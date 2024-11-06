@@ -228,8 +228,10 @@
         }
     },
     "frame.defaultDuration": 400,
+    "last.exportedFilePath": "C:/Users/banck/OneDrive/Bureau/EPITECH/PROJECT/T-JAV-501/T-JAV-501-NCY_1/assets",
     "last.imagePath": "C:/Users/user/Desktop/CarteTiledJava/assets/Spritesheets",
     "map.height": 200,
+    "map.lastUsedExportFilter": "Fichiers de carte JSON (*.tmj *.json)",
     "map.lastUsedFormat": "tmx",
     "map.tileHeight": 48,
     "map.tileWidth": 48,
