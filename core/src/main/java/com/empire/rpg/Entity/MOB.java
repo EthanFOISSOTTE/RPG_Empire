@@ -1,76 +1,24 @@
 package com.empire.rpg.Entity;
 
-import com.empire.rpg.Component.HealthComponent;
+import com.empire.rpg.Component.*;
+
+import java.util.Map;
+import java.util.UUID;
 
 public class MOB extends Entity{
-    private String name;
-    private HealthComponent health;
-    private int attackPower;
-    // private int distance;
-    //private int speed;
-    //private int level;
-    //private PositionComponent position;
 
-    public MOB(String name, HealthComponent health, int attackPower) {
-        this.name = name;
-        this.health = health;
-        this.attackPower = attackPower;
-//        this.distance = distance;
-//        this.speed = speed;
-//        this.level = level;
+    public MOB(String name, Map<Class<? extends Component>, Component> components, UUID id) {
+        super(name, components, id);
     }
 
-    public HealthComponent getHealth() {
-        return health;
+    @Override
+    public Entity addEntity() {
+        return null;
     }
 
-    public void setHealth(HealthComponent health) {
-        this.health = health;
+    @Override
+    public Entity removeEntity(String name) {
+        return null;
     }
-
-    public int getAttackPower() {
-        return attackPower;
-    }
-
-    public void setAttackPower(int attackPower) {
-        this.attackPower = attackPower;
-    }
-
-//    public int getDistance() {
-//        return distance;
-//    }
-//
-//    public void setDistance(int distance) {
-//        this.distance = distance;
-//    }
-//
-//    public int getSpeed() {
-//        return speed;
-//    }
-//
-//    public void setSpeed(int speed) {
-//        this.speed = speed;
-//    }
-//
-//    public int getLevel() {
-//        return level;
-//    }
-//
-//    public void setLevel(int level) {
-//        this.level = level;
-//    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void attack(Player target){
-        target.getHealth().setCurrentHealthPoints(target.getHealth().getCurrentHealthPoints() - this.attackPower);
-    }
-
 
 }

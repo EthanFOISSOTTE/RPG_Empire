@@ -27,5 +27,6 @@ public class HealthComponent implements Component {
     public int takeDamage(int damage){
         return this.currentHealthPoints - damage;
     }
+
 }
 

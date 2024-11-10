@@ -1,42 +1,68 @@
 package com.empire.rpg.Entity;
 import com.empire.rpg.Component.Component;
-
-import java.util.HashMap;
+import com.empire.rpg.Entity.EntityManager;
 import java.util.Map;
 import java.util.UUID;
 
-public abstract class Entity implements Component {
+public abstract class Entity extends EntityManager {
     private final UUID id;  // Identifiant unique de l'entité
-    private final Map<Class<? extends Component>, Component> components; // Map des composants
+    private final Map<Class<? extends Component>, Component> components; // Map des composants;;
 
+    public Entity(String name, Map<Class<? extends Component>, Component> components, UUID id) {
+        super(name);
+        this.components = components;
+        this.id = id;
+    }
 
-    public Entity() {
-        this.id = UUID.randomUUID();
-        this.components = new HashMap<>();
+    public abstract Entity addEntity();
+    public abstract Entity removeEntity(String name);
+
+    @Override
+    public void createEntity(UUID id) {
+        System.out.println("Creating entity with id: " + id);
     }
 
     public UUID getId() {
         return id;
     }
 
-    // Ajouter un composant à l'entité
-    public <T extends Component> void addComponent(T component) {
-        components.put(component.getClass(), component);
+    public Map<Class<? extends Component>, Component> getComponents() {
+        return components;
     }
 
-    // Récupérer un composant par son type
-    public <T extends Component> T getComponent(Class<T> componentType) {
-        return componentType.cast(components.get(componentType));
+
+    public void addComponent(Class<? extends Component> component, Component value) {
+        components.put(component, value );
     }
 
-    // Vérifie si l'entité possède un composant de ce type
-    public <T extends Component> boolean hasComponent(Class<T> componentType) {
-        return components.containsKey(componentType);
+
+    public void removeComponent(Class<? extends Component> component) {
+        components.remove(component);
     }
 
-    // Supprime un composant de l'entité
-    public <T extends Component> void removeComponent(Class<T> componentType) {
-        components.remove(componentType);
+    public Component getComponent(Class<? extends Component> component) {
+        return components.get(component);
     }
+
+    public void updateComponent(Class<? extends Component> component, Component value) {
+        components.replace(component, value);
+    }
+
+    public void updateComponents(Map<Class<? extends Component>, Component> components) {
+        this.components.putAll(components);
+    }
+
+    public void removeComponents() {
+        components.clear();
+    }
+
+    public void updateEntity(Entity entity) {
+        this.components.putAll(entity.getComponents());
+    }
+
+    public void removeEntity() {
+        components.clear();
+    }
+
 
 }

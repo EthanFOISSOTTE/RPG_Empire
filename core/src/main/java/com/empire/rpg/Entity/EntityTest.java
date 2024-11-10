@@ -1,30 +1,60 @@
 package com.empire.rpg.Entity;
 
-import com.empire.rpg.Component.HealthComponent;
-import com.empire.rpg.Component.WeaponComponent;
+import com.empire.rpg.Component.*;
+import java.util.Map;
+import java.util.UUID;
 
 public class EntityTest {
     public static void main(String[] args) {
-        // Création d'une entité Player et ajout de composants
-        Player player = new Player("Gandalf", new HealthComponent(100, 100), new WeaponComponent("Sword", 30), 10);
-        System.out.println("Player : " + player.getName() + " with health: " + player.getHealth().getCurrentHealthPoints() + " and weapon: " + player.getWeapon().getName());
 
-        // Création d'une entité MOB et ajout de composants
-        MOB mob = new MOB("Saruman", new HealthComponent(50,50), 10);
-        HealthComponent healthMob = new HealthComponent(50, 50);
-        mob.addComponent(healthMob);
-        System.out.println("MOB : " + mob.getName() + " with health: " + mob.getComponent(HealthComponent.class).getCurrentHealthPoints() + " and attack power: " + mob.getAttackPower());
+        EntityManager entityManager = new EntityManager("Balrog") {
+            @Override
+            public Entity addEntity() {
+                Map<Class<? extends Component>, Component> components = Map.of(
+                        HealthComponent.class, new HealthComponent(50, 50),
+                        PositionComponent.class, new PositionComponent(0, 0),
+                        WeaponComponent.class, new WeaponComponent("Sword", 10),
+                        MovementComponent.class, new MovementComponent(1.5f, "north"),
+                        CollisionComponent.class, new CollisionComponent(true)
+                );
+                UUID id = UUID.randomUUID();
+                return new MOB("Orc", components, id);
+            }
+            @Override
+            public void createEntity(UUID id) {
+                System.out.println("Creating entity with id: " + id);
+            }
 
-        // Le player attaque le MOB jusqu'à ce qu'il soit tué
-        while (mob.getComponent(HealthComponent.class).getCurrentHealthPoints() > 0) {
-            player.attack(mob);
-            mob.getComponent(HealthComponent.class).takeDamage(player.getWeapon().getAttackPoints());
-            System.out.println("MOB health: " + mob.getComponent(HealthComponent.class).getCurrentHealthPoints() + " after player attack");
-        }
+        };
+        entityManager.createEntity(UUID.randomUUID());
+        System.out.println("Creating MOB entity with caracteristics : Name : " + entityManager.getName() + " Health : " + ((HealthComponent) entityManager.addEntity().getComponent(HealthComponent.class)).getCurrentHealthPoints() + " / " + (entityManager.addEntity().getComponent(HealthComponent.class) + " Position : " + ((PositionComponent) entityManager.addEntity().getComponent(PositionComponent.class)).getX() + " " + ((PositionComponent) entityManager.addEntity().getComponent(PositionComponent.class)).getY() + " Weapon : " + ((WeaponComponent) entityManager.addEntity().getComponent(WeaponComponent.class)).getName() + " " + ((WeaponComponent) entityManager.addEntity().getComponent(WeaponComponent.class)).getAttackPoints() + " Movement : " + ((MovementComponent) entityManager.addEntity().getComponent(MovementComponent.class)).getSpeed() + " " + ((MovementComponent) entityManager.addEntity().getComponent(MovementComponent.class)).getDirection() + " Collision : " + ((CollisionComponent) entityManager.addEntity().getComponent(CollisionComponent.class)).isCollidable()));
 
-        // Vérifie si le MOB est mort
-        if (mob.getComponent(HealthComponent.class).getCurrentHealthPoints() <= 0) {
-            System.out.println("MOB is dead");
-        }
+
+
+
+
+        EntityManager entityManager2 = new EntityManager("Gandalf") {
+            @Override
+            public void createEntity(UUID id) {
+                System.out.println("Creating entity with id: " + id);
+            }
+
+            @Override
+            public Entity addEntity() {
+                Map<Class<? extends Component>, Component> components = Map.of(
+                    HealthComponent.class, new HealthComponent(100, 100),
+                    PositionComponent.class, new PositionComponent(0, 0),
+                    WeaponComponent.class, new WeaponComponent("Sword", 10)
+                );
+                UUID id = UUID.randomUUID();
+                return new Player("Gandalf", components, id);
+            }
+
+        } ;
+        entityManager2.createEntity(UUID.randomUUID());
+
+        System.out.println("Creating Player entity with caracteristics : Name : " + entityManager2.getName() + " Health : " + ((HealthComponent) entityManager2.addEntity().getComponent(HealthComponent.class)).getCurrentHealthPoints() + " / " + (entityManager2.addEntity().getComponent(HealthComponent.class) + " Position : " + ((PositionComponent) entityManager2.addEntity().getComponent(PositionComponent.class)).getX() + " " + ((PositionComponent) entityManager2.addEntity().getComponent(PositionComponent.class)).getY() + " Weapon : " + ((WeaponComponent) entityManager2.addEntity().getComponent(WeaponComponent.class)).getName() + " " + ((WeaponComponent) entityManager2.addEntity().getComponent(WeaponComponent.class)).getAttackPoints()));
+
+
     }
 }

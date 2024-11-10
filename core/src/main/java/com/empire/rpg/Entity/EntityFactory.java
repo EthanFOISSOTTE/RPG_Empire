@@ -1,5 +1,10 @@
 package com.empire.rpg.Entity;
 
+import java.util.UUID;
+
 public abstract class EntityFactory {
-    public abstract Entity createEntity(); // Méthode pour créer une entité
+
+    // Méthode abstraite pour créer une entité sans composants spécifiques
+    public abstract void createEntity(UUID id);
+
 }
