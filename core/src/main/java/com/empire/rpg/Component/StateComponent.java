@@ -31,4 +31,18 @@ public class StateComponent implements Component {
         this.currentState = !this.currentState;
     }
 
+    @Override
+    public int getDamageReduction() {
+        return 0;
+    }
+
+    @Override
+    public void setCurrentHealthPoints(int i) {
+
+    }
+
+    @Override
+    public int getCurrentHealthPoints() {
+        return 0;
+    }
 }

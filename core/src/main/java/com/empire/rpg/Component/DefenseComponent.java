@@ -21,6 +21,15 @@ public class DefenseComponent implements Component {
         return damageReduction;
     }
 
+    @Override
+    public void setCurrentHealthPoints(int i) {
+    }
+
+    @Override
+    public int getCurrentHealthPoints() {
+        return 0;
+    }
+
     public void setDamageReduction(int damageReduction) {
         this.damageReduction = damageReduction;
     }

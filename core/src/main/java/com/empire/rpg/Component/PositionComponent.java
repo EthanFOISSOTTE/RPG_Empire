@@ -1,10 +1,10 @@
 package com.empire.rpg.Component;
 
 public class PositionComponent implements Component{
-    private int x;
-    private int y;
+    private float x;
+    private float y;
 
-    public PositionComponent(int x, int y) {
+    public PositionComponent(float x, float y) {
         this.x = x;
         this.y = y;
     }
@@ -17,7 +17,7 @@ public class PositionComponent implements Component{
         return x;
     }
 
-    public void setPosition(int x, int y){
+    public void setPosition(float x, float y){
         this.x = x;
         this.y = y;
     }
@@ -26,10 +26,24 @@ public class PositionComponent implements Component{
         System.out.println("X: " + x + " Y: " + y);
     }
 
-    public void move(int x, int y){
+    public void move(float x, float y){
         this.x += x;
         this.y += y;
     }
 
 
+    @Override
+    public int getDamageReduction() {
+        return 0;
+    }
+
+    @Override
+    public void setCurrentHealthPoints(int i) {
+
+    }
+
+    @Override
+    public int getCurrentHealthPoints() {
+        return 0;
+    }
 }

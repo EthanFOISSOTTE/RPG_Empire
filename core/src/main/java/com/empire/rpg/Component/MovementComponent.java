@@ -33,4 +33,18 @@ public class MovementComponent implements Component {
         this.direction = "stop";
     }
 
+    @Override
+    public int getDamageReduction() {
+        return 0;
+    }
+
+    @Override
+    public void setCurrentHealthPoints(int i) {
+
+    }
+
+    @Override
+    public int getCurrentHealthPoints() {
+        return 0;
+    }
 }

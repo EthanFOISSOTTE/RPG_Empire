@@ -2,11 +2,11 @@ package com.empire.rpg.Component;
 
 public class WeaponComponent implements Component {
     private String name;
-    private int attackPoints;
+    private int damage;
 
     public WeaponComponent(String name, int attackPoints) {
         this.name = name;
-        this.attackPoints = attackPoints;
+        this.damage = attackPoints;
     }
 
     public String getName() {
@@ -17,11 +17,26 @@ public class WeaponComponent implements Component {
         this.name = name;
     }
 
-    public int getAttackPoints() {
-        return attackPoints;
+    public int getDamage() {
+        return damage;
     }
 
-    public void setAttackPoints(int attackPoints) {
-        this.attackPoints = attackPoints;
+    public void setDamage(int damage) {
+        this.damage = damage;
+    }
+
+    @Override
+    public int getDamageReduction() {
+        return 0;
+    }
+
+    @Override
+    public void setCurrentHealthPoints(int i) {
+
+    }
+
+    @Override
+    public int getCurrentHealthPoints() {
+        return 0;
     }
 }

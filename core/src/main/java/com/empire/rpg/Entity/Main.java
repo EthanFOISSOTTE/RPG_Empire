@@ -97,7 +97,7 @@ public class Main {
             System.out.println("Position: " + position.getX() + ", " + position.getY());
         }
         if (weapon != null) {
-            System.out.println("Arme: " + weapon.getName() + " (Puissance: " + weapon.getAttackPoints() + ")");
+            System.out.println("Arme: " + weapon.getName() + " (Puissance: " + weapon.getDamage() + ")");
         }
         if (movement != null) {
             System.out.println("Mouvement: Vitesse " + movement.getSpeed() + ", Direction " + movement.getDirection());

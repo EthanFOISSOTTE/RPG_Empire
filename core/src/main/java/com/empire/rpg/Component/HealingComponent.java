@@ -10,5 +10,20 @@ public class HealingComponent implements Component {
     public int getHealingPoints() {
         return healingPoints;
     }
+
+    @Override
+    public int getDamageReduction() {
+        return 0;
+    }
+
+    @Override
+    public void setCurrentHealthPoints(int i) {
+
+    }
+
+    @Override
+    public int getCurrentHealthPoints() {
+        return 0;
+    }
 }
 

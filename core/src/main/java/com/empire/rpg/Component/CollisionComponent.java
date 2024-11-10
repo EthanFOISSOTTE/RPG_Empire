@@ -25,4 +25,18 @@ public class CollisionComponent implements Component {
         return isCollidable;
     }
 
+    @Override
+    public int getDamageReduction() {
+        return 0;
+    }
+
+    @Override
+    public void setCurrentHealthPoints(int i) {
+
+    }
+
+    @Override
+    public int getCurrentHealthPoints() {
+        return 0;
+    }
 }

@@ -10,5 +10,20 @@ public class ValueComponent implements Component {
     public int getValue() {
         return value;
     }
+
+    @Override
+    public int getDamageReduction() {
+        return 0;
+    }
+
+    @Override
+    public void setCurrentHealthPoints(int i) {
+
+    }
+
+    @Override
+    public int getCurrentHealthPoints() {
+        return 0;
+    }
 }
 

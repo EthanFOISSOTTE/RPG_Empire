@@ -9,6 +9,11 @@ public class HealthComponent implements Component {
         this.maxHealthPoints = maxHealthPoints;
     }
 
+    @Override
+    public int getDamageReduction() {
+        return 0;
+    }
+
     public int getCurrentHealthPoints() {
         return currentHealthPoints;
     }
