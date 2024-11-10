@@ -11,6 +11,8 @@ public abstract class EntityManager extends EntityFactory {
     }
 
 
+    public abstract void createEntity(UUID id);
+
     public Entity addEntity() {
         createEntity(UUID.randomUUID()); // Création de l'entité via EntityFactory
         return null;
