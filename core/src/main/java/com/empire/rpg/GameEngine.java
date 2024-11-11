@@ -1,11 +1,14 @@
-package com.empire.rpg.entity;
+package com.empire.rpg;
 
 import com.empire.rpg.component.*;
+import com.empire.rpg.entity.*;
+import com.empire.rpg.system.FightSystem;
+import com.empire.rpg.system.InventorySystem;
+
 import java.util.Map;
 import java.util.UUID;
-import com.empire.rpg.system.*;
 
-public class Main {
+public class GameEngine {
     public static void main(String[] args) {
         // Création d'une entité Player
         EntityManager entityManager2 = new EntityManager("Gandalf") {
@@ -35,7 +38,7 @@ public class Main {
         displayEntityDetails(player, entityManager2);
 
         // Création d'une entité MOB
-        EntityManager entityManager = new EntityManager("Balrog") {
+        EntityManager entityManager = new EntityManager("MOB") {
             @Override
             public void createEntity(UUID id) {
                 System.out.println("Creating entity with id: " + id);
@@ -51,13 +54,13 @@ public class Main {
                     CollisionComponent.class, new CollisionComponent(true)
                 );
                 UUID id = UUID.randomUUID();
-                return new MOB("Balrog", components, id);
+                return new MOB("MOB", components, id);
             }
         };
 
-        Entity mob = entityManager.addEntity();
-        entityManager.createEntity(mob.getId());
-        displayEntityDetails(mob, entityManager);
+        MOB mobBalrog = (MOB) entityManager.addEntity();
+        entityManager.createEntity(mobBalrog.getId());
+        displayEntityDetails(mobBalrog, entityManager);
 
         // Création d'une entité HealthPotion
         HealthPotion healthPotion = new HealthPotion(5, 5, 20);
@@ -76,19 +79,11 @@ public class Main {
         System.out.println("Le joueur interagit de nouveau avec la pancarte...");
         sign.interact(); // Ferme la pancarte
 
-        // Création des systèmes
-
         // Création du système d'inventaire
         InventorySystem inventorySystem = new InventorySystem();
 
         // Création du système de combat
-        FightSystem fightSystem = new FightSystem(new MOB("Balrog", Map.of(
-            HealthComponent.class, new HealthComponent(50, 50),
-            PositionComponent.class, new PositionComponent(0, 0),
-            WeaponComponent.class, new WeaponComponent("Boules de feu", 10),
-            MovementComponent.class, new MovementComponent(1.5f, "avance tout droit"),
-            CollisionComponent.class, new CollisionComponent(true)
-        ), UUID.randomUUID()));
+        FightSystem fightSystem = new FightSystem(mobBalrog);
 
 
         // Ajout d'items à l'inventaire du joueur
@@ -97,30 +92,26 @@ public class Main {
         inventorySystem.addItem(healthPotion20, 2);
         inventorySystem.addItem(goldCoin5, 10);
 
-        // Création d'un ennemi
-        UUID mobId = UUID.randomUUID();
-        MOB enemy = new MOB("Orc", Map.of(
-            HealthComponent.class, new HealthComponent(80, 80),
-            PositionComponent.class, new PositionComponent(7, 7),
-            WeaponComponent.class, new WeaponComponent("Epee simple", 15),
-            DefenseComponent.class, new DefenseComponent(3, 3)
-        ), mobId);
-
         // Affichage initial de l'inventaire et des positions
         System.out.println("=== Etat Initial du Joueur ===");
         inventorySystem.displayInventory();
         System.out.println("Position du joueur : " + ((PositionComponent) player.getComponent(PositionComponent.class)).getX() + ", " + ((PositionComponent) player.getComponent(PositionComponent.class)).getY());
 
+        // Apparition d'un MOB ennemi
+        Entity enemy = entityManager.addEntity();
+        entityManager.createEntity(enemy.getId());
+        displayEntityDetails(enemy, entityManager);
+
+
         // Simulation de combat entre le joueur et l'ennemi
         System.out.println("\n=== Combat Simulation ===");
         fightSystem.attack(enemy, 50);  // Player attaque l'Orc
-        System.out.println("Gandalf attaque l'Orc avec son epee magique et lui inflige" + fightSystem.getDamage() + " points de degats");
+        System.out.println("Gandalf attaque l'Orc avec son epee magique et lui inflige " + fightSystem.getDamage() + " points de degats");
         fightSystem.attack(player, 10);  // Orc contre-attaque
         System.out.println("L'Orc contre-attaque et inflige " + fightSystem.getDamage() + " points de degats a Gandalf");
         fightSystem.attack(enemy, 30);  // Player attaque l'Orc et le tue
         System.out.println("Gandalf attaque l'Orc avec son epee magique et lui inflige " + fightSystem.getDamage() + " points de degats de plus");
-        MOB killedEnemy = (MOB) enemy.removeEntity("Orc");  // L'Orc est mort
-        System.out.println("L'Orc est mort");
+
 
         // Affichage des états après combat
         System.out.println("\n=== Etat Apres Combat ===");
