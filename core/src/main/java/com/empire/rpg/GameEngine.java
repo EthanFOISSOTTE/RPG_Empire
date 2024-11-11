@@ -10,6 +10,9 @@ import java.util.UUID;
 
 public class GameEngine {
     public static void main(String[] args) {
+
+
+
         // Création d'une entité Player
         EntityManager entityManager2 = new EntityManager("Gandalf") {
             @Override
@@ -21,7 +24,7 @@ public class GameEngine {
             public Entity addEntity() {
                 Map<Class<? extends Component>, Component> components = Map.of(
                     HealthComponent.class, new HealthComponent(70, 100),
-                    PositionComponent.class, new PositionComponent(0, 0),
+                    PositionComponent.class, new PositionComponent(100 , 200),
                     WeaponComponent.class, new WeaponComponent("Epee magique", 15)
                 );
                 UUID id = UUID.randomUUID();
