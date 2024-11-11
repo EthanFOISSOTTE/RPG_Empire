@@ -1,5 +1,6 @@
 package com.empire.rpg.System;
 
+import com.empire.rpg.Component.Component;
 import com.empire.rpg.Component.PositionComponent;
 import com.empire.rpg.Entity.Entity;
 
@@ -10,7 +11,7 @@ import com.empire.rpg.Entity.Entity;
  * (par exemple, un combat ou une ouverture de coffre).
  */
 
-public class CollisionSystem {
+public class CollisionSystem implements GameSystem<Component> {
     private Entity entity;
     private PositionComponent positionComponent;
     private boolean isColliding;
@@ -101,6 +102,13 @@ public class CollisionSystem {
         }
     }
 
-
-
+    @Override
+    public void update(Component component) {
+        detectCollision();
+        collided();
+        uncollided();
+        block();
+        unblock();
+        interact();
+    }
 }

@@ -1,5 +1,6 @@
 package com.empire.rpg.System;
 
+import com.empire.rpg.Component.Component;
 import com.empire.rpg.Component.PositionComponent;
 import com.empire.rpg.Entity.Entity;
 
@@ -10,7 +11,7 @@ import com.empire.rpg.Entity.Entity;
  * En fonction de la vitesse et de la direction définies dans leur MovementComponent, ce système modifie leur PositionComponent.
  */
 
-public class MovementSystem{
+public class MovementSystem implements GameSystem<Component> {
     private Entity mobileEntity;
     private PositionComponent positionComponent;
     private float speed;
@@ -157,10 +158,22 @@ public class MovementSystem{
         }
     }
 
-
-
-
-
-
-
+    @Override
+    public void update(Component component) {
+        // Logique de mise à jour du mouvement
+        moved();
+        move(speed, direction);
+        stop();
+        turn(direction);
+        moveForward(speed);
+        moveBackward(speed);
+        turnLeft(direction);
+        turnRight(direction);
+        moveLeft(speed);
+        moveRight(speed);
+        moveUp(speed);
+        moveDown(speed);
+        moveUpLeft(speed);
+        moveUpRight(speed);
+    }
 }

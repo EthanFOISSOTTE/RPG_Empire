@@ -72,10 +72,10 @@ public abstract class Entity extends EntityManager {
     /**
      * Ajoute un composant à l'entité.
      *
-     * @param component La classe du composant à ajouter.
-     * @param value     Le composant à ajouter.
+     * @param value Le composant à ajouter.
      */
-    public void addComponent(Class<? extends Component> component, Component value) {
+    public void addComponent(Component value) {
+        Class<? extends Component> component = null;
         components.put(component, value);
     }
 

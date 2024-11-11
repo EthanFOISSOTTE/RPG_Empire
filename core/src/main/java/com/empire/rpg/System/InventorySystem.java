@@ -1,10 +1,11 @@
 package com.empire.rpg.System;
 
+import com.empire.rpg.Component.Component;
 import com.empire.rpg.Entity.Item;
 import java.util.HashMap;
 import java.util.Map;
 
-public class InventorySystem {
+public class InventorySystem implements GameSystem<Component> {
 
     private final Map<Item, Integer> inventory;
 
@@ -49,5 +50,10 @@ public class InventorySystem {
                 System.out.println(entry.getKey().getName() + " x" + entry.getValue());
             }
         }
+    }
+
+    @Override
+    public void update(Component component) {
+        // Logique de mise à jour de l'inventaire
     }
 }

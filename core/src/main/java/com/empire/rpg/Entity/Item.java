@@ -1,8 +1,8 @@
 package com.empire.rpg.Entity;
 
 import com.empire.rpg.Component.CollisionComponent;
-import com.empire.rpg.Component.InventoryComponent;
 import com.empire.rpg.Component.PositionComponent;
+
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -12,7 +12,7 @@ import java.util.UUID;
  */
 public class Item extends Entity {
     private String name;
-    private List<String> types;
+    private String type;
     private int quantity;
 
     /**
@@ -20,19 +20,18 @@ public class Item extends Entity {
      *
      * @param name     Le nom de l'item
      * @param quantity La quantité de l'item
-     * @param types    Les categories d'item
+     * @param type    La categorie d'item
      */
-    public Item(String name, int quantity, List<String> types) {
+    public Item(String name, int quantity, String type) {
         super(name, Map.of(
             PositionComponent.class, new PositionComponent(0, 0),
-            CollisionComponent.class, new CollisionComponent(true),
-            InventoryComponent.class, new InventoryComponent(0, 100)
+            CollisionComponent.class, new CollisionComponent(true)
         ),
             UUID.randomUUID()
         );
 
         this.name = name;
-        this.types = List.of("weapon", "armor", "potion");
+        this.type= type;
         this.quantity = quantity;
     }
 
@@ -60,17 +59,17 @@ public class Item extends Entity {
      *
      * @return les categories de l'item
      */
-    public List<String> getTypes() {
-        return types;
+    public String getType() {
+        return type;
     }
 
     /**
      * Affecter de nouvelles categories à l'item.
      *
-     * @param types les nouvelles categories de l'item.
+     * @param type les nouvelles categories de l'item.
      */
-    public void setTypes(List<String> types) {
-        this.types = types;
+    public void setType(String type) {
+        this.type = type;
     }
 
     /**

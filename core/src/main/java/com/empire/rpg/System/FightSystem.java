@@ -1,9 +1,11 @@
 package com.empire.rpg.System;
 
+import com.empire.rpg.Component.Component;
 import com.empire.rpg.Component.DefenseComponent;
 import com.empire.rpg.Component.HealthComponent;
 import com.empire.rpg.Component.WeaponComponent;
 import com.empire.rpg.Entity.Entity;
+import com.empire.rpg.Entity.MOB;
 
 /**
  * Système de Combat (FightSystem)
@@ -12,15 +14,15 @@ import com.empire.rpg.Entity.Entity;
  * calculer les dégâts infligés.
  */
 
-public class FightSystem {
-    private Entity entityTarget;
+public class FightSystem implements GameSystem<Component> {
+    private MOB entityTarget;
     private HealthComponent healthComponent;
     private DefenseComponent defenseComponent;
     private WeaponComponent weaponComponent;
     private int damage;
     private int health;
 
-    public FightSystem(Entity entityTarget) {
+    public FightSystem(MOB entityTarget) {
         this.entityTarget = entityTarget;
         this.healthComponent = (HealthComponent) entityTarget.getComponent(HealthComponent.class);
         this.defenseComponent = (DefenseComponent) entityTarget.getComponent(DefenseComponent.class);
@@ -33,7 +35,7 @@ public class FightSystem {
         return entityTarget;
     }
 
-    public void setEntityTarget(Entity entityTarget) {
+    public void setEntityTarget(MOB entityTarget) {
         this.entityTarget = entityTarget;
     }
 
@@ -110,8 +112,45 @@ public class FightSystem {
         System.out.println("Points de vie restants: " + target.getComponent(HealthComponent.class).getCurrentHealthPoints());
     }
 
+    @Override
+    public void update(Component component) {
+        attack(entityTarget, damage);
 
+        // Logique de mise à jour du combat
 
+        HealthComponent health = (HealthComponent) entityTarget.getComponent(HealthComponent.class);
+        DefenseComponent defense = (DefenseComponent) entityTarget.getComponent(DefenseComponent.class);
+        WeaponComponent weapon = (WeaponComponent) entityTarget.getComponent(WeaponComponent.class);
 
+        // Vérifier si les composants sont présents
 
+        if (health != null && defense != null && weapon != null) {
+            // Calculer les dégâts infligés
+            int damage = weapon.getDamage() - defense.getDamageReduction();
+
+            // Appliquer les dégâts
+            health.setCurrentHealthPoints(health.getCurrentHealthPoints() - damage);
+
+            // Afficher les dégâts infligés
+            System.out.println("Dégâts infligés: " + damage);
+
+            // Afficher les points de vie restants
+            System.out.println("Points de vie restants: " + health.getCurrentHealthPoints());
+        }
+
+        // Mettre à jour les dégâts infligés
+        setDamage(damage);
+
+        // Mettre à jour les points de vie restants
+        assert health != null;
+        setHealth(health.getCurrentHealthPoints());
+
+        // Mettre à jour l'entité cible
+        setEntityTarget(entityTarget);
+
+        // Mettre à jour les composants
+        setHealthComponent(health);
+        setDefenseComponent(defense);
+
+    }
 }

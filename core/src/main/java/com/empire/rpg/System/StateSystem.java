@@ -1,5 +1,6 @@
 package com.empire.rpg.System;
 
+import com.empire.rpg.Component.Component;
 import com.empire.rpg.Entity.Entity;
 
 /**
@@ -8,7 +9,7 @@ import com.empire.rpg.Entity.Entity;
  * ou les états de la pancarte (ouverte/fermée).
  */
 
-public class StateSystem {
+public class StateSystem implements GameSystem<Component> {
     private Entity entity;
     private boolean isOpen;
     private boolean isClosed;
@@ -36,7 +37,7 @@ public class StateSystem {
     }
     public void collect(Entity entity){
         // Actions à effectuer en cas de collecte
-        entity.putInInventory();
+        //entity.putInInventory();
     }
     public void open(Entity entity){
         if (isClosed()) {
@@ -65,6 +66,12 @@ public class StateSystem {
         // Actions à effectuer en cas d'affichage
         System.out.println("Affichage de l'entité : " + entity);
     };
+
+    @Override
+    public void update(Component component) {
+        // Logique de mise à jour de l'état
+
+    }
 }
 
 

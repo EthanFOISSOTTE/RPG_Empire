@@ -1,72 +1,131 @@
 package com.empire.rpg.Component;
 
+import com.empire.rpg.Entity.Item;
+
+/**
+ * Composant d'inventaire pour gérer les objets d'un joueur.
+ */
 public class InventoryComponent implements Component {
-    private int gold;
-    private int capacity;
-    private int currentCapacity;
+    private Item itemName;
+    private Item itemQuantity;
+    private Item itemType;
 
-    public InventoryComponent(int gold, int capacity) {
-        this.gold = gold;
-        this.capacity = capacity;
-        this.currentCapacity = 0;
+    /**
+     * Constructeur pour initialiser les objets de l'inventaire.
+     *
+     * @param itemName Nom de l'objet.
+     * @param itemQuantity Quantité de l'objet.
+     * @param itemType Type de l'objet.
+     */
+    public InventoryComponent(Item itemName, Item itemQuantity, Item itemType) {
+        this.itemName = itemName;
+        this.itemQuantity = itemQuantity;
+        this.itemType = itemType;
     }
 
-    public int getGold() {
-        return gold;
-    }
-
-    public void setGold(int gold) {
-        this.gold = gold;
-    }
-
-    public int getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
-    }
-
-    public int getCurrentCapacity() {
-        return currentCapacity;
-    }
-
-    public void setCurrentCapacity(int currentCapacity) {
-        this.currentCapacity = currentCapacity;
-    }
-
-    public void addGold(int amount) {
-        gold += amount;
-    }
-
-    public void removeGold(int amount) {
-        gold -= amount;
-    }
-
-    public void addItem(int weight) {
-        currentCapacity += weight;
-    }
-
-    public void removeItem(int weight) {
-        currentCapacity -= weight;
-    }
-
-    public boolean isFull() {
-        return currentCapacity >= capacity;
-    }
-
+    /**
+     * Retourne la réduction de dégâts.
+     *
+     * @return Réduction de dégâts (toujours 0).
+     */
     @Override
     public int getDamageReduction() {
         return 0;
     }
 
+    /**
+     * Définit les points de vie actuels.
+     *
+     * @param i Points de vie actuels.
+     */
     @Override
     public void setCurrentHealthPoints(int i) {
 
     }
 
+    /**
+     * Retourne les points de vie actuels.
+     *
+     * @return Points de vie actuels (toujours 0).
+     */
     @Override
     public int getCurrentHealthPoints() {
         return 0;
+    }
+
+    /**
+     * Retourne le nom de l'objet.
+     *
+     * @return Nom de l'objet.
+     */
+    public Item getItemName() {
+        return itemName;
+    }
+
+    /**
+     * Définit le nom de l'objet.
+     *
+     * @param itemName Nom de l'objet.
+     */
+    public void setItemName(Item itemName) {
+        this.itemName = itemName;
+    }
+
+    /**
+     * Retourne la quantité de l'objet.
+     *
+     * @return Quantité de l'objet.
+     */
+    public Item getItemQuantity() {
+        return itemQuantity;
+    }
+
+    /**
+     * Définit la quantité de l'objet.
+     *
+     * @param itemQuantity Quantité de l'objet.
+     */
+    public void setItemQuantity(Item itemQuantity) {
+        this.itemQuantity = itemQuantity;
+    }
+
+    /**
+     * Retourne le type de l'objet.
+     *
+     * @return Type de l'objet.
+     */
+    public Item getItemType() {
+        return itemType;
+    }
+
+    /**
+     * Définit le type de l'objet.
+     *
+     * @param itemType Type de l'objet.
+     */
+    public void setItemType(Item itemType) {
+        this.itemType = itemType;
+    }
+
+    /**
+     * Ajoute un objet à l'inventaire.
+     *
+     * @param itemName Nom de l'objet.
+     * @param itemQuantity Quantité de l'objet.
+     * @param itemType Type de l'objet.
+     */
+    public void addItem(Item itemName, Item itemQuantity, Item itemType) {
+        this.itemName = itemName;
+        this.itemQuantity = itemQuantity;
+        this.itemType = itemType;
+    }
+
+    /**
+     * Supprime l'objet de l'inventaire.
+     */
+    public void removeItem() {
+        this.itemName = null;
+        this.itemQuantity = null;
+        this.itemType = null;
     }
 }

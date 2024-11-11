@@ -1,6 +1,7 @@
 package com.empire.rpg.System;
 
 
+import com.empire.rpg.Component.Component;
 import com.empire.rpg.Entity.Entity;
 
 /**
@@ -10,7 +11,7 @@ import com.empire.rpg.Entity.Entity;
  * spécifiques (ouvrir un coffre, lire une pancarte, etc.).
  */
 
-public class InteractionSystem {
+public class InteractionSystem implements GameSystem<Component> {
     private Entity entity;
     private boolean isInteracting;
     private boolean isInteractable;
@@ -49,5 +50,10 @@ public class InteractionSystem {
         if (isInteractable()){
             // Actions à effectuer en cas d'interaction
         }
+    }
+
+    @Override
+    public void update(Component component) {
+        // Logique de mise à jour de l'interaction
     }
 }

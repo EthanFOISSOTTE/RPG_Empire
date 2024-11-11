@@ -1,11 +1,11 @@
 package com.empire.rpg.System;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.empire.rpg.Component.Component;
 import com.empire.rpg.Component.PositionComponent;
 import com.empire.rpg.Component.TextureComponent;
 import com.empire.rpg.Entity.Entity;
-import java.util.List;
+
 
 /**
  * Système de Rendu (RenderSystem)
@@ -13,38 +13,28 @@ import java.util.List;
  * entités et leurs états. Ce système s'intègre avec une bibliothèque graphique comme LibGDX.
  */
 
-public class RenderSystem {
-    private final Batch batch;
+public class RenderSystem implements GameSystem<Component> {
+
+    private SpriteBatch batch; // Batch qui gère le rendu de plusieurs textures en une fois
 
     public RenderSystem() {
         this.batch = new SpriteBatch();
     }
 
-    public void render(List<Entity> entities) {
-        // Démarrer le batch pour dessiner
-        batch.begin();
+    public void render(Entity entity) {
+        TextureComponent textureComponent = (TextureComponent) entity.getComponent(TextureComponent.class);
+        PositionComponent positionComponent = (PositionComponent) entity.getComponent(PositionComponent.class);
 
-        // Parcourir toutes les entités à dessiner
-        for (Entity entity : entities) {
-            PositionComponent position = (PositionComponent) entity.getComponent(PositionComponent.class);
-            TextureComponent texture = (TextureComponent) entity.getComponent(TextureComponent.class);
-
-            // Vérifier si les composants sont présents
-            if (position != null && texture != null) {
-                batch.draw(
-                    texture.texture(),               // Texture de l'entité
-                    position.getX(), position.getY(),   // Position de l'entité
-                    texture.width(), texture.height() // Dimensions de l'entité
-                );
-            }
+        if (textureComponent != null && positionComponent != null) {
+            batch.begin();
+            batch.draw(textureComponent.getTexture(), positionComponent.getX(), positionComponent.getY());
+            batch.end();
         }
-
-        // Terminer le batch
-        batch.end();
     }
 
-    // Libérer les ressources du batch
-    public void dispose() {
-        batch.dispose();
+    @Override
+    public void update(Component component) {
+        // Logique de mise à jour du rendu
+
     }
 }
