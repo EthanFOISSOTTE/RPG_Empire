@@ -11,8 +11,6 @@ import java.util.UUID;
 public class GameEngine {
     public static void main(String[] args) {
 
-
-
         // Création d'une entité Player
         EntityManager entityManager2 = new EntityManager("Gandalf") {
             @Override
@@ -135,7 +133,7 @@ public class GameEngine {
         // Affichage de l'inventaire et de la santé après l'utilisation de la potion
         System.out.println("\n=== Etat Final ===");
         inventorySystem.displayInventory();
-        System.out.println("Vie du joueur : " + ((HealthComponent) player.getComponent(HealthComponent.class)).getCurrentHealthPoints() + " / " + ((HealthComponent) player.getComponent(HealthComponent.class)).getMaxHealthPoints());
+        System.out.println("Vie du joueur : " + (player.getComponent(HealthComponent.class)).getCurrentHealthPoints() + " / " + ((HealthComponent) player.getComponent(HealthComponent.class)).getMaxHealthPoints());
     }
 
     // Affiche les détails de l'entité
