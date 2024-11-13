@@ -29,6 +29,9 @@ public class Inventory {
     private boolean inCategorySelection = true;
     private List<Item> items;  // Liste des objets chargés à partir du JSON
 
+    private static final int MAX_VISIBLE_ITEMS = 7; // Nombre maximum d'objets affichés en même temps
+    private int scrollOffset = 0; // Décalage de défilement pour l'affichage des objets
+
     public Inventory(OrthographicCamera camera, SpriteBatch batch) {
         this.camera = camera;
         this.batch = batch;
@@ -45,11 +48,12 @@ public class Inventory {
         for (JsonValue itemJson : base.get("inventory")) {
             String type = itemJson.getString("type");
             String nom = itemJson.getString("nom");
-            int quantité = itemJson.getInt("quantité");
+            int quantity = itemJson.getInt("quantity");
             String description = itemJson.getString("description");
             int valeur = itemJson.getInt("valeur", 0);  // Valeur par défaut 0 si absent
+            boolean states = itemJson.getBoolean("states",false);
 
-            Item item = new Item(type, nom, quantité, description, valeur);
+            Item item = new Item(type, nom, quantity, description, valeur, states);
             items.add(item);
         }
     }
@@ -121,9 +125,13 @@ public class Inventory {
         String category = categories[selectedCategoryIndex];
         List<Item> currentItems = getItemsByType(category);
 
-        for (int i = 0; i < currentItems.size(); i++) {
+        // Calculer la portion de la liste des objets à afficher en fonction du défilement
+        int start = scrollOffset;
+        int end = Math.min(start + MAX_VISIBLE_ITEMS, currentItems.size());
+
+        for (int i = start; i < end; i++) {
             Item item = currentItems.get(i);
-            float textY = frameY + frameHeight - 60 - i * 30;
+            float textY = frameY + frameHeight - 60 - (i - start) * 30; // Ajuste la position Y pour chaque item visible
             String prefix = (!inCategorySelection && i == selectedObjectIndex) ? "-> " : "";
             font.draw(batch, prefix + item.getNom() + " (x" + item.getQuantité() + ")", frameX + 220, textY);
         }
@@ -154,6 +162,7 @@ public class Inventory {
                 if (selectedItem.getValeur() > 0) {
                     font.draw(batch, "Valeur : " + selectedItem.getValeur(), frameX + 10, startY - 90);
                 }
+
             }
         }
     }
@@ -163,13 +172,18 @@ public class Inventory {
     }
 
     public void update() {
+        List<Item> currentItems = getItemsByType(categories[selectedCategoryIndex]);
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.W)) {
             if (inCategorySelection) {
                 selectedCategoryIndex = (selectedCategoryIndex - 1 + categories.length) % categories.length;
             } else {
-                List<Item> currentItems = getItemsByType(categories[selectedCategoryIndex]);
-                if (currentItems.size() > 0) {
-                    selectedObjectIndex = (selectedObjectIndex - 1 + currentItems.size()) % currentItems.size();
+                if (selectedObjectIndex > 0) {
+                    selectedObjectIndex--;
+                    // Vérifier si on doit défiler vers le haut
+                    if (selectedObjectIndex < scrollOffset) {
+                        scrollOffset--;
+                    }
                 }
             }
         }
@@ -178,9 +192,12 @@ public class Inventory {
             if (inCategorySelection) {
                 selectedCategoryIndex = (selectedCategoryIndex + 1) % categories.length;
             } else {
-                List<Item> currentItems = getItemsByType(categories[selectedCategoryIndex]);
-                if (currentItems.size() > 0) {
-                    selectedObjectIndex = (selectedObjectIndex + 1) % currentItems.size();
+                if (selectedObjectIndex < currentItems.size() - 1) {
+                    selectedObjectIndex++;
+                    // Vérifier si on doit défiler vers le bas
+                    if (selectedObjectIndex >= scrollOffset + MAX_VISIBLE_ITEMS) {
+                        scrollOffset++;
+                    }
                 }
             }
         }
@@ -189,14 +206,19 @@ public class Inventory {
             if (inCategorySelection) {
                 inCategorySelection = false;
                 selectedObjectIndex = 0;
+                scrollOffset = 0; // Réinitialiser le défilement pour le nouvel écran d'objets
             }
         }
+
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
             if (!inCategorySelection) {
                 inCategorySelection = true;
+                selectedObjectIndex = 0;
+                scrollOffset = 0; // Réinitialiser le défilement pour le nouvel écran de catégories
             }
         }
+
     }
 
     public void setShowInteractionFrame(boolean show) {
