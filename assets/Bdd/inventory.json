@@ -1,0 +1,128 @@
+{
+  "inventory": [
+    {
+      "type": "Équipement",
+      "nom": "Épée",
+      "quantité": 1,
+      "description": "Blablabla",
+      "valeur": 30
+    },
+    {
+      "type": "Équipement",
+      "nom": "Lance",
+      "quantité": 1,
+      "description": "Blablabla",
+      "valeur": 30
+    },
+    {
+      "type": "Équipement",
+      "nom": "halbarde",
+      "quantité": 1,
+      "description": "Blablabla",
+      "valeur": 30
+    },
+    {
+      "type": "Équipement",
+      "nom": "masse",
+      "quantité": 1,
+      "description": "Blablabla",
+      "valeur": 30
+    },
+    {
+      "type": "Équipement",
+      "nom": "sabre",
+      "quantité": 1,
+      "description": "Blablabla",
+      "valeur": 30
+    },
+    {
+      "type": "Équipement",
+      "nom": "baton",
+      "quantité": 1,
+      "description": "Blablabla",
+      "valeur": 30
+    },
+    {
+      "type": "Équipement",
+      "nom": "Bouclier",
+      "quantité": 1,
+      "description": "Blablabla",
+      "valeur": 30
+    },
+    {
+      "type": "Équipement",
+      "nom": "Casque",
+      "quantité": 1,
+      "description": "Blablabla",
+      "valeur": 30
+    },
+    {
+      "type": "Équipement",
+      "nom": "Plastron",
+      "quantité": 1,
+      "description": "Blablabla",
+      "valeur": 30
+    },
+    {
+      "type": "Équipement",
+      "nom": "Botte",
+      "quantité": 1,
+      "description": "Blablabla",
+      "valeur": 30
+    },
+    {
+      "type": "Outil",
+      "nom": "Hache",
+      "quantité": 1,
+      "description": "Blablabla",
+      "valeur": 30
+    },
+    {
+      "type": "Outil",
+      "nom": "Pioche",
+      "quantité": 1,
+      "description": "Blablabla",
+      "valeur": 30
+    },
+    {
+      "type": "Consommable",
+      "nom": "Potion",
+      "quantité": 99,
+      "description": "Blablabla",
+      "valeur": 25
+    },
+    {
+      "type": "Consommable",
+      "nom": "Nourriture",
+      "quantité": 50,
+      "description": "Blablabla",
+      "valeur": 10
+    },
+    {
+      "type": "Objet de quête",
+      "nom": "Lettre",
+      "quantité": 1,
+      "description": "Blablabla"
+    },
+    {
+      "type": "Objet de quête",
+      "nom": "Carte",
+      "quantité": 1,
+      "description": "Blablabla"
+    },
+    {
+      "type": "Divers",
+      "nom": "Divers 1",
+      "quantité": 30,
+      "description": "Blablabla",
+      "valeur": 10
+    },
+    {
+      "type": "Divers",
+      "nom": "Divers 2",
+      "quantité": 10,
+      "description": "Blablabla",
+      "valeur": 20
+    }
+  ]
+}

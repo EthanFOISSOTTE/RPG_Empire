@@ -219,19 +219,17 @@
                 14,
                 13
             ],
-            "scale": 0.25,
-            "selectedLayer": 12,
+            "scale": 0.75,
+            "selectedLayer": 8,
             "viewCenter": {
-                "x": 7940,
-                "y": 4922
+                "x": 1664.6666666666665,
+                "y": 5062
             }
         }
     },
     "frame.defaultDuration": 400,
-    "last.exportedFilePath": "C:/Users/banck/OneDrive/Bureau/EPITECH/PROJECT/T-JAV-501/T-JAV-501-NCY_1/assets",
     "last.imagePath": "C:/Users/user/Desktop/CarteTiledJava/assets/Spritesheets",
     "map.height": 200,
-    "map.lastUsedExportFilter": "Fichiers de carte JSON (*.tmj *.json)",
     "map.lastUsedFormat": "tmx",
     "map.tileHeight": 48,
     "map.tileWidth": 48,
