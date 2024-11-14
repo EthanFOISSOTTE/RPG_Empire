@@ -7,15 +7,17 @@ public class Item {
     private String description;
     private int valeur;
     private boolean states;
+    private String style;
 
     // Constructeur
-    public Item(String type, String nom, int quantity, String description, int valeur,boolean states ) {
+    public Item(String type, String nom, int quantity, String description, int valeur,boolean states, String style) {
         this.type = type;
         this.nom = nom;
         this.quantity = quantity;
         this.description = description;
         this.valeur = valeur;
         this.states = states;
+        this.style = style;
     }
 
     // Getters pour chaque attribut
@@ -25,7 +27,7 @@ public class Item {
     public String getNom() {
         return nom;
     }
-    public int getQuantité() {
+    public int getQuantity() {
         return quantity;
     }
     public String getDescription() {
@@ -36,6 +38,10 @@ public class Item {
     }
     public boolean getStates(){
         return states;
+    }
+
+    public String getStyle() {
+        return style;
     }
 
     // Setters pour chaque attribut

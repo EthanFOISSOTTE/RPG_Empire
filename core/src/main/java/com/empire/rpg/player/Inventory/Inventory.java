@@ -37,6 +37,10 @@ public class Inventory {
 
     private Item equippedArmor;
     private Item equippedConsommable;
+    private Item equippedLance;
+    private Item equippedEpee;
+    private Item equippedArc;
+
 
     public Inventory(OrthographicCamera camera, SpriteBatch batch) {
         this.camera = camera;
@@ -59,8 +63,9 @@ public class Inventory {
             String description = itemJson.getString("description");
             int valeur = itemJson.getInt("valeur", 0);  // Valeur par défaut 0 si absent
             boolean states = itemJson.getBoolean("states",false);
+            String style = itemJson.getString("style","null");
 
-            Item item = new Item(type, nom, quantity, description, valeur, states);
+            Item item = new Item(type, nom, quantity, description, valeur, states, style);
             items.add(item);
         }
     }
@@ -147,7 +152,7 @@ public class Inventory {
             String prefix = (!inCategorySelection && i == selectedObjectIndex) ? "-> " : "";
             String equippedIndicator = item.getStates() ? " <-" : "";
 
-            font.draw(batch, prefix + item.getNom() + " (x" + item.getQuantité() + ")" + equippedIndicator, frameX + 220, textY);
+            font.draw(batch, prefix + item.getNom() + " (x" + item.getQuantity() + ")" + equippedIndicator, frameX + 220, textY);
         }
     }
 
@@ -178,6 +183,7 @@ public class Inventory {
                     font.draw(batch, "Valeur : " + selectedItem.getValeur(), frameX + 10, startY - 90);
                 }
                 font.draw(batch,"Statue: " + selectedItem.getStates(),frameX + 10, startY - 120); // A supp
+                font.draw(batch,"Style: " + selectedItem.getStyle(),frameX + 10, startY - 150); // A supp
             }
         }
     }

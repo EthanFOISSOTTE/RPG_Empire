@@ -6,7 +6,8 @@
       "quantity": 1,
       "description": "Blablabla",
       "valeur": 30,
-      "states": false
+      "states": false,
+      "style": "lance"
     },
     {
       "type": "Armes",
@@ -14,7 +15,8 @@
       "quantity": 1,
       "description": "Blablabla",
       "valeur": 30,
-      "states": false
+      "states": false,
+      "style": "lance"
     },
     {
       "type": "Armes",
@@ -22,7 +24,8 @@
       "quantity": 1,
       "description": "Blablabla",
       "valeur": 30,
-      "states": false
+      "states": false,
+      "style": "lance"
     },
     {
       "type": "Armes",
@@ -30,7 +33,8 @@
       "quantity": 1,
       "description": "Blablabla",
       "valeur": 30,
-      "states": false
+      "states": false,
+      "style": "épée"
     },
     {
       "type": "Armes",
@@ -38,7 +42,8 @@
       "quantity": 1,
       "description": "Blablabla",
       "valeur": 30,
-      "states": false
+      "states": false,
+      "style": "épée"
     },
     {
       "type": "Armes",
@@ -46,7 +51,8 @@
       "quantity": 1,
       "description": "Blablabla",
       "valeur": 30,
-      "states": false
+      "states": false,
+      "style": "épée"
     },
     {
       "type": "Armes",
@@ -54,7 +60,8 @@
       "quantity": 1,
       "description": "Blablabla",
       "valeur": 30,
-      "states": false
+      "states": false,
+      "style": "arc"
     },
     {
       "type": "Armes",
@@ -62,7 +69,8 @@
       "quantity": 1,
       "description": "Blablabla",
       "valeur": 30,
-      "states": false
+      "states": false,
+      "style": "arc"
     },
     {
       "type": "Armes",
@@ -70,7 +78,35 @@
       "quantity": 1,
       "description": "Blablabla",
       "valeur": 30,
-      "states": false
+      "states": false,
+      "style": "arc"
+    },
+    {
+      "type": "Armes",
+      "nom": "Bouclier en bois",
+      "quantity": 1,
+      "description": "Blablabla",
+      "valeur": 30,
+      "states": false,
+      "style": "bouclier"
+    },
+    {
+      "type": "Armes",
+      "nom": "Bouclier en fer",
+      "quantity": 1,
+      "description": "Blablabla",
+      "valeur": 30,
+      "states": false,
+      "style": "bouclier"
+    },
+    {
+      "type": "Armes",
+      "nom": "Bouclier en carbone",
+      "quantity": 1,
+      "description": "Blablabla",
+      "valeur": 30,
+      "states": false,
+      "style": "bouclier"
     },
     {
       "type": "Tenue",
