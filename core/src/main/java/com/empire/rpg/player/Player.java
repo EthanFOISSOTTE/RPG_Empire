@@ -69,8 +69,8 @@ public class Player {
         this.y = y;
         this.scale = scale;
         this.speed = Constants.PLAYER_WALKING_SPEED;
-        this.currentTool1 = Constants.TOOLS.get("SW01");
-        this.currentTool2 = Constants.TOOLS.get("SH01");
+        this.currentTool1 = Constants.TOOLS.get("AX01");
+        this.currentTool2 = Constants.TOOLS.get("SH02");
         this.lastFacingDirection = AnimationState.STANDING_DOWN;
 
         this.animationController = new AnimationController(this, body, outfit, hair, hat, tool1, tool2);
@@ -213,36 +213,8 @@ public class Player {
 
     public void updateAnimationState() {
         if (currentState instanceof AttackingState) {
-            // Définir l'animation d'attaque en fonction de la dernière direction
-            switch (lastFacingDirection) {
-                case WALKING_LEFT:
-                case RUNNING_LEFT:
-                case STANDING_LEFT:
-                case ONE_SLASH1_LEFT:
-                    animationController.setAnimationState(AnimationState.ONE_SLASH1_LEFT);
-                    break;
-                case WALKING_RIGHT:
-                case RUNNING_RIGHT:
-                case STANDING_RIGHT:
-                case ONE_SLASH1_RIGHT:
-                    animationController.setAnimationState(AnimationState.ONE_SLASH1_RIGHT);
-                    break;
-                case WALKING_UP:
-                case RUNNING_UP:
-                case STANDING_UP:
-                case ONE_SLASH1_UP:
-                    animationController.setAnimationState(AnimationState.ONE_SLASH1_UP);
-                    break;
-                case WALKING_DOWN:
-                case RUNNING_DOWN:
-                case STANDING_DOWN:
-                case ONE_SLASH1_DOWN:
-                    animationController.setAnimationState(AnimationState.ONE_SLASH1_DOWN);
-                    break;
-                default:
-                    animationController.setAnimationState(AnimationState.ONE_SLASH1_DOWN);
-                    break;
-            }
+            // Ne rien faire pour éviter d'écraser l'animation personnalisée
+            return;
         } else if (isMoving()) {
             if (running) {
                 // États d'animation pour la course

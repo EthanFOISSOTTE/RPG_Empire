@@ -5,6 +5,7 @@ import com.empire.rpg.player.Player;
 import com.empire.rpg.player.equipment.Tool;
 import com.empire.rpg.player.attacks.Attack;
 import com.empire.rpg.player.animations.AnimationState;
+import com.empire.rpg.player.animations.CustomAnimation;
 
 public class AttackingState extends State {
     private Attack attack;
@@ -20,22 +21,16 @@ public class AttackingState extends State {
 
     @Override
     public void enter() {
-        // Déterminer l'animation en fonction de l'outil utilisé (tool)
         String direction = player.getFacingDirection();
-        AnimationState animationState;
-
-        if (tool == player.getCurrentTool1()) {
-            // Utiliser l'animation d'attaque pour tool1 (par exemple, ONE_SLASH1)
-            animationState = attack.getAnimationStates().get(direction);
-        } else if (tool == player.getCurrentTool2()) {
-            // Utiliser l'animation d'attaque pour tool2 (par exemple, DEFEND1)
-            animationState = attack.getAnimationStates().get(direction);
-        } else {
-            animationState = AnimationState.STANDING_DOWN; // État par défaut si l'outil n'est pas défini
-        }
+        AnimationState animationState = attack.getAnimationStates().get(direction);
 
         if (animationState != null) {
-            player.getAnimationController().setAnimationState(animationState);
+            String tool1SpritesheetKey = player.getCurrentTool1() != null ? player.getCurrentTool1().getSpritesheetKey() : null;
+            String tool2SpritesheetKey = player.getCurrentTool2() != null ? player.getCurrentTool2().getSpritesheetKey() : null;
+
+            CustomAnimation attackAnimation = player.getAnimationController().createAttackAnimation(
+                attack.getCategoryKey(), tool1SpritesheetKey, tool2SpritesheetKey, animationState);
+            player.getAnimationController().setCustomAnimation(attackAnimation);
         }
     }
 
@@ -52,6 +47,6 @@ public class AttackingState extends State {
 
     @Override
     public void exit() {
-        // Actions à effectuer lors de la sortie de l'état d'attaque
+        player.getAnimationController().setCustomAnimation(null);
     }
 }

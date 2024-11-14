@@ -247,7 +247,7 @@ public class Constants {
         oneSlash1States.put("DOWN", AnimationState.ONE_SLASH1_DOWN);
         oneSlash1States.put("LEFT", AnimationState.ONE_SLASH1_LEFT);
         oneSlash1States.put("RIGHT", AnimationState.ONE_SLASH1_RIGHT);
-        ATTACKS.put("ONE_SLASH1", new Attack("ONE_SLASH1", "Fente tranchante", oneSlash1States, 0.3f, 10f, 10.0f));
+        ATTACKS.put("ONE_SLASH1", new Attack("ONE_SLASH1", "Fente tranchante", "ONE3", oneSlash1States, 0.3f, 10f, 10.0f));
 
         // Définition de l'attaque "ONE_DODGE"
         Map<String, AnimationState> oneDodgeStates = new HashMap<>();
@@ -255,15 +255,15 @@ public class Constants {
         oneDodgeStates.put("DOWN", AnimationState.ONE_DODGE_DOWN);
         oneDodgeStates.put("LEFT", AnimationState.ONE_DODGE_LEFT);
         oneDodgeStates.put("RIGHT", AnimationState.ONE_DODGE_RIGHT);
-        ATTACKS.put("ONE_DODGE", new Attack("ONE_DODGE", "Blocage", oneDodgeStates, 0.3f, 0f, 0.0f));
+        ATTACKS.put("ONE_DODGE", new Attack("ONE_DODGE", "Blocage", "ONE1", oneDodgeStates, 0.3f, 0f, 0.0f));
 
         // Définition de l'outil
-        TOOLS.put("AX01", new Tool("AX01", "Hache", "ONE3", "AX01", Arrays.asList("ONE_SLASH1")));
-        TOOLS.put("MC01", new Tool("MC01", "Marteau de guerre", "ONE3", "MC01", Arrays.asList("ONE_SLASH1")));
-        TOOLS.put("SW01", new Tool("SW01", "Petite épée", "ONE3", "SW01", Arrays.asList("ONE_SLASH1")));
-        TOOLS.put("SW02", new Tool("SW02", "Grosse épée", "ONE3", "SW02", Arrays.asList("ONE_SLASH1")));
-        TOOLS.put("SH01", new Tool("SH01", "Bouclier de base", "ONE1", "SH01", Arrays.asList("ONE_DODGE")));
-        TOOLS.put("SH02", new Tool("SH02", "Bouclier moyen", "ONE1", "SH02", Arrays.asList("ONE_DODGE")));
-        TOOLS.put("SH03", new Tool("SH03", "Bouclier lourd", "ONE1", "SH03", Arrays.asList("ONE_DODGE")));
+        TOOLS.put("AX01", new Tool("AX01", "Hache", "AX01", Arrays.asList("ONE_SLASH1")));
+        TOOLS.put("MC01", new Tool("MC01", "Marteau de guerre", "MC01", Arrays.asList("ONE_SLASH1")));
+        TOOLS.put("SW01", new Tool("SW01", "Petite épée", "SW01", Arrays.asList("ONE_SLASH1")));
+        TOOLS.put("SW02", new Tool("SW02", "Grosse épée", "SW02", Arrays.asList("ONE_SLASH1")));
+        TOOLS.put("SH01", new Tool("SH01", "Bouclier de base", "SH01", Arrays.asList("ONE_DODGE")));
+        TOOLS.put("SH02", new Tool("SH02", "Bouclier moyen", "SH02", Arrays.asList("ONE_DODGE")));
+        TOOLS.put("SH03", new Tool("SH03", "Bouclier lourd", "SH03", Arrays.asList("ONE_DODGE")));
     }
 }

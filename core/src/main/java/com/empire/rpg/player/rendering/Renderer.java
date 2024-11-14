@@ -10,6 +10,7 @@ public class Renderer {
         outfit.render(batch, x, y, scale);
         hair.render(batch, x, y, scale);
         hat.render(batch, x, y, scale);
+
         if (tool1 != null) {
             tool1.render(batch, x, y, scale);
         }
