@@ -1,6 +1,7 @@
 package com.empire.rpg.player.attacks;
 
 import com.empire.rpg.player.animations.AnimationState;
+import com.empire.rpg.player.audio.SoundManager;
 import java.util.Map;
 
 public class Attack {
@@ -21,6 +22,11 @@ public class Attack {
         this.duration = duration;
         this.damage = damage;
         this.cooldown = cooldown;
+    }
+
+    // Méthode pour jouer le son associé à l'attaque
+    public void playSound() {
+        SoundManager.playSound(this.id);
     }
 
     // Getters

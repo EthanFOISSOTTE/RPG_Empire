@@ -32,6 +32,9 @@ public class AttackingState extends State {
                 attack.getCategoryKey(), tool1SpritesheetKey, tool2SpritesheetKey, animationState);
             player.getAnimationController().setCustomAnimation(attackAnimation);
         }
+
+        // Jouer le son de l'attaque
+        attack.playSound();
     }
 
     @Override

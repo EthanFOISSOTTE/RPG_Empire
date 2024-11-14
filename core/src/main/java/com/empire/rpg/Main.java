@@ -11,6 +11,7 @@ import com.badlogic.gdx.Input;
 import com.empire.rpg.collisions.CollisionManager;
 import com.empire.rpg.map.MapManager;
 import com.empire.rpg.player.Player;
+import com.empire.rpg.player.audio.SoundManager;
 import com.empire.rpg.debug.DebugRenderer;
 
 public class Main extends ApplicationAdapter {
@@ -20,6 +21,7 @@ public class Main extends ApplicationAdapter {
     private MapManager mapManager;
     private CollisionManager collisionManager;
     private Player player;
+    private SoundManager soundManager;
     private DebugRenderer debugRenderer;
 
     private boolean debugMode = false;
@@ -96,5 +98,6 @@ public class Main extends ApplicationAdapter {
         batch.dispose();
         mapManager.dispose();
         player.dispose();
+        soundManager.dispose();
     }
 }
