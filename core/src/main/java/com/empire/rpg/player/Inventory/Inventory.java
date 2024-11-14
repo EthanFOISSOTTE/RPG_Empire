@@ -34,6 +34,10 @@ public class Inventory {
     private static final int MAX_VISIBLE_ITEMS = 7; // Nombre maximum d'objets affichés en même temps
     private int scrollOffset = 0; // Décalage de défilement pour l'affichage des objets
 
+
+    private Item equippedArmor;
+    private Item equippedConsommable;
+
     public Inventory(OrthographicCamera camera, SpriteBatch batch) {
         this.camera = camera;
         this.batch = batch;
@@ -132,15 +136,18 @@ public class Inventory {
         String category = categories[selectedCategoryIndex];
         List<Item> currentItems = getItemsByType(category);
 
-        // Calculer la portion de la liste des objets à afficher en fonction du défilement
         int start = scrollOffset;
         int end = Math.min(start + MAX_VISIBLE_ITEMS, currentItems.size());
 
         for (int i = start; i < end; i++) {
             Item item = currentItems.get(i);
-            float textY = frameY + frameHeight - 60 - (i - start) * 30; // Ajuste la position Y pour chaque item visible
+            float textY = frameY + frameHeight - 60 - (i - start) * 30;
+
+            // Indicateur pour l'objet sélectionné et équipé
             String prefix = (!inCategorySelection && i == selectedObjectIndex) ? "-> " : "";
-            font.draw(batch, prefix + item.getNom() + " (x" + item.getQuantité() + ")", frameX + 220, textY);
+            String equippedIndicator = item.getStates() ? " <-" : "";
+
+            font.draw(batch, prefix + item.getNom() + " (x" + item.getQuantité() + ")" + equippedIndicator, frameX + 220, textY);
         }
     }
 
@@ -226,6 +233,35 @@ public class Inventory {
                 inCategorySelection = true;
                 selectedObjectIndex = 0;
                 scrollOffset = 0; // Réinitialiser le défilement pour le nouvel écran de catégories
+            }
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            if (!inCategorySelection && !currentItems.isEmpty() && selectedObjectIndex < currentItems.size()) {
+                Item selectedItem = currentItems.get(selectedObjectIndex);
+
+                // Si l'objet est actuellement équipé (states = true), le déséquiper (mettre states à false)
+                if (selectedItem.getStates()) {
+                    selectedItem.setStates(false);
+
+                    // Vérifier si c'est un type équipé et le retirer de l'équipement actif
+                    if (selectedItem.getType().equalsIgnoreCase("Tenue")) {
+                        equippedArmor = null;
+                    } else if (selectedItem.getType().equalsIgnoreCase("Consommable")) {
+                        equippedConsommable = null;
+                    }
+                } else {
+                    // Si l'objet n'est pas équipé, l'équiper
+                    if (selectedItem.getType().equalsIgnoreCase("Tenue")) {
+                        if (equippedArmor != null) equippedArmor.setStates(false);
+                        equippedArmor = selectedItem;
+                        selectedItem.setStates(true);
+                    } else if (selectedItem.getType().equalsIgnoreCase("Consommable")) {
+                        if (equippedConsommable != null) equippedConsommable.setStates(false);
+                        equippedConsommable = selectedItem;
+                        selectedItem.setStates(true);
+                    }
+                }
             }
         }
 

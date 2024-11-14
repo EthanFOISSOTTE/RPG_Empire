@@ -38,6 +38,7 @@ public class Item {
         return states;
     }
 
+    // Setters pour chaque attribut
     public void setStates(boolean states) {
         this.states = states;
     }
