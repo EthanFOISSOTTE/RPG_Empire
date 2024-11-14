@@ -15,12 +15,14 @@ player/                             // Package principal pour le joueur
 │   └── Direction.java              // Enum pour la direction du joueur
 ├── attacks/                        // Gestion des attaques du joueur
 │   └── Attack.java                 // Classe pour les attaques
+├── audio/                          // Gestion du son
+│   └── SoundManager.java           // Classe pour gérer les sons
 ├── components/                     // Composants du joueur (cheveux, tenue, etc.)
-│   ├── CollisionComponent          // Composant de collision
 │   ├── Body.java                   // Composant pour le corps
-│   ├── Outfit.java                 // Composant pour la tenue
+│   ├── CollisionComponent          // Composant de collision
 │   ├── Hair.java                   // Composant pour les cheveux
 │   ├── Hat.java                    // Composant pour le chapeau
+│   ├── Outfit.java                 // Composant pour la tenue
 │   ├── Tool1.java                  // Composant pour l'outil 1
 │   └── Tool2.java                  // Composant pour l'outil 2
 ├── equipment/                      // Gestion de l'équipement
@@ -29,11 +31,11 @@ player/                             // Package principal pour le joueur
 │   ├── Layer.java                  // (-)Classe pour définir un calque de rendu
 │   └── Renderer.java               // Classe principale pour le rendu
 ├── states/                         // États du joueur (marche, attaque, etc.)
-│   ├── StandingState.java          // État de repos
-│   ├── WalkingState.jave           // État de marche
-│   ├── RunningState                // État de course
 │   ├── AttackingState.java         // État d'attaque
-│   └── State.java                  // Interface ou classe abstraite de base pour les états
+│   ├── RunningState                // État de course
+│   ├── StandingState.java          // État de repos
+│   ├── State.java                  // Interface ou classe abstraite de base pour les états
+│   └── WalkingState.jave           // État de marche
 ├── utils/                          // Utilitaires divers pour le joueur
 │   ├── Constants.java              // Constantes pour faciliter la gestion
 │   └── SpriteUtils.java            // (-)Méthodes utilitaires pour manipuler les sprites

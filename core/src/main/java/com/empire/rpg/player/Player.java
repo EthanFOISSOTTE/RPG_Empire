@@ -18,11 +18,7 @@ import com.empire.rpg.player.utils.Constants;
 import com.empire.rpg.player.equipment.Tool;
 import com.empire.rpg.player.attacks.Attack;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Queue;
-import java.util.LinkedList;
+import java.util.*;
 
 public class Player {
     private AnimationController animationController;
@@ -50,6 +46,10 @@ public class Player {
     // Outils équipés
     private Tool currentTool1;
     private Tool currentTool2;
+
+    // Ensembles d'outils
+    private List<Tool[]> toolSets;
+    private int currentToolSetIndex;
 
     // Gestion des cooldowns des attaques
     private Map<String, Float> attackCooldowns;
@@ -97,8 +97,6 @@ public class Player {
         this.y = y;
         this.scale = scale;
         this.speed = Constants.PLAYER_WALKING_SPEED;
-        this.currentTool1 = Constants.TOOLS.get("SW01");
-        this.currentTool2 = Constants.TOOLS.get("SH01");
         this.lastFacingDirection = AnimationState.STANDING_DOWN;
 
         this.animationController = new AnimationController(this, body, outfit, hair, hat, tool1, tool2);
@@ -124,6 +122,40 @@ public class Player {
 
         // Initialiser la file d'attente des attaques
         this.attackQueue = new LinkedList<>();
+
+        // Initialiser les ensembles d'outils
+        initializeToolSets();
+    }
+
+    private void initializeToolSets() {
+        toolSets = new ArrayList<>();
+
+        // Ensemble 1
+        Tool[] set1 = {
+            Constants.TOOLS.get("SW01"), // currentTool1
+            Constants.TOOLS.get("SH01")  // currentTool2
+        };
+        toolSets.add(set1);
+
+        // Ensemble 2
+        Tool[] set2 = {
+            Constants.TOOLS.get("AX01"),
+            Constants.TOOLS.get("SH02")
+        };
+        toolSets.add(set2);
+
+        // Ensemble 3
+        Tool[] set3 = {
+            Constants.TOOLS.get("MC01"),
+            Constants.TOOLS.get("SH03")
+        };
+        toolSets.add(set3);
+
+        // Initialiser l'index de l'ensemble actuel
+        currentToolSetIndex = 0;
+
+        // Équiper le premier ensemble par défaut
+        equipToolSet(currentToolSetIndex);
     }
 
     public void update(float deltaTime, CollisionManager collisionManager) {
@@ -161,6 +193,15 @@ public class Player {
             movingUp = movingDown = movingLeft = movingRight = running = false;
         }
 
+        // Changement d'ensemble d'outils avec les touches 1, 2 et 3
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
+            switchToolSet(0);
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) {
+            switchToolSet(1);
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) {
+            switchToolSet(2);
+        }
+
         // Attaque de base (clic gauche)
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
             queueComboAttack();
@@ -187,6 +228,26 @@ public class Player {
                 }
             }
         }
+    }
+
+    private void switchToolSet(int toolSetIndex) {
+        if (toolSetIndex >= 0 && toolSetIndex < toolSets.size()) {
+            currentToolSetIndex = toolSetIndex;
+            equipToolSet(currentToolSetIndex);
+            resetCombo(); // Réinitialiser le combo
+
+            // Interrompre l'attaque en cours si nécessaire
+            if (currentState instanceof AttackingState) {
+                currentState.exit();
+                changeState(new StandingState(this));
+            }
+        }
+    }
+
+    private void equipToolSet(int toolSetIndex) {
+        Tool[] selectedSet = toolSets.get(toolSetIndex);
+        currentTool1 = selectedSet[0];
+        currentTool2 = selectedSet[1];
     }
 
     private void queueComboAttack() {
