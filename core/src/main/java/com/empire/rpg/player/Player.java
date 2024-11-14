@@ -52,6 +52,11 @@ public class Player {
     // Gestion des cooldowns des attaques
     private Map<String, Float> attackCooldowns;
 
+    // Attributs pour le combo
+    private int comboStep;
+    private float comboTimer;
+    private final float maxComboDelay = 0.5f; // Délai maximum entre les attaques du combo
+
     // CollisionComponent
     private CollisionComponent collisionComponent;
 
@@ -96,12 +101,17 @@ public class Player {
 
         // Initialiser la map des cooldowns
         this.attackCooldowns = new HashMap<>();
+
+        // Initialiser les attributs du combo
+        this.comboStep = 0;
+        this.comboTimer = 0f;
     }
 
     public void update(float deltaTime, CollisionManager collisionManager) {
         handleInput();
         currentState.update(deltaTime, collisionManager);
         updateCooldowns(deltaTime);
+        updateComboTimer(deltaTime);
         updateAnimationState();
         animationController.update(deltaTime);
     }
@@ -134,21 +144,22 @@ public class Player {
 
         // Attaque de base (clic gauche)
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-            if (!(currentState instanceof AttackingState)) {
-                if (currentTool1 != null && !currentTool1.getAvailableAttacks().isEmpty()) {
-                    String attackId = currentTool1.getAvailableAttacks().get(0); // pour simplifier
-                    if (!isAttackOnCooldown(attackId)) {
-                        Attack attack = Constants.ATTACKS.get(attackId);
-                        if (attack != null) {
-                            startAttack(attack, currentTool1);
-                        }
-                    } else {
-                        // Attaque en cooldown, ne rien faire ou afficher un feedback
-                        System.out.println("Attaque " + attackId + " en cooldown !");
+            if (currentTool1 != null && !currentTool1.getAvailableAttacks().isEmpty()) {
+                String attackId = getNextAttackId();
+                if (!isAttackOnCooldown(attackId)) {
+                    Attack attack = Constants.ATTACKS.get(attackId);
+                    if (attack != null) {
+                        startAttack(attack, currentTool1);
+                        comboStep++;
+                        comboTimer = 0f; // Réinitialiser le timer du combo
                     }
                 } else {
-                    // Aucun outil équipé ou aucune attaque disponible
+                    // Attaque en cooldown, ne rien faire ou afficher un feedback
+                    System.out.println("Attaque " + attackId + " en cooldown !");
+                    resetCombo();
                 }
+            } else {
+                // Aucun outil équipé ou aucune attaque disponible
             }
         }
 
@@ -173,12 +184,26 @@ public class Player {
         }
     }
 
+    private String getNextAttackId() {
+        if (comboStep < currentTool1.getAvailableAttacks().size()) {
+            return currentTool1.getAvailableAttacks().get(comboStep);
+        } else {
+            // Si toutes les attaques du combo ont été utilisées, recommencer
+            resetCombo();
+            return currentTool1.getAvailableAttacks().get(0);
+        }
+    }
+
     private boolean isAttackOnCooldown(String attackId) {
         return attackCooldowns.containsKey(attackId);
     }
 
     private void startAttack(Attack attack, Tool tool) {
-        // Démarrer l'attaque
+        // Interrompre l'attaque actuelle si nécessaire
+        if (currentState instanceof AttackingState) {
+            currentState.exit();
+        }
+        // Démarrer la nouvelle attaque
         changeState(new AttackingState(this, attack, tool));
         // Ajouter l'attaque aux cooldowns
         attackCooldowns.put(attack.getId(), attack.getCooldown());
@@ -197,6 +222,24 @@ public class Player {
         }
     }
 
+    private void updateComboTimer(float deltaTime) {
+        if (comboStep > 0) {
+            comboTimer += deltaTime;
+            if (comboTimer > maxComboDelay) {
+                resetCombo();
+            }
+        }
+    }
+
+    public void resetCombo() {
+        comboStep = 0;
+        comboTimer = 0f;
+    }
+
+    public int getComboStep() {
+        return comboStep;
+    }
+
     public boolean isMoving() {
         return movingUp || movingDown || movingLeft || movingRight;
     }
@@ -213,29 +256,18 @@ public class Player {
 
         Vector2 direction = new Vector2(0, 0);
 
-        if (movingUp) {
-            direction.y += 1;
-        }
-        if (movingDown) {
-            direction.y -= 1;
-        }
-        if (movingLeft) {
-            direction.x -= 1;
-        }
-        if (movingRight) {
-            direction.x += 1;
-        }
+        if (movingUp) { direction.y += 1; }
+        if (movingDown) { direction.y -= 1; }
+        if (movingLeft) { direction.x -= 1; }
+        if (movingRight) { direction.x += 1; }
 
-        if (direction.len() > 0) {
-            direction.nor(); // Normaliser le vecteur de direction
-        }
+        if (direction.len() > 0) { direction.nor(); } // Normaliser le vecteur de direction
 
         float deltaX = direction.x * speed * deltaTime;
         float deltaY = direction.y * speed * deltaTime;
 
         // Sauvegarder la position précédente
-        float oldX = x;
-        float oldY = y;
+        float oldX = x, oldY = y;
 
         // Tenter le déplacement en X
         x += deltaX;

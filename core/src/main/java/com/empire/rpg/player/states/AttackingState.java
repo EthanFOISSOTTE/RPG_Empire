@@ -41,15 +41,19 @@ public class AttackingState extends State {
     public void update(float deltaTime, CollisionManager collisionManager) {
         elapsedTime += deltaTime;
         if (elapsedTime >= attack.getDuration()) {
-            // L'attaque est terminée, revenir à l'état de repos
+            // L'attaque est terminée
             player.changeState(new StandingState(player));
+            // Si le combo est terminé, le réinitialiser
+            if (player.getComboStep() >= player.getCurrentTool1().getAvailableAttacks().size()) {
+                player.resetCombo();
+            }
         }
-
         // Gestion des collisions ou autres mises à jour spécifiques à l'attaque
     }
 
     @Override
     public void exit() {
+        // Actions à effectuer lors de la sortie de l'état d'attaque
         player.getAnimationController().setCustomAnimation(null);
     }
 }
