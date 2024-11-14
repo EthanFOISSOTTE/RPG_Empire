@@ -1,17 +1,17 @@
 package com.empire.rpg;
 
+import com.badlogic.gdx.Game;
 import com.empire.rpg.component.*;
 import com.empire.rpg.entity.*;
+import com.empire.rpg.introScreen.Intro;
 import com.empire.rpg.system.FightSystem;
 import com.empire.rpg.system.InventorySystem;
 
 import java.util.Map;
 import java.util.UUID;
 
-public class GameEngine {
+public class GameEngine extends Game {
     public static void main(String[] args) {
-
-
 
         // Création d'une entité Player
         EntityManager entityManager2 = new EntityManager("Gandalf") {
@@ -135,7 +135,7 @@ public class GameEngine {
         // Affichage de l'inventaire et de la santé après l'utilisation de la potion
         System.out.println("\n=== Etat Final ===");
         inventorySystem.displayInventory();
-        System.out.println("Vie du joueur : " + ((HealthComponent) player.getComponent(HealthComponent.class)).getCurrentHealthPoints() + " / " + ((HealthComponent) player.getComponent(HealthComponent.class)).getMaxHealthPoints());
+        System.out.println("Vie du joueur : " + (player.getComponent(HealthComponent.class)).getCurrentHealthPoints() + " / " + ((HealthComponent) player.getComponent(HealthComponent.class)).getMaxHealthPoints());
     }
 
     // Affiche les détails de l'entité
@@ -165,5 +165,11 @@ public class GameEngine {
         }
         System.out.println();
     }
+
+    @Override
+    public void create() {
+        setScreen(new Intro(this));
+    }
+
 }
 
