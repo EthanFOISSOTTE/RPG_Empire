@@ -42,9 +42,10 @@ public class AttackingState extends State {
         elapsedTime += deltaTime;
         if (elapsedTime >= attack.getDuration()) {
             // L'attaque est terminée
-            player.changeState(new StandingState(player));
-            // Si le combo est terminé, le réinitialiser
-            if (player.getComboStep() >= player.getCurrentTool1().getAvailableAttacks().size()) {
+            if (!player.getAttackQueue().isEmpty()) {
+                player.startNextAttack();
+            } else {
+                player.changeState(new StandingState(player));
                 player.resetCombo();
             }
         }

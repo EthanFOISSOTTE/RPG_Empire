@@ -21,6 +21,8 @@ import com.empire.rpg.player.attacks.Attack;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Queue;
+import java.util.LinkedList;
 
 public class Player {
     private AnimationController animationController;
@@ -56,6 +58,20 @@ public class Player {
     private int comboStep;
     private float comboTimer;
     private final float maxComboDelay = 0.5f; // Délai maximum entre les attaques du combo
+
+    // File d'attente des attaques
+    private Queue<AttackData> attackQueue;
+
+    // Classe interne pour stocker les données des attaques
+    private class AttackData {
+        public Attack attack;
+        public Tool tool;
+
+        public AttackData(Attack attack, Tool tool) {
+            this.attack = attack;
+            this.tool = tool;
+        }
+    }
 
     // CollisionComponent
     private CollisionComponent collisionComponent;
@@ -105,6 +121,9 @@ public class Player {
         // Initialiser les attributs du combo
         this.comboStep = 0;
         this.comboTimer = 0f;
+
+        // Initialiser la file d'attente des attaques
+        this.attackQueue = new LinkedList<>();
     }
 
     public void update(float deltaTime, CollisionManager collisionManager) {
@@ -144,23 +163,7 @@ public class Player {
 
         // Attaque de base (clic gauche)
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-            if (currentTool1 != null && !currentTool1.getAvailableAttacks().isEmpty()) {
-                String attackId = getNextAttackId();
-                if (!isAttackOnCooldown(attackId)) {
-                    Attack attack = Constants.ATTACKS.get(attackId);
-                    if (attack != null) {
-                        startAttack(attack, currentTool1);
-                        comboStep++;
-                        comboTimer = 0f; // Réinitialiser le timer du combo
-                    }
-                } else {
-                    // Attaque en cooldown, ne rien faire ou afficher un feedback
-                    System.out.println("Attaque " + attackId + " en cooldown !");
-                    resetCombo();
-                }
-            } else {
-                // Aucun outil équipé ou aucune attaque disponible
-            }
+            queueComboAttack();
         }
 
         // Défense de base (clic droit)
@@ -172,6 +175,8 @@ public class Player {
                         Attack attack = Constants.ATTACKS.get(attackId);
                         if (attack != null) {
                             startAttack(attack, currentTool2);
+                            // Ajouter l'attaque aux cooldowns
+                            attackCooldowns.put(attack.getId(), attack.getCooldown());
                         }
                     } else {
                         // Attaque en cooldown, ne rien faire ou afficher un feedback
@@ -180,6 +185,31 @@ public class Player {
                 } else {
                     // Aucun outil équipé ou aucune attaque disponible
                 }
+            }
+        }
+    }
+
+    private void queueComboAttack() {
+        if (currentTool1 != null && !currentTool1.getAvailableAttacks().isEmpty()) {
+            String attackId = getNextAttackId();
+            if (!isAttackOnCooldown(attackId)) {
+                Attack attack = Constants.ATTACKS.get(attackId);
+                if (attack != null) {
+                    attackQueue.add(new AttackData(attack, currentTool1));
+                    // Ajouter l'attaque aux cooldowns
+                    attackCooldowns.put(attack.getId(), attack.getCooldown());
+                    comboStep++;
+                    comboTimer = 0f; // Réinitialiser le timer du combo
+
+                    // Si le joueur n'est pas déjà en train d'attaquer, démarrer l'attaque
+                    if (!(currentState instanceof AttackingState)) {
+                        startNextAttack();
+                    }
+                }
+            } else {
+                // Attaque en cooldown
+                System.out.println("Attaque " + attackId + " en cooldown !");
+                resetCombo();
             }
         }
     }
@@ -199,14 +229,18 @@ public class Player {
     }
 
     private void startAttack(Attack attack, Tool tool) {
-        // Interrompre l'attaque actuelle si nécessaire
-        if (currentState instanceof AttackingState) {
-            currentState.exit();
-        }
-        // Démarrer la nouvelle attaque
         changeState(new AttackingState(this, attack, tool));
-        // Ajouter l'attaque aux cooldowns
-        attackCooldowns.put(attack.getId(), attack.getCooldown());
+    }
+
+    public void startNextAttack() {
+        if (!attackQueue.isEmpty()) {
+            AttackData nextAttack = attackQueue.poll();
+            startAttack(nextAttack.attack, nextAttack.tool);
+        } else {
+            // Plus d'attaques en attente, réinitialiser le combo
+            resetCombo();
+            changeState(new StandingState(this));
+        }
     }
 
     private void updateCooldowns(float deltaTime) {
@@ -223,7 +257,7 @@ public class Player {
     }
 
     private void updateComboTimer(float deltaTime) {
-        if (comboStep > 0) {
+        if (comboStep > 0 && !(currentState instanceof AttackingState)) {
             comboTimer += deltaTime;
             if (comboTimer > maxComboDelay) {
                 resetCombo();
@@ -234,10 +268,15 @@ public class Player {
     public void resetCombo() {
         comboStep = 0;
         comboTimer = 0f;
+        attackQueue.clear();
     }
 
     public int getComboStep() {
         return comboStep;
+    }
+
+    public Queue<AttackData> getAttackQueue() {
+        return attackQueue;
     }
 
     public boolean isMoving() {
@@ -256,18 +295,29 @@ public class Player {
 
         Vector2 direction = new Vector2(0, 0);
 
-        if (movingUp) { direction.y += 1; }
-        if (movingDown) { direction.y -= 1; }
-        if (movingLeft) { direction.x -= 1; }
-        if (movingRight) { direction.x += 1; }
+        if (movingUp) {
+            direction.y += 1;
+        }
+        if (movingDown) {
+            direction.y -= 1;
+        }
+        if (movingLeft) {
+            direction.x -= 1;
+        }
+        if (movingRight) {
+            direction.x += 1;
+        }
 
-        if (direction.len() > 0) { direction.nor(); } // Normaliser le vecteur de direction
+        if (direction.len() > 0) {
+            direction.nor(); // Normaliser le vecteur de direction
+        }
 
         float deltaX = direction.x * speed * deltaTime;
         float deltaY = direction.y * speed * deltaTime;
 
         // Sauvegarder la position précédente
-        float oldX = x, oldY = y;
+        float oldX = x;
+        float oldY = y;
 
         // Tenter le déplacement en X
         x += deltaX;
