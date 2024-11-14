@@ -1,80 +1,96 @@
 {
   "inventory": [
     {
-      "type": "Équipement",
-      "nom": "Épée",
+      "type": "Armes",
+      "nom": "Lance en fer",
       "quantity": 1,
       "description": "Blablabla",
       "valeur": 30,
       "states": false
     },
     {
-      "type": "Équipement",
-      "nom": "Lance",
+      "type": "Armes",
+      "nom": "Lance en acier",
       "quantity": 1,
       "description": "Blablabla",
       "valeur": 30,
       "states": false
     },
     {
-      "type": "Équipement",
-      "nom": "halbarde",
+      "type": "Armes",
+      "nom": "Lance en carbone",
       "quantity": 1,
       "description": "Blablabla",
       "valeur": 30,
       "states": false
     },
     {
-      "type": "Équipement",
-      "nom": "masse",
+      "type": "Armes",
+      "nom": "Épée en fer",
       "quantity": 1,
       "description": "Blablabla",
       "valeur": 30,
       "states": false
     },
     {
-      "type": "Équipement",
-      "nom": "sabre",
+      "type": "Armes",
+      "nom": "Épée en acier",
       "quantity": 1,
       "description": "Blablabla",
       "valeur": 30,
       "states": false
     },
     {
-      "type": "Équipement",
-      "nom": "baton",
+      "type": "Armes",
+      "nom": "Épée en carbone",
       "quantity": 1,
       "description": "Blablabla",
       "valeur": 30,
       "states": false
     },
     {
-      "type": "Équipement",
-      "nom": "Bouclier",
+      "type": "Armes",
+      "nom": "Arc en bois",
       "quantity": 1,
       "description": "Blablabla",
       "valeur": 30,
       "states": false
     },
     {
-      "type": "Équipement",
-      "nom": "Casque",
+      "type": "Armes",
+      "nom": "Arc en fer",
       "quantity": 1,
       "description": "Blablabla",
       "valeur": 30,
       "states": false
     },
     {
-      "type": "Équipement",
-      "nom": "Plastron",
+      "type": "Armes",
+      "nom": "Arc en carbone",
       "quantity": 1,
       "description": "Blablabla",
       "valeur": 30,
       "states": false
     },
     {
-      "type": "Équipement",
-      "nom": "Botte",
+      "type": "Tenue",
+      "nom": "Armure de fer",
+      "quantity": 1,
+      "description": "Blablabla",
+      "valeur": 30,
+      "states": false
+    },
+    {
+      "type": "Tenue",
+      "nom": "Armure en acier",
+      "quantity": 1,
+      "description": "Blablabla",
+      "valeur": 30,
+      "states": false
+    },
+    {
+      "type": "Tenue",
+      "nom": "Armure en carbone",
       "quantity": 1,
       "description": "Blablabla",
       "valeur": 30,

@@ -10,25 +10,27 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class Inventory {
+
+    //partie ouverture de l'inventaire
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private ShapeRenderer shapeRenderer;
     private BitmapFont font;
     private boolean showInteractionFrame = false;
 
+    //partie organisation de l'inventaire
+    private final String[] categories = {"Armes", "Tenue" , "Outil", "Consommable", "Objet de quête", "Divers"};
     private int selectedCategoryIndex = 0;
-    private final String[] categories = {"Équipement", "Outil", "Consommable", "Objet de quête", "Divers"};
-
     private int selectedObjectIndex = 0;
     private boolean inCategorySelection = true;
     private List<Item> items;  // Liste des objets chargés à partir du JSON
 
+    //scroll des objet
     private static final int MAX_VISIBLE_ITEMS = 7; // Nombre maximum d'objets affichés en même temps
     private int scrollOffset = 0; // Décalage de défilement pour l'affichage des objets
 
@@ -41,6 +43,7 @@ public class Inventory {
         loadInventoryFromJson();  // Charger les données JSON à l'initialisation
     }
 
+    //partie trie de la liste du fichier JSON
     private void loadInventoryFromJson() {
         Json json = new Json();
         JsonValue base = new JsonReader().parse(Gdx.files.internal("Bdd/inventory.json"));
@@ -64,6 +67,7 @@ public class Inventory {
         }
     }
 
+    // partie création de l'interface graphique de l'inventaire
     private void drawInteractionFrame(Vector2 playerPosition) {
         float frameWidth = 600;
         float frameHeight = 300;
@@ -99,20 +103,22 @@ public class Inventory {
         shapeRenderer.line(objectDetailSeparatorX, frameY, objectDetailSeparatorX, frameY + frameHeight);
         shapeRenderer.end();
 
-
         batch.begin();
         font.draw(batch, "Inventaire", frameX + 15, frameY + frameHeight - 15);
 
-
+        // Affiche les catégorie
         drawCategoriesMenu(frameX, frameY, frameHeight);
+
+        // Affiche les objet
         drawObjectsMenu(frameX, frameY, frameHeight);
 
-        // Afficher les détails de l'objet sélectionné dans la colonne alignée à la colonne objets
+        // Affiche les détails de l'objet sélectionné
         drawItemDetails(objectDetailSeparatorX, frameY, frameHeight);  // Utiliser objectDetailSeparatorX pour l'alignement
 
         batch.end();
     }
 
+    // partie création de la partie catégorie
     private void drawCategoriesMenu(float frameX, float frameY, float frameHeight) {
         for (int i = 0; i < categories.length; i++) {
             String category = categories[i];
@@ -121,6 +127,7 @@ public class Inventory {
         }
     }
 
+    // partie création de la partie objet
     private void drawObjectsMenu(float frameX, float frameY, float frameHeight) {
         String category = categories[selectedCategoryIndex];
         List<Item> currentItems = getItemsByType(category);
@@ -137,6 +144,7 @@ public class Inventory {
         }
     }
 
+    // partie création de la partie détail d'objet
     private void drawItemDetails(float frameX, float frameY, float frameHeight) {
         // Vérifie que l'utilisateur est dans le mode de sélection d'objet
         if (!inCategorySelection) {
@@ -162,15 +170,17 @@ public class Inventory {
                 if (selectedItem.getValeur() > 0) {
                     font.draw(batch, "Valeur : " + selectedItem.getValeur(), frameX + 10, startY - 90);
                 }
-
+                font.draw(batch,"Statue: " + selectedItem.getStates(),frameX + 10, startY - 120); // A supp
             }
         }
     }
 
+    // Appelle un objet selon son type
     private List<Item> getItemsByType(String type) {
         return items.stream().filter(item -> item.getType().equalsIgnoreCase(type)).collect(Collectors.toList());
     }
 
+    //partie initialisation de touche
     public void update() {
         List<Item> currentItems = getItemsByType(categories[selectedCategoryIndex]);
 
