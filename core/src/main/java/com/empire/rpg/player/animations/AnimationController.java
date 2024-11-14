@@ -127,7 +127,7 @@ public class AnimationController {
             String stateName = state.name();
 
             // Vérifier si l'état est un état d'attaque
-            if (stateName.startsWith("ONE_SLASH") || stateName.startsWith("ONE_DODGE")) {
+            if (!(stateName.startsWith("RUNNING") || stateName.startsWith("WALKING") || stateName.startsWith("STANDING"))) {
                 // Ne pas créer d'animations pour les états d'attaque
                 continue;
             }

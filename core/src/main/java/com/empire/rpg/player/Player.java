@@ -18,6 +18,10 @@ import com.empire.rpg.player.utils.Constants;
 import com.empire.rpg.player.equipment.Tool;
 import com.empire.rpg.player.attacks.Attack;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 public class Player {
     private AnimationController animationController;
     private Renderer renderer;
@@ -45,6 +49,9 @@ public class Player {
     private Tool currentTool1;
     private Tool currentTool2;
 
+    // Gestion des cooldowns des attaques
+    private Map<String, Float> attackCooldowns;
+
     // CollisionComponent
     private CollisionComponent collisionComponent;
 
@@ -69,8 +76,8 @@ public class Player {
         this.y = y;
         this.scale = scale;
         this.speed = Constants.PLAYER_WALKING_SPEED;
-        this.currentTool1 = Constants.TOOLS.get("AX01");
-        this.currentTool2 = Constants.TOOLS.get("SH02");
+        this.currentTool1 = Constants.TOOLS.get("SW01");
+        this.currentTool2 = Constants.TOOLS.get("SH01");
         this.lastFacingDirection = AnimationState.STANDING_DOWN;
 
         this.animationController = new AnimationController(this, body, outfit, hair, hat, tool1, tool2);
@@ -86,11 +93,15 @@ public class Player {
 
         this.currentState = new StandingState(this);
         currentState.enter();
+
+        // Initialiser la map des cooldowns
+        this.attackCooldowns = new HashMap<>();
     }
 
     public void update(float deltaTime, CollisionManager collisionManager) {
         handleInput();
         currentState.update(deltaTime, collisionManager);
+        updateCooldowns(deltaTime);
         updateAnimationState();
         animationController.update(deltaTime);
     }
@@ -126,9 +137,14 @@ public class Player {
             if (!(currentState instanceof AttackingState)) {
                 if (currentTool1 != null && !currentTool1.getAvailableAttacks().isEmpty()) {
                     String attackId = currentTool1.getAvailableAttacks().get(0); // pour simplifier
-                    Attack attack = Constants.ATTACKS.get(attackId);
-                    if (attack != null) {
-                        changeState(new AttackingState(this, attack, currentTool1));
+                    if (!isAttackOnCooldown(attackId)) {
+                        Attack attack = Constants.ATTACKS.get(attackId);
+                        if (attack != null) {
+                            startAttack(attack, currentTool1);
+                        }
+                    } else {
+                        // Attaque en cooldown, ne rien faire ou afficher un feedback
+                        System.out.println("Attaque " + attackId + " en cooldown !");
                     }
                 } else {
                     // Aucun outil équipé ou aucune attaque disponible
@@ -141,13 +157,42 @@ public class Player {
             if (!(currentState instanceof AttackingState)) {
                 if (currentTool2 != null && !currentTool2.getAvailableAttacks().isEmpty()) {
                     String attackId = currentTool2.getAvailableAttacks().get(0);
-                    Attack attack = Constants.ATTACKS.get(attackId);
-                    if (attack != null) {
-                        changeState(new AttackingState(this, attack, currentTool2));
+                    if (!isAttackOnCooldown(attackId)) {
+                        Attack attack = Constants.ATTACKS.get(attackId);
+                        if (attack != null) {
+                            startAttack(attack, currentTool2);
+                        }
+                    } else {
+                        // Attaque en cooldown, ne rien faire ou afficher un feedback
+                        System.out.println("Attaque " + attackId + " en cooldown !");
                     }
                 } else {
                     // Aucun outil équipé ou aucune attaque disponible
                 }
+            }
+        }
+    }
+
+    private boolean isAttackOnCooldown(String attackId) {
+        return attackCooldowns.containsKey(attackId);
+    }
+
+    private void startAttack(Attack attack, Tool tool) {
+        // Démarrer l'attaque
+        changeState(new AttackingState(this, attack, tool));
+        // Ajouter l'attaque aux cooldowns
+        attackCooldowns.put(attack.getId(), attack.getCooldown());
+    }
+
+    private void updateCooldowns(float deltaTime) {
+        Iterator<Map.Entry<String, Float>> iterator = attackCooldowns.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, Float> entry = iterator.next();
+            float remainingTime = entry.getValue() - deltaTime;
+            if (remainingTime <= 0) {
+                iterator.remove();
+            } else {
+                entry.setValue(remainingTime);
             }
         }
     }
@@ -215,7 +260,9 @@ public class Player {
         if (currentState instanceof AttackingState) {
             // Ne rien faire pour éviter d'écraser l'animation personnalisée
             return;
-        } else if (isMoving()) {
+        }
+
+        if (isMoving()) {
             if (running) {
                 // États d'animation pour la course
                 if (movingLeft) {

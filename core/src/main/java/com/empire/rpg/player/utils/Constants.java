@@ -227,6 +227,20 @@ public class Constants {
         STATES_REQUIRING_TOOLS.add("ONE_SLASH1_LEFT");
         STATES_REQUIRING_TOOLS.add("ONE_SLASH1_RIGHT");
 
+        // Indices des frames et des timings pour les animations de l'attaque (ONE_SLASH2) dans les 4 directions
+        FRAME_INDICES.put("ONE_SLASH2_UP", new int[][] {{1, 4}, {1, 5}, {1, 6}, {1, 7}});
+        FRAME_TIMINGS.put("ONE_SLASH2_UP", new float[] {0.075f, 0.075f, 0.075f, 0.075f});
+        FRAME_INDICES.put("ONE_SLASH2_DOWN", new int[][] {{0, 4}, {0, 5}, {0, 6}, {0, 7}});
+        FRAME_TIMINGS.put("ONE_SLASH2_DOWN", new float[] {0.075f, 0.075f, 0.075f, 0.075f});
+        FRAME_INDICES.put("ONE_SLASH2_LEFT", new int[][] {{3, 4}, {3, 5}, {3, 6}, {3, 7}});
+        FRAME_TIMINGS.put("ONE_SLASH2_LEFT", new float[] {0.075f, 0.075f, 0.075f, 0.075f});
+        FRAME_INDICES.put("ONE_SLASH2_RIGHT", new int[][] {{2, 4}, {2, 5}, {2, 6}, {2, 7}});
+        FRAME_TIMINGS.put("ONE_SLASH2_RIGHT", new float[] {0.075f, 0.075f, 0.075f, 0.075f});
+        STATES_REQUIRING_TOOLS.add("ONE_SLASH2_UP");
+        STATES_REQUIRING_TOOLS.add("ONE_SLASH2_DOWN");
+        STATES_REQUIRING_TOOLS.add("ONE_SLASH2_LEFT");
+        STATES_REQUIRING_TOOLS.add("ONE_SLASH2_RIGHT");
+
         // Indices des frames et des timings pour les animations de blocage (ONE_DODGE) dans les 4 directions
         FRAME_INDICES.put("ONE_DODGE_UP", new int[][] {{1, 4}});
         FRAME_TIMINGS.put("ONE_DODGE_UP", new float[] {1f});
@@ -247,7 +261,15 @@ public class Constants {
         oneSlash1States.put("DOWN", AnimationState.ONE_SLASH1_DOWN);
         oneSlash1States.put("LEFT", AnimationState.ONE_SLASH1_LEFT);
         oneSlash1States.put("RIGHT", AnimationState.ONE_SLASH1_RIGHT);
-        ATTACKS.put("ONE_SLASH1", new Attack("ONE_SLASH1", "Fente tranchante", "ONE3", oneSlash1States, 0.3f, 10f, 10.0f));
+        ATTACKS.put("ONE_SLASH1", new Attack("ONE_SLASH1", "Fente tranchante", "ONE3", oneSlash1States, 0.3f, 10f, 1.0f));
+
+        // Définition de l'attaque "ONE_SLASH2"
+        Map<String, AnimationState> oneSlash2States = new HashMap<>();
+        oneSlash2States.put("UP", AnimationState.ONE_SLASH2_UP);
+        oneSlash2States.put("DOWN", AnimationState.ONE_SLASH2_DOWN);
+        oneSlash2States.put("LEFT", AnimationState.ONE_SLASH2_LEFT);
+        oneSlash2States.put("RIGHT", AnimationState.ONE_SLASH2_RIGHT);
+        ATTACKS.put("ONE_SLASH2", new Attack("ONE_SLASH2", "Fente tranchante", "ONE3", oneSlash2States, 0.3f, 10f, 1.0f));
 
         // Définition de l'attaque "ONE_DODGE"
         Map<String, AnimationState> oneDodgeStates = new HashMap<>();
@@ -255,13 +277,13 @@ public class Constants {
         oneDodgeStates.put("DOWN", AnimationState.ONE_DODGE_DOWN);
         oneDodgeStates.put("LEFT", AnimationState.ONE_DODGE_LEFT);
         oneDodgeStates.put("RIGHT", AnimationState.ONE_DODGE_RIGHT);
-        ATTACKS.put("ONE_DODGE", new Attack("ONE_DODGE", "Blocage", "ONE1", oneDodgeStates, 0.3f, 0f, 0.0f));
+        ATTACKS.put("ONE_DODGE", new Attack("ONE_DODGE", "Blocage", "ONE1", oneDodgeStates, 0.3f, 0f, 0.5f));
 
         // Définition de l'outil
-        TOOLS.put("AX01", new Tool("AX01", "Hache", "AX01", Arrays.asList("ONE_SLASH1")));
-        TOOLS.put("MC01", new Tool("MC01", "Marteau de guerre", "MC01", Arrays.asList("ONE_SLASH1")));
-        TOOLS.put("SW01", new Tool("SW01", "Petite épée", "SW01", Arrays.asList("ONE_SLASH1")));
-        TOOLS.put("SW02", new Tool("SW02", "Grosse épée", "SW02", Arrays.asList("ONE_SLASH1")));
+        TOOLS.put("AX01", new Tool("AX01", "Hache", "AX01", Arrays.asList("ONE_SLASH1", "ONE_SLASH2")));
+        TOOLS.put("MC01", new Tool("MC01", "Marteau de guerre", "MC01", Arrays.asList("ONE_SLASH1", "ONE_SLASH2")));
+        TOOLS.put("SW01", new Tool("SW01", "Petite épée", "SW01", Arrays.asList("ONE_SLASH1", "ONE_SLASH2")));
+        TOOLS.put("SW02", new Tool("SW02", "Grosse épée", "SW02", Arrays.asList("ONE_SLASH1", "ONE_SLASH2")));
         TOOLS.put("SH01", new Tool("SH01", "Bouclier de base", "SH01", Arrays.asList("ONE_DODGE")));
         TOOLS.put("SH02", new Tool("SH02", "Bouclier moyen", "SH02", Arrays.asList("ONE_DODGE")));
         TOOLS.put("SH03", new Tool("SH03", "Bouclier lourd", "SH03", Arrays.asList("ONE_DODGE")));
