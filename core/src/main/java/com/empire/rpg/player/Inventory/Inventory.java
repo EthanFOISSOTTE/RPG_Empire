@@ -10,9 +10,11 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 public class Inventory {
 
@@ -24,14 +26,14 @@ public class Inventory {
     private boolean showInteractionFrame = false;
 
     //partie organisation de l'inventaire
-    private final String[] categories = {"Armes", "Tenue" , "Outil", "Consommable", "Objet de quête", "Divers"};
+    private final String[] categories = {"Armes", "Tenue", "Consommable", "Outil",  "Objet de quête", "Divers"};
     private int selectedCategoryIndex = 0;
     private int selectedObjectIndex = 0;
     private boolean inCategorySelection = true;
     private List<Item> items;  // Liste des objets chargés à partir du JSON
 
     //scroll des objet
-    private static final int MAX_VISIBLE_ITEMS = 7; // Nombre maximum d'objets affichés en même temps
+    private static final int MAX_VISIBLE_ITEMS = 11; // Nombre maximum d'objets affichés en même temps
     private int scrollOffset = 0; // Décalage de défilement pour l'affichage des objets
 
 
@@ -39,7 +41,9 @@ public class Inventory {
     private Item equippedConsommable;
     private Item equippedLance;
     private Item equippedEpee;
+    private Item equippedBouclier;
     private Item equippedArc;
+    private Item equippedCarquois;
 
 
     public Inventory(OrthographicCamera camera, SpriteBatch batch) {
@@ -70,6 +74,7 @@ public class Inventory {
         }
     }
 
+
     public void render(Vector2 playerPosition) {
         if (showInteractionFrame) {
             drawInteractionFrame(playerPosition);
@@ -78,10 +83,12 @@ public class Inventory {
 
     // partie création de l'interface graphique de l'inventaire
     private void drawInteractionFrame(Vector2 playerPosition) {
-        float frameWidth = 600;
-        float frameHeight = 300;
+        float frameWidth = 700;
+        float frameHeight = 400;
         float frameX = playerPosition.x - frameWidth / 2;
         float frameY = playerPosition.y - frameHeight / 2;
+        float padding = 15;
+        float lineWidth = 2f; // Épaisseur des lignes
 
         // Fond noir transparent
         shapeRenderer.setProjectionMatrix(camera.combined);
@@ -90,39 +97,61 @@ public class Inventory {
         shapeRenderer.rect(frameX, frameY, frameWidth, frameHeight);
         shapeRenderer.end();
 
-        // Contour blanc
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        // Contour blanc épaissi
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(1, 1, 1, 1);
-        shapeRenderer.rect(frameX, frameY, frameWidth, frameHeight);
+        shapeRenderer.rect(frameX, frameY + frameHeight - lineWidth, frameWidth, lineWidth); // Haut
+        shapeRenderer.rect(frameX, frameY, frameWidth, lineWidth);                          // Bas
+        shapeRenderer.rect(frameX, frameY, lineWidth, frameHeight);                        // Gauche
+        shapeRenderer.rect(frameX + frameWidth - lineWidth, frameY, lineWidth, frameHeight); // Droite
         shapeRenderer.end();
 
-        // Calculer la largeur des colonnes pour que objets et description aient la même largeur
-        float categoryObjectSeparatorX = frameX + frameWidth / 3; // 1/3 pour les catégories
-        float objectDetailSeparatorX = frameX + (2 * frameWidth / 3); // 2/3 pour objets
+        // Dessiner le titre "Inventaire" avec une taille de police plus grande
+        batch.begin();
+        String messageTop = "Inventaire";
+        GlyphLayout layout = new GlyphLayout(font, messageTop);
 
-        // Ligne de séparation entre catégories et objets
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(1, 1, 1, 1);
-        shapeRenderer.line(categoryObjectSeparatorX, frameY, categoryObjectSeparatorX, frameY + frameHeight);
+        // Augmenter temporairement la taille de la police
+        float originalScaleX = font.getData().scaleX;
+        float originalScaleY = font.getData().scaleY;
+        font.getData().setScale(1.5f); // Augmenter la taille du texte uniquement pour le titre
+
+        font.setColor(1, 1, 1, 1);
+        float textTopX = frameX + (frameWidth - layout.width * font.getScaleX()) / 2;
+        float textTopY = frameY + frameHeight - padding;
+        font.draw(batch, messageTop, textTopX, textTopY);
+
+        // Réinitialiser la taille de la police pour le reste des textes
+        font.getData().setScale(originalScaleX, originalScaleY);
+        batch.end();
+
+        // Barre de séparation sous "Inventaire"
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        float separatorY = textTopY - layout.height * 2f - 10; // Adapter à la taille du texte
+        shapeRenderer.rect(frameX, separatorY - lineWidth / 2, frameWidth, lineWidth); // Toute la largeur du cadre
         shapeRenderer.end();
 
-        // Ligne de séparation entre objets et détails
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(1, 1, 1, 1);
-        shapeRenderer.line(objectDetailSeparatorX, frameY, objectDetailSeparatorX, frameY + frameHeight);
+        // Colonnes de séparation verticales ajustées
+        float verticalLineEndY = separatorY - lineWidth / 2; // Arrêter les lignes verticales ici
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        float categoryObjectSeparatorX = frameX - 80 + frameWidth / 3;
+        float objectDetailSeparatorX = frameX - 80 + (2 * frameWidth / 3);
+
+        shapeRenderer.rect(categoryObjectSeparatorX - lineWidth / 2, frameY, lineWidth, verticalLineEndY - frameY); // Catégories
+        shapeRenderer.rect(objectDetailSeparatorX - lineWidth / 2, frameY, lineWidth, verticalLineEndY - frameY);  // Objets
         shapeRenderer.end();
 
         batch.begin();
-        font.draw(batch, "Inventaire", frameX + 15, frameY + frameHeight - 15);
 
-        // Affiche les catégorie
+        // Affiche les catégories
         drawCategoriesMenu(frameX, frameY, frameHeight);
 
-        // Affiche les objet
-        drawObjectsMenu(frameX, frameY, frameHeight);
+        // Affiche les objets
+        drawObjectsMenu(frameX - 45, frameY, frameHeight);
 
         // Affiche les détails de l'objet sélectionné
-        drawItemDetails(objectDetailSeparatorX, frameY, frameHeight);  // Utiliser objectDetailSeparatorX pour l'alignement
+        drawItemDetails(objectDetailSeparatorX + 10, frameY, frameHeight);
 
         batch.end();
     }
@@ -246,25 +275,70 @@ public class Inventory {
             if (!inCategorySelection && !currentItems.isEmpty() && selectedObjectIndex < currentItems.size()) {
                 Item selectedItem = currentItems.get(selectedObjectIndex);
 
-                // Si l'objet est actuellement équipé (states = true), le déséquiper (mettre states à false)
+                // Si l'objet est déjà équipé, on le déséquipe
                 if (selectedItem.getStates()) {
                     selectedItem.setStates(false);
 
-                    // Vérifier si c'est un type équipé et le retirer de l'équipement actif
+                    // Déséquipement selon le type
                     if (selectedItem.getType().equalsIgnoreCase("Tenue")) {
                         equippedArmor = null;
-                    } else if (selectedItem.getType().equalsIgnoreCase("Consommable")) {
+                    }
+                    else if (selectedItem.getType().equalsIgnoreCase("Consommable")) {
                         equippedConsommable = null;
                     }
-                } else {
-                    // Si l'objet n'est pas équipé, l'équiper
+                    else if (selectedItem.getType().equalsIgnoreCase("Armes")) {
+                        // Déséquiper une arme spécifique selon son style
+                        if (selectedItem.getStyle().equalsIgnoreCase("lance")) {
+                            equippedLance = null;
+                        }
+                        else if (selectedItem.getStyle().equalsIgnoreCase("épée")) {
+                            equippedEpee = null;
+                        }
+                        else if (selectedItem.getStyle().equalsIgnoreCase("arc")) {
+                            equippedArc = null;
+                        }
+                        else if (selectedItem.getStyle().equalsIgnoreCase("bouclier")) {
+                            equippedBouclier = null;
+                        }
+                        else if (selectedItem.getStyle().equalsIgnoreCase("carquois")) {
+                            equippedCarquois = null;
+                        }
+                    }
+                }
+                else { // Si l'objet n'est pas équipé, on l'équipe
                     if (selectedItem.getType().equalsIgnoreCase("Tenue")) {
-                        if (equippedArmor != null) equippedArmor.setStates(false);
+                        if (equippedArmor != null) equippedArmor.setStates(false); // Déséquipement de l'armure précédente
                         equippedArmor = selectedItem;
                         selectedItem.setStates(true);
-                    } else if (selectedItem.getType().equalsIgnoreCase("Consommable")) {
-                        if (equippedConsommable != null) equippedConsommable.setStates(false);
+                    }
+                    else if (selectedItem.getType().equalsIgnoreCase("Consommable")) {
+                        if (equippedConsommable != null) equippedConsommable.setStates(false); // Déséquipement de l'objet consommable précédent
                         equippedConsommable = selectedItem;
+                        selectedItem.setStates(true);
+                    }
+                    else if (selectedItem.getType().equalsIgnoreCase("Armes")) {
+                        // Gestion des armes par style pour éviter de multiples armes du même style
+                        if (selectedItem.getStyle().equalsIgnoreCase("lance")) {
+                            if (equippedLance != null) equippedLance.setStates(false); // Déséquiper la lance précédente
+                            equippedLance = selectedItem;
+                        }
+                        else if (selectedItem.getStyle().equalsIgnoreCase("épée")) {
+                            if (equippedEpee != null) equippedEpee.setStates(false); // Déséquiper l'épée précédente
+                            equippedEpee = selectedItem;
+                        }
+                        else if (selectedItem.getStyle().equalsIgnoreCase("arc")) {
+                            if (equippedArc != null) equippedArc.setStates(false); // Déséquiper l'arc précédent
+                            equippedArc = selectedItem;
+                        }
+                        else if (selectedItem.getStyle().equalsIgnoreCase("bouclier")) {
+                            if (equippedBouclier != null) equippedBouclier.setStates(false); // Déséquiper le bouclier précédent
+                            equippedBouclier = selectedItem;
+                        }
+                        else if (selectedItem.getStyle().equalsIgnoreCase("carquois")) {
+                            if (equippedCarquois != null) equippedCarquois.setStates(false); // Déséquiper le carquois précédent
+                            equippedCarquois = selectedItem;
+                        }
+
                         selectedItem.setStates(true);
                     }
                 }

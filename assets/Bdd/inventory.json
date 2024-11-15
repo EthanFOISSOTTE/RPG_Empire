@@ -109,6 +109,33 @@
       "style": "bouclier"
     },
     {
+      "type": "Armes",
+      "nom": "flèche en bois",
+      "quantity": 1,
+      "description": "Blablabla",
+      "valeur": 30,
+      "states": false,
+      "style": "carquois"
+    },
+    {
+      "type": "Armes",
+      "nom": "flèche en fer",
+      "quantity": 1,
+      "description": "Blablabla",
+      "valeur": 30,
+      "states": false,
+      "style": "carquois"
+    },
+    {
+      "type": "Armes",
+      "nom": "flèche en carbone",
+      "quantity": 1,
+      "description": "Blablabla",
+      "valeur": 30,
+      "states": false,
+      "style": "carquois"
+    },
+    {
       "type": "Tenue",
       "nom": "Armure de fer",
       "quantity": 1,
@@ -137,16 +164,16 @@
       "nom": "Hache",
       "quantity": 1,
       "description": "Blablabla",
-      "valeur": 30,
-      "states": false
+      "valeur": 30
+
     },
     {
       "type": "Outil",
       "nom": "Pioche",
       "quantity": 1,
       "description": "Blablabla",
-      "valeur": 30,
-      "states": false
+      "valeur": 30
+
     },
     {
       "type": "Consommable",
