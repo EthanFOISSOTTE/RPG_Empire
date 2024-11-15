@@ -255,7 +255,35 @@ public class Constants {
         STATES_REQUIRING_TOOLS.add("ONE_DODGE_LEFT");
         STATES_REQUIRING_TOOLS.add("ONE_DODGE_RIGHT");
 
-        // Définition de l'attaque "ONE_SLASH1"
+        // Indices des frames et des timings pour les animations de l'attaque (POL_SLASH1) dans les 4 directions
+        FRAME_INDICES.put("POL_SLASH1_UP", new int[][] {{1, 0}, {1, 1}, {1, 2}, {1, 3}});
+        FRAME_TIMINGS.put("POL_SLASH1_UP", new float[] {0.075f, 0.075f, 0.075f, 0.075f});
+        FRAME_INDICES.put("POL_SLASH1_DOWN", new int[][] {{0, 0}, {0, 1}, {0, 2}, {0, 3}});
+        FRAME_TIMINGS.put("POL_SLASH1_DOWN", new float[] {0.075f, 0.075f, 0.075f, 0.075f});
+        FRAME_INDICES.put("POL_SLASH1_LEFT", new int[][] {{3, 0}, {3, 1}, {3, 2}, {3, 3}});
+        FRAME_TIMINGS.put("POL_SLASH1_LEFT", new float[] {0.075f, 0.075f, 0.075f, 0.075f});
+        FRAME_INDICES.put("POL_SLASH1_RIGHT", new int[][] {{2, 0}, {2, 1}, {2, 2}, {2, 3}});
+        FRAME_TIMINGS.put("POL_SLASH1_RIGHT", new float[] {0.075f, 0.075f, 0.075f, 0.075f});
+        STATES_REQUIRING_TOOLS.add("POL_SLASH1_UP");
+        STATES_REQUIRING_TOOLS.add("POL_SLASH1_DOWN");
+        STATES_REQUIRING_TOOLS.add("POL_SLASH1_LEFT");
+        STATES_REQUIRING_TOOLS.add("POL_SLASH1_RIGHT");
+
+        // Indices des frames et des timings pour les animations de l'attaque ("BOW_SHOOT1") dans les 4 directions
+        FRAME_INDICES.put("BOW_SHOOT1_UP", new int[][] {{5, 0}, {5, 1}, {5, 2}, {5, 3}, {5, 4}, {5, 5}, {5, 6}, {5, 7}});
+        FRAME_TIMINGS.put("BOW_SHOOT1_UP", new float[] {0.180f, 0.100f, 0.100f, 0.100f, 0.400f, 0.050f, 0.050f, 0.100f});
+        FRAME_INDICES.put("BOW_SHOOT1_DOWN", new int[][] {{4, 0}, {4, 1}, {4, 2}, {4, 3}, {4, 4}, {4, 5}, {4, 6}, {4, 7}});
+        FRAME_TIMINGS.put("BOW_SHOOT1_DOWN", new float[] {0.180f, 0.100f, 0.100f, 0.100f, 0.400f, 0.050f, 0.050f, 0.100f});
+        FRAME_INDICES.put("BOW_SHOOT1_LEFT", new int[][] {{7, 0}, {7, 1}, {7, 2}, {7, 3}, {7, 4}, {7, 5}, {7, 6}, {7, 7}});
+        FRAME_TIMINGS.put("BOW_SHOOT1_LEFT", new float[] {0.180f, 0.100f, 0.100f, 0.100f, 0.400f, 0.050f, 0.050f, 0.100f});
+        FRAME_INDICES.put("BOW_SHOOT1_RIGHT", new int[][] {{6, 0}, {6, 1}, {6, 2}, {6, 3}, {6, 4}, {6, 5}, {6, 6}, {6, 7}});
+        FRAME_TIMINGS.put("BOW_SHOOT1_RIGHT", new float[] {0.180f, 0.100f, 0.100f, 0.100f, 0.400f, 0.050f, 0.050f, 0.100f});
+        STATES_REQUIRING_TOOLS.add("BOW_SHOOT1_UP");
+        STATES_REQUIRING_TOOLS.add("BOW_SHOOT1_DOWN");
+        STATES_REQUIRING_TOOLS.add("BOW_SHOOT1_LEFT");
+        STATES_REQUIRING_TOOLS.add("BOW_SHOOT1_RIGHT");
+
+            // Définition de l'attaque "ONE_SLASH1"
         Map<String, AnimationState> oneSlash1States = new HashMap<>();
         oneSlash1States.put("UP", AnimationState.ONE_SLASH1_UP);
         oneSlash1States.put("DOWN", AnimationState.ONE_SLASH1_DOWN);
@@ -288,6 +316,28 @@ public class Constants {
             0.3f, 0f, 0.5f, 50f, 25f
         ));
 
+        // Définition de l'attaque "POL_SLASH1"
+        Map<String, AnimationState> polSlash1States = new HashMap<>();
+        polSlash1States.put("UP", AnimationState.POL_SLASH1_UP);
+        polSlash1States.put("DOWN", AnimationState.POL_SLASH1_DOWN);
+        polSlash1States.put("LEFT", AnimationState.POL_SLASH1_LEFT);
+        polSlash1States.put("RIGHT", AnimationState.POL_SLASH1_RIGHT);
+        ATTACKS.put("POL_SLASH1", new Attack(
+            "POL_SLASH1", "Coup tranchante", "POL3", polSlash1States,
+            0.3f, 15f, 1.0f, 150f, 50f
+        ));
+
+        // Définition de l'attaque "BOW_SHOOT1"
+        Map<String, AnimationState> bowShoot1States = new HashMap<>();
+        bowShoot1States.put("UP", AnimationState.BOW_SHOOT1_UP);
+        bowShoot1States.put("DOWN", AnimationState.BOW_SHOOT1_DOWN);
+        bowShoot1States.put("LEFT", AnimationState.BOW_SHOOT1_LEFT);
+        bowShoot1States.put("RIGHT", AnimationState.BOW_SHOOT1_RIGHT);
+        ATTACKS.put("BOW_SHOOT1", new Attack(
+            "BOW_SHOOT1", "Tir à l'arc", "BOW3", bowShoot1States,
+            1.08f, 15f, 2.2f, 20f, 200f
+        ));
+
         // Définition de l'outil
         TOOLS.put("AX01", new Tool("AX01", "Hache", "AX01", Arrays.asList("ONE_SLASH1", "ONE_SLASH2")));
         TOOLS.put("MC01", new Tool("MC01", "Marteau de guerre", "MC01", Arrays.asList("ONE_SLASH1", "ONE_SLASH2")));
@@ -296,5 +346,8 @@ public class Constants {
         TOOLS.put("SH01", new Tool("SH01", "Bouclier de base", "SH01", Arrays.asList("ONE_DODGE")));
         TOOLS.put("SH02", new Tool("SH02", "Bouclier moyen", "SH02", Arrays.asList("ONE_DODGE")));
         TOOLS.put("SH03", new Tool("SH03", "Bouclier lourd", "SH03", Arrays.asList("ONE_DODGE")));
+        TOOLS.put("HB01", new Tool("HB01", "Lance", "HB01", Arrays.asList("POL_SLASH1")));
+        TOOLS.put("BO02", new Tool("BO02", "Arc de base", "BO02", Arrays.asList("BOW_SHOOT1")));
+        TOOLS.put("QV01", new Tool("QV01", "Carquois", "QV01", Arrays.asList()));
     }
 }

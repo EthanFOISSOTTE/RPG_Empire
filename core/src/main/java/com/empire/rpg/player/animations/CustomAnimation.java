@@ -29,7 +29,7 @@ public class CustomAnimation {
         }
     }
 
-    // Méthodes pour obtenir les frames de chaque composant
+    // Methods to get frames for each component
 
     public TextureRegion getBodyKeyFrame(float stateTime) {
         int frameIndex = getFrameIndex(stateTime);
@@ -67,7 +67,7 @@ public class CustomAnimation {
         if (looping) {
             stateTime = stateTime % totalDuration;
         } else if (stateTime >= totalDuration) {
-            return bodyFrames.length - 1;
+            return frameDurations.length - 1;
         }
 
         float time = 0f;
@@ -77,6 +77,6 @@ public class CustomAnimation {
                 return i;
             }
         }
-        return bodyFrames.length - 1; // Dernière frame par défaut
+        return frameDurations.length - 1; // Default to last frame
     }
 }

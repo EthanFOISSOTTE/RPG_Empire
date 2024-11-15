@@ -27,10 +27,21 @@ public enum AnimationState {
     ONE_SLASH2_DOWN,
     ONE_SLASH2_LEFT,
     ONE_SLASH2_RIGHT,
-
     // États de défense - ONE_DODGE
     ONE_DODGE_UP,
     ONE_DODGE_DOWN,
     ONE_DODGE_LEFT,
     ONE_DODGE_RIGHT,
+
+    // États d'attaque - POL_SLASH1
+    POL_SLASH1_UP,
+    POL_SLASH1_DOWN,
+    POL_SLASH1_LEFT,
+    POL_SLASH1_RIGHT,
+
+    // États d'attaque - BOW_SHOOT1
+    BOW_SHOOT1_UP,
+    BOW_SHOOT1_DOWN,
+    BOW_SHOOT1_LEFT,
+    BOW_SHOOT1_RIGHT,
 }

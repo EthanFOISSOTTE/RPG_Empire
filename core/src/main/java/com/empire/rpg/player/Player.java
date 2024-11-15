@@ -35,7 +35,7 @@ public class Player {
     private float speed;
     private float scale;
 
-    // Variables pour la direction
+    // Variables for direction
     private boolean movingUp;
     private boolean movingDown;
     private boolean movingLeft;
@@ -43,26 +43,26 @@ public class Player {
     private boolean running;
     private AnimationState lastFacingDirection;
 
-    // Outils équipés
+    // Equipped tools
     private Tool currentTool1;
     private Tool currentTool2;
 
-    // Ensembles d'outils
+    // Tool sets
     private List<Tool[]> toolSets;
     private int currentToolSetIndex;
 
-    // Gestion des cooldowns des attaques
+    // Attack cooldowns
     private Map<String, Float> attackCooldowns;
 
-    // Attributs pour le combo
+    // Combo attributes
     private int comboStep;
     private float comboTimer;
-    private final float maxComboDelay = 0.5f; // Délai maximum entre les attaques du combo
+    private final float maxComboDelay = 0.5f; // Maximum delay between combo attacks
 
-    // File d'attente des attaques
+    // Attack queue
     private Queue<AttackData> attackQueue;
 
-    // Classe interne pour stocker les données des attaques
+    // Inner class to store attack data
     private class AttackData {
         public Attack attack;
         public Tool tool;
@@ -76,7 +76,7 @@ public class Player {
     // CollisionComponent
     private CollisionComponent collisionComponent;
 
-    // Constructeurs
+    // Constructors
     public Player() {
         this(0f, 0f, Constants.PLAYER_SCALE);
     }
@@ -102,7 +102,7 @@ public class Player {
         this.animationController = new AnimationController(this, body, outfit, hair, hat, tool1, tool2);
         this.renderer = new Renderer();
 
-        // Initialiser le CollisionComponent en utilisant les constantes
+        // Initialize CollisionComponent using constants
         float collisionWidth = Constants.PLAYER_COLLISION_WIDTH * scale;
         float collisionHeight = Constants.PLAYER_COLLISION_HEIGHT * scale;
         float offsetX = Constants.PLAYER_COLLISION_OFFSET_X * scale;
@@ -113,48 +113,48 @@ public class Player {
         this.currentState = new StandingState(this);
         currentState.enter();
 
-        // Initialiser la map des cooldowns
+        // Initialize attack cooldowns
         this.attackCooldowns = new HashMap<>();
 
-        // Initialiser les attributs du combo
+        // Initialize combo attributes
         this.comboStep = 0;
         this.comboTimer = 0f;
 
-        // Initialiser la file d'attente des attaques
+        // Initialize attack queue
         this.attackQueue = new LinkedList<>();
 
-        // Initialiser les ensembles d'outils
+        // Initialize tool sets
         initializeToolSets();
     }
 
     private void initializeToolSets() {
         toolSets = new ArrayList<>();
 
-        // Ensemble 1
+        // Set 1: Both tools equipped
         Tool[] set1 = {
             Constants.TOOLS.get("SW01"), // currentTool1
             Constants.TOOLS.get("SH01")  // currentTool2
         };
         toolSets.add(set1);
 
-        // Ensemble 2
+        // Set 2: Only left-hand tool equipped
         Tool[] set2 = {
-            Constants.TOOLS.get("AX01"),
-            Constants.TOOLS.get("SH02")
+            Constants.TOOLS.get("HB01"), // currentTool1
+            null                         // currentTool2
         };
         toolSets.add(set2);
 
-        // Ensemble 3
+        // Set 3: Only right-hand tool equipped
         Tool[] set3 = {
-            Constants.TOOLS.get("MC01"),
-            Constants.TOOLS.get("SH03")
+            Constants.TOOLS.get("BO02"), // currentTool1
+            Constants.TOOLS.get("QV01")  // currentTool2
         };
         toolSets.add(set3);
 
-        // Initialiser l'index de l'ensemble actuel
+        // Initialize the current tool set index
         currentToolSetIndex = 0;
 
-        // Équiper le premier ensemble par défaut
+        // Equip the first set by default
         equipToolSet(currentToolSetIndex);
     }
 
@@ -177,12 +177,12 @@ public class Player {
         currentState.enter();
     }
 
-    // méthode pour obtenir l'état actuel
+    // Method to get the current state
     public State getCurrentState() {
         return currentState;
     }
 
-    // Gestion des entrées
+    // Input handling
     private void handleInput() {
         if (!(currentState instanceof AttackingState)) {
             movingUp = Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP);
@@ -191,14 +191,14 @@ public class Player {
             movingRight = Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT);
             running = Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT);
 
-            // Mise à jour de la vitesse
+            // Update speed
             speed = running ? Constants.PLAYER_RUNNING_SPEED : Constants.PLAYER_WALKING_SPEED;
         } else {
-            // Empêcher le mouvement pendant l'attaque
+            // Prevent movement during attack
             movingUp = movingDown = movingLeft = movingRight = running = false;
         }
 
-        // Changement d'ensemble d'outils avec les touches 1, 2 et 3
+        // Switch tool sets with keys 1, 2, 3, 4
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
             switchToolSet(0);
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) {
@@ -207,29 +207,40 @@ public class Player {
             switchToolSet(2);
         }
 
-        // Attaque de base (clic gauche)
+        // Base attack (left click)
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-            queueComboAttack();
+            if (currentTool1 != null) {
+                queueComboAttack();
+            } else {
+                // No tool equipped in left hand; optional feedback
+                System.out.println("No weapon equipped in the left hand!");
+            }
         }
 
-        // Défense de base (clic droit)
+        // Base defense (right click)
         if (Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
-            if (!(currentState instanceof AttackingState)) {
-                if (currentTool2 != null && !currentTool2.getAvailableAttacks().isEmpty()) {
+            if (!(currentState instanceof AttackingState) && currentTool2 != null) {
+                if (!currentTool2.getAvailableAttacks().isEmpty()) {
                     String attackId = currentTool2.getAvailableAttacks().get(0);
                     if (!isAttackOnCooldown(attackId)) {
                         Attack attack = Constants.ATTACKS.get(attackId);
                         if (attack != null) {
                             startAttack(attack, currentTool2);
-                            // Ajouter l'attaque aux cooldowns
+                            // Add the attack to cooldowns
                             attackCooldowns.put(attack.getId(), attack.getCooldown());
                         }
                     } else {
-                        // Attaque en cooldown, ne rien faire ou afficher un feedback
-                        System.out.println("Attaque " + attackId + " en cooldown !");
+                        // Attack is on cooldown; optional feedback
+                        System.out.println("Attack " + attackId + " is on cooldown!");
                     }
                 } else {
-                    // Aucun outil équipé ou aucune attaque disponible
+                    // No attacks available for currentTool2; optional feedback
+                    System.out.println("No attacks available for the equipped tool in the right hand!");
+                }
+            } else {
+                // No tool equipped in right hand or already attacking; optional feedback
+                if (currentTool2 == null) {
+                    System.out.println("No weapon equipped in the right hand!");
                 }
             }
         }
@@ -239,9 +250,9 @@ public class Player {
         if (toolSetIndex >= 0 && toolSetIndex < toolSets.size()) {
             currentToolSetIndex = toolSetIndex;
             equipToolSet(currentToolSetIndex);
-            resetCombo(); // Réinitialiser le combo
+            resetCombo(); // Reset the combo
 
-            // Interrompre l'attaque en cours si nécessaire
+            // Interrupt the current attack if necessary
             if (currentState instanceof AttackingState) {
                 currentState.exit();
                 changeState(new StandingState(this));
@@ -262,31 +273,38 @@ public class Player {
                 Attack attack = Constants.ATTACKS.get(attackId);
                 if (attack != null) {
                     attackQueue.add(new AttackData(attack, currentTool1));
-                    // Ajouter l'attaque aux cooldowns
+                    // Add the attack to cooldowns
                     attackCooldowns.put(attack.getId(), attack.getCooldown());
                     comboStep++;
-                    comboTimer = 0f; // Réinitialiser le timer du combo
+                    comboTimer = 0f; // Reset the combo timer
 
-                    // Si le joueur n'est pas déjà en train d'attaquer, démarrer l'attaque
+                    // If the player is not already attacking, start the attack
                     if (!(currentState instanceof AttackingState)) {
                         startNextAttack();
                     }
                 }
             } else {
-                // Attaque en cooldown
-                System.out.println("Attaque " + attackId + " en cooldown !");
+                // Attack is on cooldown
+                System.out.println("Attack " + attackId + " is on cooldown!");
                 resetCombo();
             }
+        } else {
+            // No tool equipped or no attacks available; optional feedback
+            System.out.println("No attacks available for the equipped tool in the left hand!");
         }
     }
 
     private String getNextAttackId() {
-        if (comboStep < currentTool1.getAvailableAttacks().size()) {
+        if (currentTool1 != null && comboStep < currentTool1.getAvailableAttacks().size()) {
             return currentTool1.getAvailableAttacks().get(comboStep);
         } else {
-            // Si toutes les attaques du combo ont été utilisées, recommencer
+            // If all combo attacks have been used, reset
             resetCombo();
-            return currentTool1.getAvailableAttacks().get(0);
+            if (currentTool1 != null && !currentTool1.getAvailableAttacks().isEmpty()) {
+                return currentTool1.getAvailableAttacks().get(0);
+            } else {
+                return null;
+            }
         }
     }
 
@@ -295,7 +313,12 @@ public class Player {
     }
 
     private void startAttack(Attack attack, Tool tool) {
-        changeState(new AttackingState(this, attack, tool));
+        if (tool != null) {
+            changeState(new AttackingState(this, attack, tool));
+        } else {
+            // Tool is null; handle accordingly
+            System.out.println("Cannot start attack without a tool!");
+        }
     }
 
     public void startNextAttack() {
@@ -303,7 +326,7 @@ public class Player {
             AttackData nextAttack = attackQueue.poll();
             startAttack(nextAttack.attack, nextAttack.tool);
         } else {
-            // Plus d'attaques en attente, réinitialiser le combo
+            // No more attacks queued, reset combo
             resetCombo();
             changeState(new StandingState(this));
         }
@@ -354,7 +377,7 @@ public class Player {
     }
 
     public void move(float deltaTime, CollisionManager collisionManager) {
-        // Empêcher le mouvement pendant l'attaque
+        // Prevent movement during attack
         if (currentState instanceof AttackingState) {
             return;
         }
@@ -375,30 +398,30 @@ public class Player {
         }
 
         if (direction.len() > 0) {
-            direction.nor(); // Normaliser le vecteur de direction
+            direction.nor(); // Normalize direction vector
         }
 
         float deltaX = direction.x * speed * deltaTime;
         float deltaY = direction.y * speed * deltaTime;
 
-        // Sauvegarder la position précédente
+        // Save previous position
         float oldX = x;
         float oldY = y;
 
-        // Tenter le déplacement en X
+        // Attempt to move in X
         x += deltaX;
         collisionComponent.setPosition(x, y);
         if (collisionManager.isColliding(collisionComponent.getBoundingBox())) {
-            // Collision détectée, annuler le déplacement en X
+            // Collision detected, revert X movement
             x = oldX;
             collisionComponent.setPosition(x, y);
         }
 
-        // Tenter le déplacement en Y
+        // Attempt to move in Y
         y += deltaY;
         collisionComponent.setPosition(x, y);
         if (collisionManager.isColliding(collisionComponent.getBoundingBox())) {
-            // Collision détectée, annuler le déplacement en Y
+            // Collision detected, revert Y movement
             y = oldY;
             collisionComponent.setPosition(x, y);
         }
@@ -406,13 +429,13 @@ public class Player {
 
     public void updateAnimationState() {
         if (currentState instanceof AttackingState) {
-            // Ne rien faire pour éviter d'écraser l'animation personnalisée
+            // Do nothing to avoid overwriting custom animation
             return;
         }
 
         if (isMoving()) {
             if (running) {
-                // États d'animation pour la course
+                // Running animation states
                 if (movingLeft) {
                     animationController.setAnimationState(AnimationState.RUNNING_LEFT);
                     lastFacingDirection = AnimationState.RUNNING_LEFT;
@@ -427,7 +450,7 @@ public class Player {
                     lastFacingDirection = AnimationState.RUNNING_DOWN;
                 }
             } else {
-                // États d'animation pour la marche
+                // Walking animation states
                 if (movingLeft) {
                     animationController.setAnimationState(AnimationState.WALKING_LEFT);
                     lastFacingDirection = AnimationState.WALKING_LEFT;
@@ -443,7 +466,7 @@ public class Player {
                 }
             }
         } else {
-            // États d'animation pour le repos en fonction de la dernière direction
+            // Standing animation states based on last facing direction
             switch (lastFacingDirection) {
                 case WALKING_LEFT:
                 case RUNNING_LEFT:
@@ -477,7 +500,7 @@ public class Player {
         }
     }
 
-    // Getters et setters pour la position
+    // Getters and setters for position
     public float getX() {
         return x;
     }
@@ -486,17 +509,17 @@ public class Player {
         return y;
     }
 
-    // Getter pour le CollisionComponent
+    // Getter for CollisionComponent
     public CollisionComponent getCollisionComponent() {
         return collisionComponent;
     }
 
-    // Méthode pour obtenir la boîte de collision du joueur
+    // Method to get the player's collision bounds
     public Rectangle getCollisionBounds() {
         return collisionComponent.getBoundingBox();
     }
 
-    // Méthode pour obtenir la direction du joueur
+    // Method to get the player's direction
     public Vector2 getDirection() {
         float dirX = 0;
         float dirY = 0;
@@ -507,7 +530,7 @@ public class Player {
 
         Vector2 direction = new Vector2(dirX, dirY);
         if (direction.len() != 0) {
-            direction.nor(); // Normaliser le vecteur
+            direction.nor(); // Normalize vector
         }
         return direction;
     }
@@ -539,7 +562,7 @@ public class Player {
         }
     }
 
-    // Getters pour les outils
+    // Getters for tools
     public Tool getCurrentTool1() {
         return currentTool1;
     }

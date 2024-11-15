@@ -48,11 +48,6 @@ public class AnimationController {
         currentAnimationState = AnimationState.STANDING_DOWN; // Par défaut, le joueur regarde vers le bas
     }
 
-    // Vérifier si l'animation actuelle nécessite un outil
-    private boolean requiresTool(AnimationState state) {
-        return Constants.STATES_REQUIRING_TOOLS.contains(state.name());
-    }
-
     // Charger les SpriteSheets pour chaque composant
     private void loadSpriteSheets() {
         // Initialiser les maps pour les spritesheets
@@ -91,11 +86,11 @@ public class AnimationController {
             hatSpriteSheets.put(key, spriteSheet);
         }
 
-        // Charger les spritesheets pour tool1 et tool2
+        // Load tool1 and tool2 sprite sheets
         for (Attack attack : Constants.ATTACKS.values()) {
             String categoryKey = attack.getCategoryKey();
 
-            // Chargement des spritesheets pour tool1
+            // Load tool1 sprite sheets
             Map<String, String> toolsForCategory1 = Constants.TOOL1_SPRITESHEET_PATHS.get(categoryKey);
             if (toolsForCategory1 != null) {
                 Map<String, SpriteSheet> toolSheets1 = new HashMap<>();
@@ -107,7 +102,7 @@ public class AnimationController {
                 tool1SpriteSheets.put(categoryKey, toolSheets1);
             }
 
-            // Chargement des spritesheets pour tool2
+            // Load tool2 sprite sheets
             Map<String, String> toolsForCategory2 = Constants.TOOL2_SPRITESHEET_PATHS.get(categoryKey);
             if (toolsForCategory2 != null) {
                 Map<String, SpriteSheet> toolSheets2 = new HashMap<>();
@@ -173,6 +168,9 @@ public class AnimationController {
 
     // Créer les frames pour chaque composant
     private TextureRegion[] getFrames(SpriteSheet spriteSheet, int[][] frameIndices) {
+        if (spriteSheet == null) {
+            return null;
+        }
         TextureRegion[] frames = new TextureRegion[frameIndices.length];
         for (int i = 0; i < frameIndices.length; i++) {
             int row = frameIndices[i][0];
