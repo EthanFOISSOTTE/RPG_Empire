@@ -261,7 +261,10 @@ public class Constants {
         oneSlash1States.put("DOWN", AnimationState.ONE_SLASH1_DOWN);
         oneSlash1States.put("LEFT", AnimationState.ONE_SLASH1_LEFT);
         oneSlash1States.put("RIGHT", AnimationState.ONE_SLASH1_RIGHT);
-        ATTACKS.put("ONE_SLASH1", new Attack("ONE_SLASH1", "Fente tranchante", "ONE3", oneSlash1States, 0.3f, 10f, 1.0f));
+        ATTACKS.put("ONE_SLASH1", new Attack(
+            "ONE_SLASH1", "Fente tranchante", "ONE3", oneSlash1States,
+            0.3f, 10f, 1.0f, 80f, 40f
+        ));
 
         // Définition de l'attaque "ONE_SLASH2"
         Map<String, AnimationState> oneSlash2States = new HashMap<>();
@@ -269,7 +272,10 @@ public class Constants {
         oneSlash2States.put("DOWN", AnimationState.ONE_SLASH2_DOWN);
         oneSlash2States.put("LEFT", AnimationState.ONE_SLASH2_LEFT);
         oneSlash2States.put("RIGHT", AnimationState.ONE_SLASH2_RIGHT);
-        ATTACKS.put("ONE_SLASH2", new Attack("ONE_SLASH2", "Fente tranchante", "ONE3", oneSlash2States, 0.3f, 10f, 1.0f));
+        ATTACKS.put("ONE_SLASH2", new Attack(
+            "ONE_SLASH2", "Fente tranchante", "ONE3", oneSlash2States,
+            0.3f, 10f, 1.0f, 80f, 40f
+        ));
 
         // Définition de l'attaque "ONE_DODGE"
         Map<String, AnimationState> oneDodgeStates = new HashMap<>();
@@ -277,7 +283,10 @@ public class Constants {
         oneDodgeStates.put("DOWN", AnimationState.ONE_DODGE_DOWN);
         oneDodgeStates.put("LEFT", AnimationState.ONE_DODGE_LEFT);
         oneDodgeStates.put("RIGHT", AnimationState.ONE_DODGE_RIGHT);
-        ATTACKS.put("ONE_DODGE", new Attack("ONE_DODGE", "Blocage", "ONE1", oneDodgeStates, 0.3f, 0f, 0.5f));
+        ATTACKS.put("ONE_DODGE", new Attack(
+            "ONE_DODGE", "Blocage", "ONE1", oneDodgeStates,
+            0.3f, 0f, 0.5f, 50f, 25f
+        ));
 
         // Définition de l'outil
         TOOLS.put("AX01", new Tool("AX01", "Hache", "AX01", Arrays.asList("ONE_SLASH1", "ONE_SLASH2")));

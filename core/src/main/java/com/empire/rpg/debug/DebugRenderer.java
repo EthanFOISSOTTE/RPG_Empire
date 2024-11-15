@@ -11,19 +11,24 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.empire.rpg.collisions.CollisionManager;
 import com.empire.rpg.player.Player;
+import com.empire.rpg.player.states.AttackingState;
+import com.empire.rpg.player.attacks.Attack;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
 public class DebugRenderer {
     private final ShapeRenderer shapeRenderer;
     private final BitmapFont font;
-    private final SpriteBatch spriteBatch; // Nécessaire pour dessiner le texte
+    private final SpriteBatch spriteBatch;
+    private final GlyphLayout glyphLayout;
     private static final float DIRECTION_LINE_LENGTH = 50f;
 
     public DebugRenderer() {
         this.shapeRenderer = new ShapeRenderer();
-        this.font = new BitmapFont(); // Initialisation du BitmapFont pour afficher le texte
-        this.spriteBatch = new SpriteBatch(); // Initialisation du SpriteBatch pour dessiner le texte
-        this.font.setColor(Color.WHITE); // Couleur blanche pour le texte
+        this.font = new BitmapFont();
+        this.spriteBatch = new SpriteBatch();
+        this.font.setColor(Color.WHITE);
+        this.glyphLayout = new GlyphLayout();
     }
 
     public void renderDebugBounds(Camera camera, Player player, CollisionManager collisionManager) {
@@ -60,15 +65,65 @@ public class DebugRenderer {
             shapeRenderer.polygon(polygon.getTransformedVertices());
         }
 
+        // Dessiner la zone d'effet de l'attaque si le joueur est en train d'attaquer
+        if (player.getCurrentState() instanceof AttackingState) {
+            AttackingState attackingState = (AttackingState) player.getCurrentState();
+            Polygon attackHitbox = attackingState.getAttackHitbox();
+            if (attackHitbox != null) {
+                shapeRenderer.setColor(Color.ORANGE);
+                shapeRenderer.polygon(attackHitbox.getTransformedVertices());
+            }
+        }
+
         shapeRenderer.end();
 
-        // Dessiner les coordonnées X et Y du joueur
+        // Dessiner les textes
         spriteBatch.setProjectionMatrix(camera.combined);
         spriteBatch.begin();
+
+        // Dessiner les coordonnées X et Y du joueur
         float playerTextX = playerBounds.x + playerBounds.width / 2;
         float playerTextY = playerBounds.y + playerBounds.height + 15; // Position légèrement au-dessus du joueur
         font.draw(spriteBatch, "X: " + (int) playerBounds.x + " Y: " + (int) playerBounds.y, playerTextX, playerTextY);
+
+        // Dessiner le texte sur la hitbox de l'attaque
+        if (player.getCurrentState() instanceof AttackingState) {
+            AttackingState attackingState = (AttackingState) player.getCurrentState();
+            Polygon attackHitbox = attackingState.getAttackHitbox();
+            if (attackHitbox != null) {
+                Attack attack = attackingState.getAttack();
+                if (attack != null) {
+                    // Calculer le centre du polygone
+                    Vector2 centroid = getPolygonCentroid(attackHitbox);
+
+                    // Préparer le texte
+                    String attackInfo = "ID: " + attack.getId() + " Damage: " + attack.getDamage();
+
+                    // Mesurer la taille du texte pour le centrer
+                    glyphLayout.setText(font, attackInfo);
+                    float textWidth = glyphLayout.width;
+                    float textHeight = glyphLayout.height;
+
+                    // Dessiner le texte au centre de la hitbox
+                    font.draw(spriteBatch, attackInfo, centroid.x - textWidth / 2, centroid.y + textHeight / 2);
+                }
+            }
+        }
+
         spriteBatch.end();
+    }
+
+    private Vector2 getPolygonCentroid(Polygon polygon) {
+        float[] vertices = polygon.getTransformedVertices();
+        float centroidX = 0, centroidY = 0;
+        int numVertices = vertices.length / 2;
+        for (int i = 0; i < vertices.length; i += 2) {
+            centroidX += vertices[i];
+            centroidY += vertices[i + 1];
+        }
+        centroidX /= numVertices;
+        centroidY /= numVertices;
+        return new Vector2(centroidX, centroidY);
     }
 
     public void dispose() {

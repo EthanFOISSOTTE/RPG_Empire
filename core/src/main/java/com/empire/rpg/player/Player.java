@@ -177,6 +177,11 @@ public class Player {
         currentState.enter();
     }
 
+    // méthode pour obtenir l'état actuel
+    public State getCurrentState() {
+        return currentState;
+    }
+
     // Gestion des entrées
     private void handleInput() {
         if (!(currentState instanceof AttackingState)) {
