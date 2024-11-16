@@ -335,7 +335,7 @@ public class Constants {
         bowShoot1States.put("RIGHT", AnimationState.BOW_SHOOT1_RIGHT);
         ATTACKS.put("BOW_SHOOT1", new Attack(
             "BOW_SHOOT1", "Tir à l'arc", "BOW3", bowShoot1States,
-            1.08f, 15f, 2.2f, 20f, 200f
+            1.08f, 0f, 2.2f, 0f, 0f
         ));
 
         // Définition de l'outil
