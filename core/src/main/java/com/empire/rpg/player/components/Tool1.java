@@ -3,13 +3,16 @@ package com.empire.rpg.player.components;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
+// Composant représentant l'outil tenu dans la main gauche (Tool1)
 public class Tool1 {
-    private TextureRegion currentFrame;
+    private TextureRegion currentFrame; // Frame actuelle à afficher pour l'outil
 
+    // Mettre à jour la frame actuelle de l'outil
     public void update(TextureRegion frame) {
         currentFrame = frame;
     }
 
+    // Rendu de l'outil sur l'écran
     public void render(Batch batch, float x, float y, float scale) {
         if (currentFrame != null) {
             float width = currentFrame.getRegionWidth() * scale;
@@ -20,7 +23,8 @@ public class Tool1 {
         }
     }
 
+    // Méthode pour libérer les ressources si nécessaire
     public void dispose() {
-        // Si vous avez des ressources à libérer
+        // Rien à libérer ici car nous n'avons pas de ressources propres
     }
 }

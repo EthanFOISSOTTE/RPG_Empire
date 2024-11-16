@@ -2,17 +2,19 @@ package com.empire.rpg.player.animations;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
+// Classe représentant une animation personnalisée composée de plusieurs frames pour chaque composant
 public class CustomAnimation {
-    private TextureRegion[] bodyFrames;
-    private TextureRegion[] outfitFrames;
-    private TextureRegion[] hairFrames;
-    private TextureRegion[] hatFrames;
-    private TextureRegion[] tool1Frames;
-    private TextureRegion[] tool2Frames;
-    private float[] frameDurations;
-    private boolean looping;
-    private float totalDuration;
+    private TextureRegion[] bodyFrames; // Frames pour le corps
+    private TextureRegion[] outfitFrames; // Frames pour la tenue
+    private TextureRegion[] hairFrames; // Frames pour les cheveux
+    private TextureRegion[] hatFrames; // Frames pour le chapeau
+    private TextureRegion[] tool1Frames; // Frames pour l'outil 1
+    private TextureRegion[] tool2Frames; // Frames pour l'outil 2
+    private float[] frameDurations; // Durée de chaque frame
+    private boolean looping; // Indique si l'animation est en boucle
+    private float totalDuration; // Durée totale de l'animation
 
+    // Constructeur de l'animation personnalisée
     public CustomAnimation(TextureRegion[] bodyFrames, TextureRegion[] outfitFrames, TextureRegion[] hairFrames,
                            TextureRegion[] hatFrames, TextureRegion[] tool1Frames, TextureRegion[] tool2Frames,
                            float[] frameDurations, boolean looping) {
@@ -25,11 +27,11 @@ public class CustomAnimation {
         this.frameDurations = frameDurations;
         this.looping = looping;
         for (float duration : frameDurations) {
-            totalDuration += duration;
+            totalDuration += duration; // Calculer la durée totale de l'animation
         }
     }
 
-    // Methods to get frames for each component
+    // Méthodes pour obtenir la frame actuelle pour chaque composant en fonction du temps écoulé
 
     public TextureRegion getBodyKeyFrame(float stateTime) {
         int frameIndex = getFrameIndex(stateTime);
@@ -52,22 +54,23 @@ public class CustomAnimation {
     }
 
     public TextureRegion getTool1KeyFrame(float stateTime) {
-        if (tool1Frames == null) return null;
+        if (tool1Frames == null) return null; // Si pas d'outil 1, retourner null
         int frameIndex = getFrameIndex(stateTime);
         return tool1Frames[frameIndex];
     }
 
     public TextureRegion getTool2KeyFrame(float stateTime) {
-        if (tool2Frames == null) return null;
+        if (tool2Frames == null) return null; // Si pas d'outil 2, retourner null
         int frameIndex = getFrameIndex(stateTime);
         return tool2Frames[frameIndex];
     }
 
+    // Calculer l'indice de la frame actuelle en fonction du temps écoulé
     private int getFrameIndex(float stateTime) {
         if (looping) {
-            stateTime = stateTime % totalDuration;
+            stateTime = stateTime % totalDuration; // Boucler le temps si l'animation est en boucle
         } else if (stateTime >= totalDuration) {
-            return frameDurations.length - 1;
+            return frameDurations.length - 1; // Si l'animation est terminée, retourner la dernière frame
         }
 
         float time = 0f;
@@ -77,6 +80,6 @@ public class CustomAnimation {
                 return i;
             }
         }
-        return frameDurations.length - 1; // Default to last frame
+        return frameDurations.length - 1; // Par défaut, retourner la dernière frame
     }
 }

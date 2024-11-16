@@ -8,12 +8,14 @@ import com.empire.rpg.player.animations.AnimationState;
 import com.empire.rpg.player.animations.CustomAnimation;
 import com.badlogic.gdx.math.Polygon;
 
+// État du joueur lorsqu'il effectue une attaque
 public class AttackingState extends State {
-    private Attack attack;
-    private Tool tool;
-    private float elapsedTime;
-    private Polygon attackHitbox;
+    private Attack attack; // Attaque en cours
+    private Tool tool; // Outil utilisé pour l'attaque
+    private float elapsedTime; // Temps écoulé depuis le début de l'attaque
+    private Polygon attackHitbox; // Hitbox de l'attaque
 
+    // Constructeur de l'état d'attaque
     public AttackingState(Player player, Attack attack, Tool tool) {
         super(player);
         this.attack = attack;
@@ -23,13 +25,16 @@ public class AttackingState extends State {
 
     @Override
     public void enter() {
+        // Déterminer la direction du joueur pour sélectionner l'animation appropriée
         String direction = player.getFacingDirection();
         AnimationState animationState = attack.getAnimationStates().get(direction);
 
         if (animationState != null) {
+            // Récupérer les clés de spritesheet pour les outils équipés
             String tool1SpritesheetKey = player.getCurrentTool1() != null ? player.getCurrentTool1().getSpritesheetKey() : null;
             String tool2SpritesheetKey = player.getCurrentTool2() != null ? player.getCurrentTool2().getSpritesheetKey() : null;
 
+            // Créer l'animation d'attaque personnalisée
             CustomAnimation attackAnimation = player.getAnimationController().createAttackAnimation(
                 attack.getCategoryKey(), tool1SpritesheetKey, tool2SpritesheetKey, animationState);
             player.getAnimationController().setCustomAnimation(attackAnimation);
@@ -38,7 +43,7 @@ public class AttackingState extends State {
         // Jouer le son de l'attaque
         attack.playSound();
 
-        // Calculer la position de la zone d'effet
+        // Calculer la hitbox de l'attaque
         calculateAttackHitbox();
     }
 
@@ -46,15 +51,17 @@ public class AttackingState extends State {
     public void update(float deltaTime, CollisionManager collisionManager) {
         elapsedTime += deltaTime;
         if (elapsedTime >= attack.getDuration()) {
-            // L'attaque est terminée
+            // Si l'attaque est terminée
             if (!player.getAttackQueue().isEmpty()) {
+                // Démarrer l'attaque suivante dans la file d'attente
                 player.startNextAttack();
             } else {
+                // Retourner à l'état debout et réinitialiser le combo
                 player.changeState(new StandingState(player));
                 player.resetCombo();
             }
         }
-        // Gestion des collisions ou autres mises à jour spécifiques à l'attaque
+        // Ici, vous pouvez ajouter la gestion des collisions avec la hitbox de l'attaque
     }
 
     @Override
@@ -64,6 +71,7 @@ public class AttackingState extends State {
         attackHitbox = null; // Réinitialiser la hitbox
     }
 
+    // Calculer la hitbox de l'attaque en fonction de la direction du joueur
     private void calculateAttackHitbox() {
         float hitboxWidth = attack.getHitboxWidth();
         float hitboxHeight = attack.getHitboxHeight();
@@ -71,8 +79,8 @@ public class AttackingState extends State {
         // Points de la hitbox avant transformation
         float[] vertices = new float[] {
             -hitboxWidth / 2, 0,                  // Point inférieur gauche
-            hitboxWidth / 2, 0,                  // Point inférieur droit
-            hitboxWidth / 2, hitboxHeight,       // Point supérieur droit
+            hitboxWidth / 2, 0,                   // Point inférieur droit
+            hitboxWidth / 2, hitboxHeight,        // Point supérieur droit
             -hitboxWidth / 2, hitboxHeight        // Point supérieur gauche
         };
 
@@ -117,11 +125,12 @@ public class AttackingState extends State {
         attackHitbox.translate(offsetX, offsetY);
     }
 
+    // Getter pour la hitbox de l'attaque
     public Polygon getAttackHitbox() {
         return attackHitbox;
     }
 
-    // Ajouter le getter pour l'attaque
+    // Getter pour l'attaque en cours
     public Attack getAttack() {
         return attack;
     }

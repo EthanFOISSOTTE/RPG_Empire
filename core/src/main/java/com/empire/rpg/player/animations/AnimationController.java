@@ -1,39 +1,41 @@
 package com.empire.rpg.player.animations;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-
 import com.empire.rpg.player.Player;
 import com.empire.rpg.player.components.*;
 import com.empire.rpg.player.utils.Constants;
 import com.empire.rpg.player.animations.spritesheet.SpriteSheet;
-import com.empire.rpg.player.equipment.Tool;
 import com.empire.rpg.player.attacks.Attack;
 
 import java.util.HashMap;
 import java.util.Map;
 
+// Contrôleur d'animation du joueur, gère les animations en fonction de l'état du joueur
 public class AnimationController {
-    private AnimationState currentAnimationState;
-    private CustomAnimation currentCustomAnimation;
-    private Body body;
-    private Outfit outfit;
-    private Hair hair;
-    private Hat hat;
-    private Tool1 tool1;
-    private Tool2 tool2;
-    private Player player;
+    private AnimationState currentAnimationState; // État d'animation actuel
+    private CustomAnimation currentCustomAnimation; // Animation personnalisée actuelle (pour les attaques)
+    private Body body; // Composant du corps du joueur
+    private Outfit outfit; // Composant de la tenue du joueur
+    private Hair hair; // Composant des cheveux du joueur
+    private Hat hat; // Composant du chapeau du joueur
+    private Tool1 tool1; // Composant de l'outil 1 (main gauche)
+    private Tool2 tool2; // Composant de l'outil 2 (main droite)
+    private Player player; // Référence au joueur
 
-    private Map<AnimationState, CustomAnimation> animations;
-    private float stateTime;
+    private Map<AnimationState, CustomAnimation> animations; // Map des animations standard (marche, repos, etc.)
+    private float stateTime; // Temps écoulé depuis le début de l'animation
 
+    // Maps pour stocker les spritesheets des différents composants
     private Map<String, SpriteSheet> bodySpriteSheets;
     private Map<String, SpriteSheet> outfitSpriteSheets;
     private Map<String, SpriteSheet> hairSpriteSheets;
     private Map<String, SpriteSheet> hatSpriteSheets;
 
+    // Maps pour les spritesheets des outils en fonction de la catégorie et de la clé de spritesheet
     private Map<String, Map<String, SpriteSheet>> tool1SpriteSheets;
     private Map<String, Map<String, SpriteSheet>> tool2SpriteSheets;
 
+    // Constructeur du contrôleur d'animation
     public AnimationController(Player player, Body body, Outfit outfit, Hair hair, Hat hat, Tool1 tool1, Tool2 tool2) {
         this.player = player;
         this.body = body;
@@ -43,12 +45,12 @@ public class AnimationController {
         this.tool1 = tool1;
         this.tool2 = tool2;
         animations = new HashMap<>();
-        loadSpriteSheets();
-        createAnimations();
+        loadSpriteSheets(); // Charge les spritesheets nécessaires
+        createAnimations(); // Crée les animations standard
         currentAnimationState = AnimationState.STANDING_DOWN; // Par défaut, le joueur regarde vers le bas
     }
 
-    // Charger les SpriteSheets pour chaque composant
+    // Charger les spritesheets pour chaque composant
     private void loadSpriteSheets() {
         // Initialiser les maps pour les spritesheets
         bodySpriteSheets = new HashMap<>();
@@ -86,11 +88,11 @@ public class AnimationController {
             hatSpriteSheets.put(key, spriteSheet);
         }
 
-        // Load tool1 and tool2 sprite sheets
+        // Charger les spritesheets pour les outils (tool1 et tool2) en fonction des attaques disponibles
         for (Attack attack : Constants.ATTACKS.values()) {
             String categoryKey = attack.getCategoryKey();
 
-            // Load tool1 sprite sheets
+            // Charger les spritesheets pour tool1
             Map<String, String> toolsForCategory1 = Constants.TOOL1_SPRITESHEET_PATHS.get(categoryKey);
             if (toolsForCategory1 != null) {
                 Map<String, SpriteSheet> toolSheets1 = new HashMap<>();
@@ -102,7 +104,7 @@ public class AnimationController {
                 tool1SpriteSheets.put(categoryKey, toolSheets1);
             }
 
-            // Load tool2 sprite sheets
+            // Charger les spritesheets pour tool2
             Map<String, String> toolsForCategory2 = Constants.TOOL2_SPRITESHEET_PATHS.get(categoryKey);
             if (toolsForCategory2 != null) {
                 Map<String, SpriteSheet> toolSheets2 = new HashMap<>();
@@ -116,14 +118,13 @@ public class AnimationController {
         }
     }
 
-    // Créer les animations pour chaque état
+    // Créer les animations pour chaque état (marche, repos, etc.)
     private void createAnimations() {
         for (AnimationState state : AnimationState.values()) {
             String stateName = state.name();
 
-            // Vérifier si l'état est un état d'attaque
+            // Ignorer les états d'attaque ici (ils seront gérés séparément)
             if (!(stateName.startsWith("RUNNING") || stateName.startsWith("WALKING") || stateName.startsWith("STANDING"))) {
-                // Ne pas créer d'animations pour les états d'attaque
                 continue;
             }
 
@@ -131,7 +132,7 @@ public class AnimationController {
             float[] durations = Constants.FRAME_TIMINGS.get(stateName);
 
             if (frameIndices != null && durations != null) {
-                // Déterminer le spritesheet approprié en fonction de l'état d'animation
+                // Déterminer la clé de spritesheet appropriée en fonction de l'état d'animation
                 String spritesheetKey = getSpritesheetKeyForState(state);
 
                 // Récupérer les SpriteSheets pour chaque composant
@@ -146,7 +147,7 @@ public class AnimationController {
                 TextureRegion[] hairFrames = getFrames(hairSheet, frameIndices);
                 TextureRegion[] hatFrames = getFrames(hatSheet, frameIndices);
 
-                // Créer l'animation personnalisée sans outils
+                // Créer l'animation personnalisée sans outils (tool1 et tool2 sont null)
                 CustomAnimation animation = new CustomAnimation(
                     bodyFrames, outfitFrames, hairFrames, hatFrames, null, null, durations, true
                 );
@@ -155,18 +156,18 @@ public class AnimationController {
         }
     }
 
-    // Déterminer le spritesheet à utiliser en fonction de l'état
+    // Déterminer la clé de spritesheet à utiliser en fonction de l'état d'animation
     private String getSpritesheetKeyForState(AnimationState state) {
         String stateName = state.name();
         if (stateName.startsWith("RUNNING") || stateName.startsWith("WALKING") || stateName.startsWith("STANDING")) {
-            return "P1"; // Ou la clé appropriée pour les animations non-attaques
+            return "P1"; // Utilise la clé "P1" pour les animations standard
         } else {
-            // Pour les autres états (potentiellement des attaques), nous ne les traitons pas ici
+            // Pour les autres états (attaques), la clé sera déterminée ailleurs
             return null;
         }
     }
 
-    // Créer les frames pour chaque composant
+    // Obtenir les frames à partir d'une spritesheet donnée et des indices de frames
     private TextureRegion[] getFrames(SpriteSheet spriteSheet, int[][] frameIndices) {
         if (spriteSheet == null) {
             return null;
@@ -180,37 +181,36 @@ public class AnimationController {
         return frames;
     }
 
-    // Créer une animation d'attaque
+    // Créer une animation d'attaque personnalisée
     public CustomAnimation createAttackAnimation(String categoryKey, String tool1SpritesheetKey, String tool2SpritesheetKey, AnimationState state) {
         int[][] frameIndices = Constants.FRAME_INDICES.get(state.name());
         float[] durations = Constants.FRAME_TIMINGS.get(state.name());
 
         if (frameIndices == null || durations == null) {
-            // Gérer l'erreur ou retourner null
+            // Si les indices de frames ou les timings sont manquants, retourner null
             return null;
         }
 
-        // Récupérer les SpriteSheets
+        // Récupérer les SpriteSheets pour chaque composant en fonction de la catégorie
         SpriteSheet bodySheet = bodySpriteSheets.get(categoryKey);
         SpriteSheet outfitSheet = outfitSpriteSheets.get(categoryKey);
         SpriteSheet hairSheet = hairSpriteSheets.get(categoryKey);
         SpriteSheet hatSheet = hatSpriteSheets.get(categoryKey);
 
-        // Récupérer le SpriteSheet de tool1
+        // Récupérer les SpriteSheets pour les outils
         Map<String, SpriteSheet> tool1Sheets = tool1SpriteSheets.get(categoryKey);
         SpriteSheet tool1Sheet = null;
         if (tool1Sheets != null && tool1SpritesheetKey != null) {
             tool1Sheet = tool1Sheets.get(tool1SpritesheetKey);
         }
 
-        // Récupérer le SpriteSheet de tool2
         Map<String, SpriteSheet> tool2Sheets = tool2SpriteSheets.get(categoryKey);
         SpriteSheet tool2Sheet = null;
         if (tool2Sheets != null && tool2SpritesheetKey != null) {
             tool2Sheet = tool2Sheets.get(tool2SpritesheetKey);
         }
 
-        // Récupérer les frames
+        // Obtenir les frames pour chaque composant
         TextureRegion[] bodyFrames = getFrames(bodySheet, frameIndices);
         TextureRegion[] outfitFrames = getFrames(outfitSheet, frameIndices);
         TextureRegion[] hairFrames = getFrames(hairSheet, frameIndices);
@@ -218,30 +218,33 @@ public class AnimationController {
         TextureRegion[] tool1Frames = getFrames(tool1Sheet, frameIndices);
         TextureRegion[] tool2Frames = getFrames(tool2Sheet, frameIndices);
 
-        // Créer l'animation personnalisée
+        // Créer l'animation personnalisée avec les outils
         return new CustomAnimation(bodyFrames, outfitFrames, hairFrames, hatFrames, tool1Frames, tool2Frames, durations, false);
     }
 
+    // Définir une animation personnalisée (par exemple lors d'une attaque)
     public void setCustomAnimation(CustomAnimation animation) {
         this.currentCustomAnimation = animation;
-        this.stateTime = 0f; // Réinitialiser le temps d'état
+        this.stateTime = 0f; // Réinitialiser le temps d'animation
     }
 
-    // Changer l'état de l'animation
+    // Changer l'état d'animation actuel
     public void setAnimationState(AnimationState state) {
         if (currentAnimationState != state) {
             currentAnimationState = state;
-            stateTime = 0f;
+            stateTime = 0f; // Réinitialiser le temps d'animation
         }
     }
 
-    // Mettre à jour l'animation
+    // Mettre à jour l'animation en fonction du temps écoulé
     public void update(float deltaTime) {
         stateTime += deltaTime;
 
+        // Utiliser l'animation personnalisée si elle est définie, sinon l'animation standard
         CustomAnimation currentAnimation = (currentCustomAnimation != null) ? currentCustomAnimation : animations.get(currentAnimationState);
 
         if (currentAnimation != null) {
+            // Récupérer les frames actuelles pour chaque composant
             TextureRegion currentBodyFrame = currentAnimation.getBodyKeyFrame(stateTime);
             TextureRegion currentOutfitFrame = currentAnimation.getOutfitKeyFrame(stateTime);
             TextureRegion currentHairFrame = currentAnimation.getHairKeyFrame(stateTime);
@@ -249,7 +252,7 @@ public class AnimationController {
             TextureRegion currentTool1Frame = currentAnimation.getTool1KeyFrame(stateTime);
             TextureRegion currentTool2Frame = currentAnimation.getTool2KeyFrame(stateTime);
 
-            // Mettre à jour les composants
+            // Mettre à jour les composants avec les frames actuelles
             body.update(currentBodyFrame);
             outfit.update(currentOutfitFrame);
             hair.update(currentHairFrame);
@@ -259,7 +262,7 @@ public class AnimationController {
         }
     }
 
-    // Rendre l'animation
+    // Libérer les ressources associées aux spritesheets
     public void dispose() {
         for (SpriteSheet sheet : bodySpriteSheets.values()) {
             sheet.dispose();
