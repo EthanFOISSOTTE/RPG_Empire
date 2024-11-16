@@ -80,4 +80,17 @@ public class CollisionManager {
 
         return (distanceX * distanceX + distanceY * distanceY) < (radius * radius);
     }
+
+    // Getters pour les objets de collision
+    public Array<Rectangle> getCollisionRectangles() {
+        return collisionRectangles;
+    }
+
+    public Array<Ellipse> getCollisionEllipses() {
+        return collisionEllipses;
+    }
+
+    public Array<Polygon> getCollisionPolygons() {
+        return collisionPolygons;
+    }
 }
