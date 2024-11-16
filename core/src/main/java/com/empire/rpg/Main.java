@@ -7,11 +7,13 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.Input;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
-import com.empire.rpg.CollisionManager;
-import com.empire.rpg.MapManager;
-import com.empire.rpg.player.Player;
-import com.empire.rpg.player.audio.SoundManager;
+import com.empire.rpg.entity.player.PlayerCharacter;
+import com.empire.rpg.component.Component;
+import com.empire.rpg.entity.player.audio.SoundManager;
 import com.empire.rpg.debug.DebugRenderer;
 
 public class Main extends ApplicationAdapter {
@@ -20,7 +22,7 @@ public class Main extends ApplicationAdapter {
     private FitViewport viewport;
     private MapManager mapManager;
     private CollisionManager collisionManager;
-    private Player player;
+    private PlayerCharacter player;
     private SoundManager soundManager;
     private DebugRenderer debugRenderer;
 
@@ -39,12 +41,11 @@ public class Main extends ApplicationAdapter {
         mapManager = new MapManager("rpg-map.tmx", camera);
         collisionManager = new CollisionManager(mapManager.getTiledMap());
 
-        // Définir le point de spawn du joueur
-        float spawnX = 4800f; // Coordonnée X du point de spawn
-        float spawnY = 4800f; // Coordonnée Y du point de spawn
+        // Création d'une map de composants (vide pour cet exemple)
+        Map<Class<? extends Component>, Component> components = new HashMap<>();
 
-        // Créer le joueur au point de spawn
-        player = new Player(spawnX, spawnY);
+        // Création et initialisation de l'instance de PlayerCharacter
+        player = new PlayerCharacter(4800f, 4800f, 2.0f, UUID.randomUUID(), "Hero", components);
 
         // Initialiser le débogueur
         debugRenderer = new DebugRenderer();
@@ -64,7 +65,7 @@ public class Main extends ApplicationAdapter {
 
         // Mettre à jour le joueur
         float deltaTime = Gdx.graphics.getDeltaTime();
-        player.update(deltaTime, collisionManager);
+        player.update(deltaTime, collisionManager); // Utilisation correcte de 'player'
 
         // Mettre à jour la caméra pour suivre le joueur
         camera.position.set(player.getX(), player.getY(), 0);
@@ -73,7 +74,7 @@ public class Main extends ApplicationAdapter {
         // Démarrer le batch pour dessiner le joueur
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-        player.render(batch);
+        player.render(batch); // Utilisation correcte de 'player'
         batch.end();
 
         // Rendre les couches supérieures (au-dessus du joueur)
@@ -84,7 +85,7 @@ public class Main extends ApplicationAdapter {
             debugMode = !debugMode;
         }
         if (debugMode) {
-            debugRenderer.renderDebugBounds(camera, player, collisionManager);
+            debugRenderer.renderDebugBounds(camera, player, collisionManager); // Utilisation correcte de 'player'
         }
     }
 

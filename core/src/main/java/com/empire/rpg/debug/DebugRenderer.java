@@ -10,9 +10,9 @@ import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.empire.rpg.CollisionManager;
-import com.empire.rpg.player.Player;
-import com.empire.rpg.player.states.AttackingState;
-import com.empire.rpg.player.attacks.Attack;
+import com.empire.rpg.entity.player.PlayerCharacter;
+import com.empire.rpg.entity.player.states.AttackingState;
+import com.empire.rpg.entity.player.attacks.Attack;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
@@ -31,12 +31,12 @@ public class DebugRenderer {
         this.glyphLayout = new GlyphLayout();
     }
 
-    public void renderDebugBounds(Camera camera, Player player, CollisionManager collisionManager) {
+    public void renderDebugBounds(Camera camera, PlayerCharacter PlayerCharacter, CollisionManager collisionManager) {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
 
         // Dessiner la boîte de collision du joueur
-        Rectangle playerBounds = player.getCollisionBounds();
+        Rectangle playerBounds = PlayerCharacter.getCollisionBounds();
         shapeRenderer.setColor(Color.RED);
         shapeRenderer.rect(playerBounds.x, playerBounds.y, playerBounds.width, playerBounds.height);
 
@@ -45,7 +45,7 @@ public class DebugRenderer {
         float playerCenterY = playerBounds.y + playerBounds.height / 2;
 
         shapeRenderer.setColor(Color.YELLOW);
-        Vector2 playerDirection = player.getDirection();
+        Vector2 playerDirection = PlayerCharacter.getDirection();
         shapeRenderer.line(playerCenterX, playerCenterY,
             playerCenterX + playerDirection.x * DIRECTION_LINE_LENGTH,
             playerCenterY + playerDirection.y * DIRECTION_LINE_LENGTH);
@@ -66,8 +66,8 @@ public class DebugRenderer {
         }
 
         // Dessiner la zone d'effet de l'attaque si le joueur est en train d'attaquer
-        if (player.getCurrentState() instanceof AttackingState) {
-            AttackingState attackingState = (AttackingState) player.getCurrentState();
+        if (PlayerCharacter.getCurrentState() instanceof AttackingState) {
+            AttackingState attackingState = (AttackingState) PlayerCharacter.getCurrentState();
             Polygon attackHitbox = attackingState.getAttackHitbox();
             if (attackHitbox != null) {
                 shapeRenderer.setColor(Color.ORANGE);
@@ -87,8 +87,8 @@ public class DebugRenderer {
         font.draw(spriteBatch, "X: " + (int) playerBounds.x + " Y: " + (int) playerBounds.y, playerTextX, playerTextY);
 
         // Dessiner le texte sur la hitbox de l'attaque
-        if (player.getCurrentState() instanceof AttackingState) {
-            AttackingState attackingState = (AttackingState) player.getCurrentState();
+        if (PlayerCharacter.getCurrentState() instanceof AttackingState) {
+            AttackingState attackingState = (AttackingState) PlayerCharacter.getCurrentState();
             Polygon attackHitbox = attackingState.getAttackHitbox();
             if (attackHitbox != null) {
                 Attack attack = attackingState.getAttack();
