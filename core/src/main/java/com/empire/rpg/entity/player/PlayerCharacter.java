@@ -9,16 +9,18 @@ import com.badlogic.gdx.math.Vector2;
 import com.empire.rpg.component.Component;
 import com.empire.rpg.entity.Player;
 import com.empire.rpg.CollisionManager;
+import com.empire.rpg.component.HealthComponent;
+import com.empire.rpg.component.PositionComponent;
 import com.empire.rpg.entity.player.animations.AnimationController;
 import com.empire.rpg.entity.player.animations.AnimationState;
 import com.empire.rpg.entity.player.components.*;
-import com.empire.rpg.entity.player.rendering.Renderer;
-import com.empire.rpg.entity.player.states.State;
-import com.empire.rpg.entity.player.states.StandingState;
-import com.empire.rpg.entity.player.states.AttackingState;
-import com.empire.rpg.entity.player.utils.Constants;
 import com.empire.rpg.entity.player.equipment.Tool;
 import com.empire.rpg.entity.player.attacks.Attack;
+import com.empire.rpg.entity.player.rendering.Renderer;
+import com.empire.rpg.entity.player.states.AttackingState;
+import com.empire.rpg.entity.player.states.State;
+import com.empire.rpg.entity.player.states.StandingState;
+import com.empire.rpg.entity.player.utils.Constants;
 
 import java.util.*;
 
@@ -41,9 +43,6 @@ public class PlayerCharacter extends Player {
     private Tool2 tool2;
     // État actuel du joueur (debout, marchant, attaquant, etc.)
     private State currentState;
-    // Position du joueur sur l'axe X et Y
-    private float x;
-    private float y;
     // Vitesse de déplacement du joueur
     private float speed;
     // Échelle du joueur pour le rendu
@@ -73,7 +72,7 @@ public class PlayerCharacter extends Player {
     private float comboTimer; // Temps écoulé depuis la dernière attaque du combo
     private final float maxComboDelay = 0.5f; // Délai maximum entre les attaques d'un combo
 
-    // File d'attente des attaques à exécuter
+    // File d'attaque des attaques à exécuter
     private Queue<AttackData> attackQueue;
 
     // Classe interne pour stocker les données d'une attaque en attente
@@ -96,22 +95,26 @@ public class PlayerCharacter extends Player {
      * Constructeur par défaut qui initialise le joueur à la position (0,0) avec l'échelle par défaut.
      */
     public PlayerCharacter() {
-        this(0f, 0f, Constants.PLAYER_SCALE, UUID.randomUUID(), "PlayerCharacter", new HashMap<>());
+        this(Constants.PLAYER_SCALE, UUID.randomUUID(), "PlayerCharacter", new HashMap<>());
     }
 
     /**
-     * Constructeur principal qui initialise le joueur avec une position, une échelle, un identifiant unique,
+     * Constructeur principal qui initialise le joueur avec une échelle, un identifiant unique,
      * un nom et une map de composants.
      *
-     * @param x          Position X initiale.
-     * @param y          Position Y initiale.
      * @param scale      Échelle du joueur.
      * @param id         Identifiant unique du joueur.
      * @param name       Nom du joueur.
      * @param components Map des composants associés.
      */
-    public PlayerCharacter(float x, float y, float scale, UUID id, String name, Map<Class<? extends Component>, Component> components) {
+    public PlayerCharacter(float scale, UUID id, String name, Map<Class<? extends Component>, Component> components) {
         super(name, components, id); // Appel au constructeur de la superclasse
+
+        // Vérifier la présence du PositionComponent
+        PositionComponent position = (PositionComponent) components.get(PositionComponent.class);
+        if (position == null) {
+            throw new IllegalArgumentException("PositionComponent is required");
+        }
 
         // Initialisation des composants visuels
         this.body = new Body();
@@ -121,9 +124,7 @@ public class PlayerCharacter extends Player {
         this.tool1 = new Tool1();
         this.tool2 = new Tool2();
 
-        // Initialisation des attributs de position et d'échelle
-        this.x = x;
-        this.y = y;
+        // Initialisation des attributs d'échelle
         this.scale = scale;
         // Vitesse de marche par défaut
         this.speed = Constants.PLAYER_WALKING_SPEED;
@@ -134,13 +135,13 @@ public class PlayerCharacter extends Player {
         this.animationController = new AnimationController(this, body, outfit, hair, hat, tool1, tool2);
         this.renderer = new Renderer();
 
-        // Initialisation du composant de collision en utilisant les constantes
+        // Initialisation du composant de collision en utilisant la position du PositionComponent
         float collisionWidth = Constants.PLAYER_COLLISION_WIDTH * scale;
         float collisionHeight = Constants.PLAYER_COLLISION_HEIGHT * scale;
         float offsetX = Constants.PLAYER_COLLISION_OFFSET_X * scale;
         float offsetY = Constants.PLAYER_COLLISION_OFFSET_Y * scale;
 
-        collisionComponent = new CollisionComponent(x, y, collisionWidth, collisionHeight, offsetX, offsetY);
+        collisionComponent = new CollisionComponent(position.getX(), position.getY(), collisionWidth, collisionHeight, offsetX, offsetY);
 
         // État initial du joueur (debout)
         this.currentState = new StandingState(this);
@@ -153,7 +154,7 @@ public class PlayerCharacter extends Player {
         this.comboStep = 0;
         this.comboTimer = 0f;
 
-        // Initialisation de la file d'attente des attaques
+        // Initialisation de la file d'attaque des attaques
         this.attackQueue = new LinkedList<>();
 
         // Initialisation des ensembles d'outils
@@ -204,7 +205,7 @@ public class PlayerCharacter extends Player {
 
     // Méthode pour rendre le joueur à l'écran
     public void render(Batch batch) {
-        renderer.render(batch, body, outfit, hair, hat, tool1, tool2, x, y, scale);
+        renderer.render(batch, body, outfit, hair, hat, tool1, tool2, getX(), getY(), scale);
     }
 
     // Méthode pour changer l'état du joueur
@@ -311,7 +312,7 @@ public class PlayerCharacter extends Player {
     private void queueComboAttack() {
         if (currentTool1 != null && !currentTool1.getAvailableAttacks().isEmpty()) {
             String attackId = getNextAttackId(); // Obtenir l'ID de la prochaine attaque du combo
-            if (!isAttackOnCooldown(attackId)) {
+            if (attackId != null && !isAttackOnCooldown(attackId)) {
                 Attack attack = Constants.ATTACKS.get(attackId);
                 if (attack != null) {
                     attackQueue.add(new AttackData(attack, currentTool1)); // Ajouter l'attaque à la file d'attente
@@ -325,8 +326,10 @@ public class PlayerCharacter extends Player {
                     }
                 }
             } else {
-                // L'attaque est en cooldown
-                System.out.println("Attaque " + attackId + " en recharge !");
+                // L'attaque est en cooldown ou null
+                if (attackId != null) {
+                    System.out.println("Attaque " + attackId + " en recharge !");
+                }
                 resetCombo();
             }
         } else {
@@ -337,7 +340,7 @@ public class PlayerCharacter extends Player {
 
     // Méthode pour obtenir l'ID de la prochaine attaque dans le combo
     private String getNextAttackId() {
-        if (currentTool1 != null && comboStep < currentTool1.getAvailableAttacks().size()) {
+        if (comboStep < currentTool1.getAvailableAttacks().size()) {
             return currentTool1.getAvailableAttacks().get(comboStep);
         } else {
             // Si toutes les attaques du combo ont été utilisées, réinitialiser le combo
@@ -413,7 +416,7 @@ public class PlayerCharacter extends Player {
         return comboStep;
     }
 
-    // Getter pour la file d'attente des attaques
+    // Getter pour la file d'attaque des attaques
     public Queue<AttackData> getAttackQueue() {
         return attackQueue;
     }
@@ -459,26 +462,32 @@ public class PlayerCharacter extends Player {
         float deltaX = direction.x * speed * deltaTime;
         float deltaY = direction.y * speed * deltaTime;
 
-        // Sauvegarder la position précédente
-        float oldX = x;
-        float oldY = y;
+        // Récupérer PositionComponent
+        PositionComponent position = (PositionComponent) getComponent(PositionComponent.class);
+        if (position == null) {
+            System.out.println("PositionComponent missing");
+            return;
+        }
+
+        float oldX = position.getX();
+        float oldY = position.getY();
 
         // Tentative de déplacement en X
-        x += deltaX;
-        collisionComponent.setPosition(x, y);
+        position.setPosition(oldX + deltaX, oldY);
+        collisionComponent.setPosition(position.getX(), position.getY());
         if (collisionManager.isColliding(collisionComponent.getBoundingBox())) {
             // Collision détectée, annuler le déplacement en X
-            x = oldX;
-            collisionComponent.setPosition(x, y);
+            position.setPosition(oldX, oldY);
+            collisionComponent.setPosition(position.getX(), position.getY());
         }
 
         // Tentative de déplacement en Y
-        y += deltaY;
-        collisionComponent.setPosition(x, y);
+        position.setPosition(position.getX(), position.getY() + deltaY);
+        collisionComponent.setPosition(position.getX(), position.getY());
         if (collisionManager.isColliding(collisionComponent.getBoundingBox())) {
             // Collision détectée, annuler le déplacement en Y
-            y = oldY;
-            collisionComponent.setPosition(x, y);
+            position.setPosition(position.getX(), oldY);
+            collisionComponent.setPosition(position.getX(), position.getY());
         }
     }
 
@@ -556,9 +565,16 @@ public class PlayerCharacter extends Player {
         }
     }
 
-    // Getters et setters pour la position du joueur
-    public float getX() { return x; }
-    public float getY() { return y; }
+    // Getters pour la position du joueur via PositionComponent
+    public float getX() {
+        PositionComponent position = (PositionComponent) getComponent(PositionComponent.class);
+        return position != null ? position.getX() : 0f;
+    }
+
+    public float getY() {
+        PositionComponent position = (PositionComponent) getComponent(PositionComponent.class);
+        return position != null ? position.getY() : 0f;
+    }
 
     // Getter pour le composant de collision
     public CollisionComponent getCollisionComponent() {
@@ -619,6 +635,7 @@ public class PlayerCharacter extends Player {
     public Tool getCurrentTool1() {
         return currentTool1;
     }
+
     public Tool getCurrentTool2() {
         return currentTool2;
     }
@@ -635,5 +652,25 @@ public class PlayerCharacter extends Player {
         hair.dispose();
         hat.dispose();
         // Les autres composants (tool1, tool2) n'ont pas de ressources à libérer
+    }
+
+    /**
+     * Récupère les points de vie actuels du joueur via HealthComponent.
+     *
+     * @return Les points de vie actuels.
+     */
+    public int getHealth() {
+        HealthComponent health = (HealthComponent) getComponent(HealthComponent.class);
+        return health != null ? health.getCurrentHealthPoints() : 0;
+    }
+
+    /**
+     * Récupère les points de vie maximum du joueur via HealthComponent.
+     *
+     * @return Les points de vie maximum.
+     */
+    public int getMaxHealth() {
+        HealthComponent health = (HealthComponent) getComponent(HealthComponent.class);
+        return health != null ? health.getMaxHealthPoints() : 0;
     }
 }

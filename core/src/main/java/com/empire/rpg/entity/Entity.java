@@ -61,6 +61,15 @@ public abstract class Entity extends EntityManager {
     }
 
     /**
+     * Retourne le nom de l'entité.
+     *
+     * @return Le nom de l'entité.
+     */
+    public String getName() {
+        return super.getName();
+    }
+
+    /**
      * Retourne la map des composants de l'entité.
      *
      * @return La map des composants de l'entité.

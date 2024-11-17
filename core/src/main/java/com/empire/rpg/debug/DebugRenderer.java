@@ -1,5 +1,7 @@
 package com.empire.rpg.debug;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
@@ -10,6 +12,7 @@ import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.empire.rpg.CollisionManager;
+import com.empire.rpg.component.HealthComponent;
 import com.empire.rpg.entity.player.PlayerCharacter;
 import com.empire.rpg.entity.player.states.AttackingState;
 import com.empire.rpg.entity.player.attacks.Attack;
@@ -31,12 +34,15 @@ public class DebugRenderer {
         this.glyphLayout = new GlyphLayout();
     }
 
-    public void renderDebugBounds(Camera camera, PlayerCharacter PlayerCharacter, CollisionManager collisionManager) {
+    public void renderDebugBounds(Camera camera, PlayerCharacter player, CollisionManager collisionManager) {
+        // Gestion des entrées pour ajouter/soustraire des points de vie
+        handleHealthModification(player);
+
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
 
         // Dessiner la boîte de collision du joueur
-        Rectangle playerBounds = PlayerCharacter.getCollisionBounds();
+        Rectangle playerBounds = player.getCollisionBounds();
         shapeRenderer.setColor(Color.RED);
         shapeRenderer.rect(playerBounds.x, playerBounds.y, playerBounds.width, playerBounds.height);
 
@@ -45,10 +51,10 @@ public class DebugRenderer {
         float playerCenterY = playerBounds.y + playerBounds.height / 2;
 
         shapeRenderer.setColor(Color.YELLOW);
-        Vector2 playerDirection = PlayerCharacter.getDirection();
+        Vector2 playerDirection = player.getDirection();
         shapeRenderer.line(playerCenterX, playerCenterY,
-            playerCenterX + playerDirection.x * DIRECTION_LINE_LENGTH,
-            playerCenterY + playerDirection.y * DIRECTION_LINE_LENGTH);
+                playerCenterX + playerDirection.x * DIRECTION_LINE_LENGTH,
+                playerCenterY + playerDirection.y * DIRECTION_LINE_LENGTH);
 
         // Dessiner les objets de collision de la carte
         shapeRenderer.setColor(Color.RED);
@@ -66,8 +72,8 @@ public class DebugRenderer {
         }
 
         // Dessiner la zone d'effet de l'attaque si le joueur est en train d'attaquer
-        if (PlayerCharacter.getCurrentState() instanceof AttackingState) {
-            AttackingState attackingState = (AttackingState) PlayerCharacter.getCurrentState();
+        if (player.getCurrentState() instanceof AttackingState) {
+            AttackingState attackingState = (AttackingState) player.getCurrentState();
             Polygon attackHitbox = attackingState.getAttackHitbox();
             if (attackHitbox != null) {
                 shapeRenderer.setColor(Color.ORANGE);
@@ -86,9 +92,25 @@ public class DebugRenderer {
         float playerTextY = playerBounds.y + playerBounds.height + 15; // Position légèrement au-dessus du joueur
         font.draw(spriteBatch, "X: " + (int) playerBounds.x + " Y: " + (int) playerBounds.y, playerTextX, playerTextY);
 
+        // Dessiner le nom du joueur
+        String playerName = player.getName();
+        glyphLayout.setText(font, "Name: " + playerName);
+        float nameTextWidth = glyphLayout.width;
+        float nameTextHeight = glyphLayout.height;
+        font.draw(spriteBatch, "Name: " + playerName, playerTextX - nameTextWidth / 2, playerTextY + 15 + nameTextHeight);
+
+        // Dessiner la santé du joueur
+        int currentHealth = player.getHealth();
+        int maxHealth = player.getMaxHealth();
+        String healthText = "Health: " + currentHealth + "/" + maxHealth;
+        glyphLayout.setText(font, healthText);
+        float healthTextWidth = glyphLayout.width;
+        float healthTextHeight = glyphLayout.height;
+        font.draw(spriteBatch, healthText, playerTextX - healthTextWidth / 2, playerTextY + 30 + healthTextHeight);
+
         // Dessiner le texte sur la hitbox de l'attaque
-        if (PlayerCharacter.getCurrentState() instanceof AttackingState) {
-            AttackingState attackingState = (AttackingState) PlayerCharacter.getCurrentState();
+        if (player.getCurrentState() instanceof AttackingState) {
+            AttackingState attackingState = (AttackingState) player.getCurrentState();
             Polygon attackHitbox = attackingState.getAttackHitbox();
             if (attackHitbox != null) {
                 Attack attack = attackingState.getAttack();
@@ -111,6 +133,31 @@ public class DebugRenderer {
         }
 
         spriteBatch.end();
+    }
+
+    /**
+     * Gère l'ajout et la soustraction de points de vie via les touches "P" et "M".
+     *
+     * @param player Le joueur dont les points de vie sont modifiés.
+     */
+    private void handleHealthModification(PlayerCharacter player) {
+        HealthComponent health = (HealthComponent) player.getComponent(HealthComponent.class);
+        if (health == null) {
+            System.out.println("HealthComponent missing");
+            return;
+        }
+
+        // Ajouter 5 HP lorsque la touche "P" est pressée
+        if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+            int healedHealth = health.heal(5);
+            System.out.println("Health increased to " + healedHealth + "/" + health.getMaxHealthPoints());
+        }
+
+        // Soustraire 5 HP lorsque la touche "O" est pressée
+        if (Gdx.input.isKeyJustPressed(Input.Keys.O)) {
+            int damagedHealth = health.takeDamage(5);
+            System.out.println("Health decreased to " + damagedHealth + "/" + health.getMaxHealthPoints());
+        }
     }
 
     private Vector2 getPolygonCentroid(Polygon polygon) {

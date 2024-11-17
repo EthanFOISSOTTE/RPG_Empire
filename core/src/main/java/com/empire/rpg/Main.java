@@ -11,10 +11,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import com.empire.rpg.component.HealthComponent;
+import com.empire.rpg.component.PositionComponent;
+import com.empire.rpg.component.WeaponComponent;
 import com.empire.rpg.entity.player.PlayerCharacter;
 import com.empire.rpg.component.Component;
 import com.empire.rpg.entity.player.audio.SoundManager;
 import com.empire.rpg.debug.DebugRenderer;
+import com.empire.rpg.ui.PlayerUI;
 
 public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
@@ -25,6 +29,7 @@ public class Main extends ApplicationAdapter {
     private PlayerCharacter player;
     private SoundManager soundManager;
     private DebugRenderer debugRenderer;
+    private PlayerUI playerUI;
 
     private boolean debugMode = false;
 
@@ -41,14 +46,20 @@ public class Main extends ApplicationAdapter {
         mapManager = new MapManager("rpg-map.tmx", camera);
         collisionManager = new CollisionManager(mapManager.getTiledMap());
 
-        // Création d'une map de composants (vide pour cet exemple)
-        Map<Class<? extends Component>, Component> components = new HashMap<>();
+        // Création d'une map de composants avec PositionComponent et HealthComponent
+        Map<Class<? extends Component>, Component> components = Map.of(
+            HealthComponent.class, new HealthComponent(90, 100),
+            PositionComponent.class, new PositionComponent(4800f, 4800f)
+        );
 
         // Création et initialisation de l'instance de PlayerCharacter
-        player = new PlayerCharacter(4800f, 4800f, 2.0f, UUID.randomUUID(), "Hero", components);
+        player = new PlayerCharacter(2.0f, UUID.randomUUID(), "Hero", components);
 
         // Initialiser le débogueur
         debugRenderer = new DebugRenderer();
+
+        // Initialiser l'UI du joueur
+        playerUI = new PlayerUI(player);
 
         // Mettre à jour la caméra sur le joueur
         camera.position.set(player.getX(), player.getY(), 0);
@@ -65,16 +76,12 @@ public class Main extends ApplicationAdapter {
 
         // Mettre à jour le joueur
         float deltaTime = Gdx.graphics.getDeltaTime();
-        player.update(deltaTime, collisionManager); // Utilisation correcte de 'player'
-
-        // Mettre à jour la caméra pour suivre le joueur
-        camera.position.set(player.getX(), player.getY(), 0);
-        camera.update();
+        player.update(deltaTime, collisionManager);
 
         // Démarrer le batch pour dessiner le joueur
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-        player.render(batch); // Utilisation correcte de 'player'
+        player.render(batch);
         batch.end();
 
         // Rendre les couches supérieures (au-dessus du joueur)
@@ -85,8 +92,15 @@ public class Main extends ApplicationAdapter {
             debugMode = !debugMode;
         }
         if (debugMode) {
-            debugRenderer.renderDebugBounds(camera, player, collisionManager); // Utilisation correcte de 'player'
+            debugRenderer.renderDebugBounds(camera, player, collisionManager);
         }
+
+        // Rendre l'UI du joueur (après le rendu des éléments du jeu)
+        playerUI.render(batch);
+
+        // Mettre à jour la caméra pour suivre le joueur
+        camera.position.set(player.getX(), player.getY(), 0);
+        camera.update();
     }
 
     @Override
@@ -99,6 +113,10 @@ public class Main extends ApplicationAdapter {
         batch.dispose();
         mapManager.dispose();
         player.dispose();
-        soundManager.dispose();
+        if (soundManager != null) {
+            soundManager.dispose();
+        }
+        debugRenderer.dispose();
+        playerUI.dispose();
     }
 }
