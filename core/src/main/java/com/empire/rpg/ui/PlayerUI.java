@@ -56,8 +56,7 @@ public class PlayerUI {
     public PlayerUI(PlayerCharacter playerInstance) {
         this.player = playerInstance;
 
-        // Initialisation des variables de position et de taille (hardcodées)
-        // Vous pouvez ajuster ces valeurs selon vos besoins
+        // Initialisation des variables de position et de taille
 
         // Position et taille du cadre de la barre de santé (player_status.png)
         this.statusX = 0f;          // Position X en pixels depuis la gauche de l'écran
