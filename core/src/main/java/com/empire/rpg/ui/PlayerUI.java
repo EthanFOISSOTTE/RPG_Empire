@@ -6,11 +6,15 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.empire.rpg.component.HealthComponent;
 import com.empire.rpg.entity.player.PlayerCharacter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
+
+import com.empire.rpg.entity.player.equipment.Tool;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Classe responsable de l'affichage de l'interface utilisateur du joueur,
- * notamment la barre de santé.
+ * notamment la barre de santé et l'icône de l'arme équipée.
  */
 public class PlayerUI {
     // Textures pour les éléments UI
@@ -29,16 +33,25 @@ public class PlayerUI {
     private final float healthBarFullWidth;
     private final float healthBarHeight;
 
+    // Variables de position et de taille pour l'icône de l'arme
+    private final float weaponIconX;
+    private final float weaponIconY;
+    private final float weaponIconWidth;
+    private final float weaponIconHeight;
+
     // Référence au joueur
     private final PlayerCharacter player;
 
     // Caméra dédiée pour l'UI
     private OrthographicCamera uiCamera;
 
+    // Cache pour les textures des icônes d'armes
+    private Map<String, Texture> toolIcons;
+
     /**
      * Constructeur pour initialiser l'UI du joueur.
      *
-     * @param playerInstance Instance du joueur pour accéder à sa santé.
+     * @param playerInstance Instance du joueur pour accéder à sa santé et à ses outils.
      */
     public PlayerUI(PlayerCharacter playerInstance) {
         this.player = playerInstance;
@@ -58,13 +71,33 @@ public class PlayerUI {
         this.healthBarFullWidth = 45f * 4; // Largeur maximale en pixels
         this.healthBarHeight = 5f * 4;  // Hauteur en pixels
 
+        // Position et taille de l'icône de l'arme équipée
+        this.weaponIconX = 45f;      // Position X en pixels depuis la gauche de l'écran
+        this.weaponIconY = 638f;       // Position Y en pixels depuis le bas de l'écran
+        this.weaponIconWidth = 16f * 3;   // Largeur en pixels
+        this.weaponIconHeight = 16f * 3;  // Hauteur en pixels
+
         // Charger les textures
-        this.playerStatusTexture = new Texture(Gdx.files.internal("UI/player_status.png"));
-        this.playerHealthBarTexture = new Texture(Gdx.files.internal("UI/player_health_bar.png"));
+        try {
+            this.playerStatusTexture = new Texture(Gdx.files.internal("UI/player_status.png"));
+        } catch (Exception e) {
+            System.err.println("Erreur lors du chargement de player_status.png: " + e.getMessage());
+            this.playerStatusTexture = null;
+        }
+
+        try {
+            this.playerHealthBarTexture = new Texture(Gdx.files.internal("UI/player_health_bar.png"));
+        } catch (Exception e) {
+            System.err.println("Erreur lors du chargement de player_health_bar.png: " + e.getMessage());
+            this.playerHealthBarTexture = null;
+        }
 
         // Initialiser la caméra de l'UI
         this.uiCamera = new OrthographicCamera();
         this.uiCamera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+        // Initialiser le cache des icônes d'armes
+        this.toolIcons = new HashMap<>();
     }
 
     /**
@@ -81,7 +114,9 @@ public class PlayerUI {
         batch.begin();
 
         // Dessiner le cadre de la barre de santé
-        batch.draw(playerStatusTexture, statusX, statusY, statusWidth, statusHeight);
+        if (playerStatusTexture != null) {
+            batch.draw(playerStatusTexture, statusX, statusY, statusWidth, statusHeight);
+        }
 
         // Obtenir la santé actuelle et maximale du joueur
         HealthComponent health = (HealthComponent) player.getComponent(HealthComponent.class);
@@ -101,7 +136,43 @@ public class PlayerUI {
 
         // Dessiner la barre de santé
         // La barre disparaît de droite à gauche en ajustant la largeur
-        batch.draw(playerHealthBarTexture, healthBarX, healthBarY, currentHealthBarWidth, healthBarHeight);
+        if (playerHealthBarTexture != null) {
+            batch.draw(playerHealthBarTexture, healthBarX, healthBarY, currentHealthBarWidth, healthBarHeight);
+        }
+
+        // Déterminer quelle icône d'arme afficher
+        String toolIdToDisplay = null;
+
+        // Récupérer les outils équipés
+        Tool currentTool1 = player.getCurrentTool1();
+        Tool currentTool2 = player.getCurrentTool2();
+
+        if (currentTool1 != null) {
+            toolIdToDisplay = currentTool1.getId();
+        } else if (currentTool2 != null) {
+            toolIdToDisplay = currentTool2.getId();
+        }
+
+        // Charger et récupérer la texture de l'icône de l'arme
+        if (toolIdToDisplay != null && !toolIdToDisplay.isEmpty()) {
+            Texture weaponTexture = toolIcons.get(toolIdToDisplay);
+            if (weaponTexture == null) {
+                // Charger la texture si elle n'est pas déjà chargée
+                String weaponIconPath = "UI/icon/weapon/" + toolIdToDisplay + "-icon.png";
+                try {
+                    weaponTexture = new Texture(Gdx.files.internal(weaponIconPath));
+                    toolIcons.put(toolIdToDisplay, weaponTexture);
+                } catch (Exception e) {
+                    System.err.println("Erreur lors du chargement de " + weaponIconPath + ": " + e.getMessage());
+                    weaponTexture = null;
+                }
+            }
+
+            // Dessiner l'icône de l'arme si la texture est chargée
+            if (weaponTexture != null) {
+                batch.draw(weaponTexture, weaponIconX, weaponIconY, weaponIconWidth, weaponIconHeight);
+            }
+        }
 
         // Terminer le SpriteBatch pour l'UI
         batch.end();
@@ -117,5 +188,12 @@ public class PlayerUI {
         if (playerHealthBarTexture != null) {
             playerHealthBarTexture.dispose();
         }
+        // Disposer toutes les textures d'icônes d'armes
+        for (Texture texture : toolIcons.values()) {
+            if (texture != null) {
+                texture.dispose();
+            }
+        }
+        toolIcons.clear();
     }
 }
