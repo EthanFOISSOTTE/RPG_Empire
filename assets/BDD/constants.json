@@ -417,10 +417,10 @@
       "spritesheetKey": "HB01",
       "attackId": ["POL_SLASH1"]
     },
-    "BO01": {
-      "id": "BO01",
+    "BO02": {
+      "id": "BO02",
       "name": "Arc basique",
-      "spritesheetKey": "BO01",
+      "spritesheetKey": "BO02",
       "attackId": ["BOW_SHOOT1"]
     },
     "QV01": {

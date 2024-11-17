@@ -6,9 +6,8 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Arrays;
+import java.util.List;
+import java.util.ArrayList;
 
 import com.empire.rpg.entity.player.equipment.Tool;
 import com.empire.rpg.entity.player.attacks.Attack;
@@ -30,19 +29,6 @@ public class Constants {
     public static final int SPRITE_WIDTH = 64;
     public static final int SPRITE_HEIGHT = 64;
 
-    // Types et versions des sprites du joueur
-    public static final String BodyType = "humn", BodyVersion = "v00";
-    public static final String OutfitType = "pfpn", OutfitVersion = "v05";
-    public static final String HairType = "bob1", HairVersion = "v11";
-    public static final String HatType = "empty", HatVersion = "v00";
-
-    // Version des sprites des armes
-    public static final String bo01Version = "v01", bo02Version = "v01", bo03Version = "v01";
-    public static final String ax01Version = "v01", mc01Version = "v01", sw01Version = "v01", sw02Version = "v01";
-    public static final String hb01Version = "v01", sp01Version = "v01", sp02Version = "v01";
-    public static final String qv01Version = "v01";
-    public static final String sh01Version = "v01", sh02Version = "v01", sh03Version = "v01";
-
     // Chemins des sprites du joueur
     public static final Map<String, String> BODY_SPRITESHEET_PATHS = new HashMap<>();
     public static final Map<String, String> OUTFIT_SPRITESHEET_PATHS = new HashMap<>();
@@ -58,296 +44,215 @@ public class Constants {
     // Initialisation les outils et les attaques
     public static final Map<String, Attack> ATTACKS = new HashMap<>();
     public static final Map<String, Tool> TOOLS = new HashMap<>();
-    // Ensemble des états nécessitant des outils
-    public static final Set<String> STATES_REQUIRING_TOOLS = new HashSet<>();
 
     // Initialisation des chemins des sprites du joueur, des outils et des animations
     static {
         // Lecture du fichier JSON du joueur
-        FileHandle file = Gdx.files.internal("Player/Player.json");
-        JsonReader jsonReader = new JsonReader();
-        JsonValue base = jsonReader.parse(file);
+        FileHandle filePlayer = Gdx.files.internal("Player/Player.json");
+        JsonReader jsonReaderPlayer = new JsonReader();
+        JsonValue basePlayer = jsonReaderPlayer.parse(filePlayer);
 
-        // Chemins des sprites du joueur
-        BODY_SPRITESHEET_PATHS.put("P1", base.get("body").get(BodyType).get(BodyVersion).getString("char_a_p1"));
-        BODY_SPRITESHEET_PATHS.put("P2", base.get("body").get(BodyType).get(BodyVersion).getString("char_a_p2"));
-        BODY_SPRITESHEET_PATHS.put("P3", base.get("body").get(BodyType).get(BodyVersion).getString("char_a_p3"));
-        BODY_SPRITESHEET_PATHS.put("P4", base.get("body").get(BodyType).get(BodyVersion).getString("char_a_p4"));
-        BODY_SPRITESHEET_PATHS.put("BOW1", base.get("body").get(BodyType).get(BodyVersion).getString("char_a_pBOW1"));
-        BODY_SPRITESHEET_PATHS.put("BOW2", base.get("body").get(BodyType).get(BodyVersion).getString("char_a_pBOW2"));
-        BODY_SPRITESHEET_PATHS.put("BOW3", base.get("body").get(BodyType).get(BodyVersion).getString("char_a_pBOW3"));
-        BODY_SPRITESHEET_PATHS.put("ONE1", base.get("body").get(BodyType).get(BodyVersion).getString("char_a_pONE1"));
-        BODY_SPRITESHEET_PATHS.put("ONE2", base.get("body").get(BodyType).get(BodyVersion).getString("char_a_pONE2"));
-        BODY_SPRITESHEET_PATHS.put("ONE3", base.get("body").get(BodyType).get(BodyVersion).getString("char_a_pONE3"));
-        BODY_SPRITESHEET_PATHS.put("POL1", base.get("body").get(BodyType).get(BodyVersion).getString("char_a_pPOL1"));
-        BODY_SPRITESHEET_PATHS.put("POL2", base.get("body").get(BodyType).get(BodyVersion).getString("char_a_pPOL2"));
-        BODY_SPRITESHEET_PATHS.put("POL3", base.get("body").get(BodyType).get(BodyVersion).getString("char_a_pPOL3"));
+        // Lecture du fichier JSON des constantes
+        FileHandle fileConstants = Gdx.files.internal("BDD/constants.json");
+        JsonReader jsonReaderConstants = new JsonReader();
+        JsonValue baseConstants = jsonReaderConstants.parse(fileConstants);
 
-        OUTFIT_SPRITESHEET_PATHS.put("P1", base.get("1out").get(OutfitType).get(OutfitVersion).getString("char_a_p1"));
-        OUTFIT_SPRITESHEET_PATHS.put("P2", base.get("1out").get(OutfitType).get(OutfitVersion).getString("char_a_p2"));
-        OUTFIT_SPRITESHEET_PATHS.put("P3", base.get("1out").get(OutfitType).get(OutfitVersion).getString("char_a_p3"));
-        OUTFIT_SPRITESHEET_PATHS.put("P4", base.get("1out").get(OutfitType).get(OutfitVersion).getString("char_a_p4"));
-        OUTFIT_SPRITESHEET_PATHS.put("BOW1", base.get("1out").get(OutfitType).get(OutfitVersion).getString("char_a_pBOW1"));
-        OUTFIT_SPRITESHEET_PATHS.put("BOW2", base.get("1out").get(OutfitType).get(OutfitVersion).getString("char_a_pBOW2"));
-        OUTFIT_SPRITESHEET_PATHS.put("BOW3", base.get("1out").get(OutfitType).get(OutfitVersion).getString("char_a_pBOW3"));
-        OUTFIT_SPRITESHEET_PATHS.put("ONE1", base.get("1out").get(OutfitType).get(OutfitVersion).getString("char_a_pONE1"));
-        OUTFIT_SPRITESHEET_PATHS.put("ONE2", base.get("1out").get(OutfitType).get(OutfitVersion).getString("char_a_pONE2"));
-        OUTFIT_SPRITESHEET_PATHS.put("ONE3", base.get("1out").get(OutfitType).get(OutfitVersion).getString("char_a_pONE3"));
-        OUTFIT_SPRITESHEET_PATHS.put("POL1", base.get("1out").get(OutfitType).get(OutfitVersion).getString("char_a_pPOL1"));
-        OUTFIT_SPRITESHEET_PATHS.put("POL2", base.get("1out").get(OutfitType).get(OutfitVersion).getString("char_a_pPOL2"));
-        OUTFIT_SPRITESHEET_PATHS.put("POL3", base.get("1out").get(OutfitType).get(OutfitVersion).getString("char_a_pPOL3"));
+        // Accès à la section spritesheets dans constants.json
+        JsonValue spritesheets = baseConstants.get("spritesheets");
 
-        HAIR_SPRITESHEET_PATHS.put("P1", base.get("4har").get(HairType).get(HairVersion).getString("char_a_p1"));
-        HAIR_SPRITESHEET_PATHS.put("P2", base.get("4har").get(HairType).get(HairVersion).getString("char_a_p2"));
-        HAIR_SPRITESHEET_PATHS.put("P3", base.get("4har").get(HairType).get(HairVersion).getString("char_a_p3"));
-        HAIR_SPRITESHEET_PATHS.put("P4", base.get("4har").get(HairType).get(HairVersion).getString("char_a_p4"));
-        HAIR_SPRITESHEET_PATHS.put("BOW1", base.get("4har").get(HairType).get(HairVersion).getString("char_a_pBOW1"));
-        HAIR_SPRITESHEET_PATHS.put("BOW2", base.get("4har").get(HairType).get(HairVersion).getString("char_a_pBOW2"));
-        HAIR_SPRITESHEET_PATHS.put("BOW3", base.get("4har").get(HairType).get(HairVersion).getString("char_a_pBOW3"));
-        HAIR_SPRITESHEET_PATHS.put("ONE1", base.get("4har").get(HairType).get(HairVersion).getString("char_a_pONE1"));
-        HAIR_SPRITESHEET_PATHS.put("ONE2", base.get("4har").get(HairType).get(HairVersion).getString("char_a_pONE2"));
-        HAIR_SPRITESHEET_PATHS.put("ONE3", base.get("4har").get(HairType).get(HairVersion).getString("char_a_pONE3"));
-        HAIR_SPRITESHEET_PATHS.put("POL1", base.get("4har").get(HairType).get(HairVersion).getString("char_a_pPOL1"));
-        HAIR_SPRITESHEET_PATHS.put("POL2", base.get("4har").get(HairType).get(HairVersion).getString("char_a_pPOL2"));
-        HAIR_SPRITESHEET_PATHS.put("POL3", base.get("4har").get(HairType).get(HairVersion).getString("char_a_pPOL3"));
+        // Remplissage des maps en itérant sur chaque catégorie de spritesheets
+        populateMap(basePlayer, spritesheets.get("body"), BODY_SPRITESHEET_PATHS, "body");
+        populateMap(basePlayer, spritesheets.get("outfit"), OUTFIT_SPRITESHEET_PATHS, "outfit");
+        populateMap(basePlayer, spritesheets.get("hair"), HAIR_SPRITESHEET_PATHS, "hair");
+        populateMap(basePlayer, spritesheets.get("hat"), HAT_SPRITESHEET_PATHS, "hat");
 
-        HAT_SPRITESHEET_PATHS.put("P1", base.get("5hat").get(HatType).get(HatVersion).getString("char_a_p1"));
-        HAT_SPRITESHEET_PATHS.put("P2", base.get("5hat").get(HatType).get(HatVersion).getString("char_a_p2"));
-        HAT_SPRITESHEET_PATHS.put("P3", base.get("5hat").get(HatType).get(HatVersion).getString("char_a_p3"));
-        HAT_SPRITESHEET_PATHS.put("P4", base.get("5hat").get(HatType).get(HatVersion).getString("char_a_p4"));
-        HAT_SPRITESHEET_PATHS.put("BOW1", base.get("5hat").get(HatType).get(HatVersion).getString("char_a_pBOW1"));
-        HAT_SPRITESHEET_PATHS.put("BOW2", base.get("5hat").get(HatType).get(HatVersion).getString("char_a_pBOW2"));
-        HAT_SPRITESHEET_PATHS.put("BOW3", base.get("5hat").get(HatType).get(HatVersion).getString("char_a_pBOW3"));
-        HAT_SPRITESHEET_PATHS.put("ONE1", base.get("5hat").get(HatType).get(HatVersion).getString("char_a_pONE1"));
-        HAT_SPRITESHEET_PATHS.put("ONE2", base.get("5hat").get(HatType).get(HatVersion).getString("char_a_pONE2"));
-        HAT_SPRITESHEET_PATHS.put("ONE3", base.get("5hat").get(HatType).get(HatVersion).getString("char_a_pONE3"));
-        HAT_SPRITESHEET_PATHS.put("POL1", base.get("5hat").get(HatType).get(HatVersion).getString("char_a_pPOL1"));
-        HAT_SPRITESHEET_PATHS.put("POL2", base.get("5hat").get(HatType).get(HatVersion).getString("char_a_pPOL2"));
-        HAT_SPRITESHEET_PATHS.put("POL3", base.get("5hat").get(HatType).get(HatVersion).getString("char_a_pPOL3"));
+        // Remplissage des maps pour les outils (catégories imbriquées)
+        populateNestedMap(basePlayer, spritesheets.get("tool1"), TOOL1_SPRITESHEET_PATHS, "tool1");
+        populateNestedMap(basePlayer, spritesheets.get("tool2"), TOOL2_SPRITESHEET_PATHS, "tool2");
 
-        // Chemins des sprites des outils (TOOL1)
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("P2", k -> new HashMap<>()).put("BNET", base.get("6tla").get("char_a_p2").get("bnet").getString("v01"));
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("P2", k -> new HashMap<>()).put("FARM", base.get("6tla").get("char_a_p2").get("farm").getString("v01"));
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("P2", k -> new HashMap<>()).put("MINE", base.get("6tla").get("char_a_p2").get("mine").getString("v01"));
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("P2", k -> new HashMap<>()).put("WOOD", base.get("6tla").get("char_a_p2").get("wood").getString("v01"));
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("P3", k -> new HashMap<>()).put("RODA", base.get("6tla").get("char_a_p3").get("roda").getString("v01"));
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("P4", k -> new HashMap<>()).put("FARM", base.get("6tla").get("char_a_p4").get("farm").getString("v01"));
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("P4", k -> new HashMap<>()).put("SMTH", base.get("6tla").get("char_a_p4").get("smth").getString("v01"));
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("P4", k -> new HashMap<>()).put("WOOD", base.get("6tla").get("char_a_p4").get("wood").getString("v01"));
+        // Remplissage des animations
+        JsonValue animations = baseConstants.get("animations");
+        populateAnimations(animations);
 
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("BOW1", k -> new HashMap<>()).put("BO01", base.get("6tla").get("char_a_pBOW1").get("bo01").getString(bo01Version));
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("BOW1", k -> new HashMap<>()).put("BO02", base.get("6tla").get("char_a_pBOW1").get("bo02").getString(bo02Version));
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("BOW1", k -> new HashMap<>()).put("BO03", base.get("6tla").get("char_a_pBOW1").get("bo03").getString(bo03Version));
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("BOW2", k -> new HashMap<>()).put("BO01", base.get("6tla").get("char_a_pBOW2").get("bo01").getString(bo01Version));
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("BOW2", k -> new HashMap<>()).put("BO02", base.get("6tla").get("char_a_pBOW2").get("bo02").getString(bo02Version));
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("BOW2", k -> new HashMap<>()).put("BO03", base.get("6tla").get("char_a_pBOW2").get("bo03").getString(bo03Version));
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("BOW3", k -> new HashMap<>()).put("BO01", base.get("6tla").get("char_a_pBOW3").get("bo01").getString(bo01Version));
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("BOW3", k -> new HashMap<>()).put("BO02", base.get("6tla").get("char_a_pBOW3").get("bo02").getString(bo02Version));
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("BOW3", k -> new HashMap<>()).put("BO03", base.get("6tla").get("char_a_pBOW3").get("bo03").getString(bo03Version));
+        // Remplissage des attaques
+        JsonValue attacks = baseConstants.get("attacks");
+        populateAttacks(attacks);
 
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("ONE1", k -> new HashMap<>()).put("AX01", base.get("6tla").get("char_a_pONE1").get("ax01").getString(ax01Version));
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("ONE1", k -> new HashMap<>()).put("MC01", base.get("6tla").get("char_a_pONE1").get("mc01").getString(mc01Version));
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("ONE1", k -> new HashMap<>()).put("SW01", base.get("6tla").get("char_a_pONE1").get("sw01").getString(sw01Version));
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("ONE1", k -> new HashMap<>()).put("SW02", base.get("6tla").get("char_a_pONE1").get("sw02").getString(sw02Version));
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("ONE2", k -> new HashMap<>()).put("AX01", base.get("6tla").get("char_a_pONE2").get("ax01").getString(ax01Version));
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("ONE2", k -> new HashMap<>()).put("MC01", base.get("6tla").get("char_a_pONE2").get("mc01").getString(mc01Version));
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("ONE2", k -> new HashMap<>()).put("SW01", base.get("6tla").get("char_a_pONE2").get("sw01").getString(sw01Version));
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("ONE2", k -> new HashMap<>()).put("SW02", base.get("6tla").get("char_a_pONE2").get("sw02").getString(sw02Version));
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("ONE3", k -> new HashMap<>()).put("AX01", base.get("6tla").get("char_a_pONE3").get("ax01").getString(ax01Version));
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("ONE3", k -> new HashMap<>()).put("MC01", base.get("6tla").get("char_a_pONE3").get("mc01").getString(mc01Version));
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("ONE3", k -> new HashMap<>()).put("SW01", base.get("6tla").get("char_a_pONE3").get("sw01").getString(sw01Version));
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("ONE3", k -> new HashMap<>()).put("SW02", base.get("6tla").get("char_a_pONE3").get("sw02").getString(sw02Version));
+        // Remplissage des outils
+        JsonValue tools = baseConstants.get("tools");
+        populateTools(tools);
+    }
 
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("POL1", k -> new HashMap<>()).put("HB01", base.get("6tla").get("char_a_pPOL1").get("hb01").getString(hb01Version));
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("POL1", k -> new HashMap<>()).put("SP01", base.get("6tla").get("char_a_pPOL1").get("sp01").getString(sp01Version));
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("POL1", k -> new HashMap<>()).put("SP02", base.get("6tla").get("char_a_pPOL1").get("sp02").getString(sp02Version));
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("POL2", k -> new HashMap<>()).put("HB01", base.get("6tla").get("char_a_pPOL2").get("hb01").getString(hb01Version));
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("POL2", k -> new HashMap<>()).put("SP01", base.get("6tla").get("char_a_pPOL2").get("sp01").getString(sp01Version));
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("POL2", k -> new HashMap<>()).put("SP02", base.get("6tla").get("char_a_pPOL2").get("sp02").getString(sp02Version));
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("POL3", k -> new HashMap<>()).put("HB01", base.get("6tla").get("char_a_pPOL3").get("hb01").getString(hb01Version));
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("POL3", k -> new HashMap<>()).put("SP01", base.get("6tla").get("char_a_pPOL3").get("sp01").getString(sp01Version));
-        TOOL1_SPRITESHEET_PATHS.computeIfAbsent("POL3", k -> new HashMap<>()).put("SP02", base.get("6tla").get("char_a_pPOL3").get("sp02").getString(sp02Version));
+    /**
+     * Méthode utilitaire pour remplir une map de spritesheet paths pour les catégories simples.
+     *
+     * @param basePlayer    JsonValue contenant les données du joueur.
+     * @param categoryPaths JsonValue contenant les chemins pour une catégorie spécifique.
+     * @param targetMap     Map cible à remplir avec les chemins des spritesheets.
+     * @param categoryName  Nom de la catégorie (pour les messages d'erreur).
+     */
+    private static void populateMap(JsonValue basePlayer, JsonValue categoryPaths, Map<String, String> targetMap, String categoryName) {
+        for (JsonValue entry = categoryPaths.child; entry != null; entry = entry.next) {
+            String key = entry.name; // Par exemple "P1", "BOW1", etc.
+            JsonValue pathArray = entry; // Tableau des segments de chemin
 
-        // Chemins des sprites des outils (TOOL2)
-        TOOL2_SPRITESHEET_PATHS.computeIfAbsent("BOW1", k -> new HashMap<>()).put("QV01", base.get("7tlb").get("char_a_pBOW1").get("qv01").getString(qv01Version));
-        TOOL2_SPRITESHEET_PATHS.computeIfAbsent("BOW2", k -> new HashMap<>()).put("QV01", base.get("7tlb").get("char_a_pBOW2").get("qv01").getString(qv01Version));
-        TOOL2_SPRITESHEET_PATHS.computeIfAbsent("BOW3", k -> new HashMap<>()).put("QV01", base.get("7tlb").get("char_a_pBOW3").get("qv01").getString(qv01Version));
+            // Naviguer dans basePlayer en suivant le chemin spécifié dans pathArray
+            String path = navigatePath(basePlayer, pathArray);
+            if (path != null) {
+                targetMap.put(key, path);
+            } else {
+                // Gérer les erreurs ou les chemins manquants si nécessaire
+                System.err.println("Chemin invalide ou valeur non trouvée pour la clé : " + key + " dans la catégorie : " + categoryName);
+            }
+        }
+    }
 
-        TOOL2_SPRITESHEET_PATHS.computeIfAbsent("ONE1", k -> new HashMap<>()).put("SH01", base.get("7tlb").get("char_a_pONE1").get("sh01").getString(sh01Version));
-        TOOL2_SPRITESHEET_PATHS.computeIfAbsent("ONE1", k -> new HashMap<>()).put("SH02", base.get("7tlb").get("char_a_pONE1").get("sh02").getString(sh02Version));
-        TOOL2_SPRITESHEET_PATHS.computeIfAbsent("ONE1", k -> new HashMap<>()).put("SH03", base.get("7tlb").get("char_a_pONE1").get("sh03").getString(sh03Version));
-        TOOL2_SPRITESHEET_PATHS.computeIfAbsent("ONE2", k -> new HashMap<>()).put("SH01", base.get("7tlb").get("char_a_pONE2").get("sh01").getString(sh01Version));
-        TOOL2_SPRITESHEET_PATHS.computeIfAbsent("ONE2", k -> new HashMap<>()).put("SH02", base.get("7tlb").get("char_a_pONE2").get("sh02").getString(sh02Version));
-        TOOL2_SPRITESHEET_PATHS.computeIfAbsent("ONE2", k -> new HashMap<>()).put("SH03", base.get("7tlb").get("char_a_pONE2").get("sh03").getString(sh03Version));
-        TOOL2_SPRITESHEET_PATHS.computeIfAbsent("ONE3", k -> new HashMap<>()).put("SH01", base.get("7tlb").get("char_a_pONE3").get("sh01").getString(sh01Version));
-        TOOL2_SPRITESHEET_PATHS.computeIfAbsent("ONE3", k -> new HashMap<>()).put("SH02", base.get("7tlb").get("char_a_pONE3").get("sh02").getString(sh02Version));
-        TOOL2_SPRITESHEET_PATHS.computeIfAbsent("ONE3", k -> new HashMap<>()).put("SH03", base.get("7tlb").get("char_a_pONE3").get("sh03").getString(sh03Version));
+    /**
+     * Méthode utilitaire pour remplir une map de spritesheet paths pour les catégories imbriquées.
+     *
+     * @param basePlayer    JsonValue contenant les données du joueur.
+     * @param categoryPaths JsonValue contenant les chemins pour une catégorie spécifique.
+     * @param targetMap     Map cible à remplir avec les chemins des spritesheets imbriqués.
+     * @param categoryName  Nom de la catégorie (pour les messages d'erreur).
+     */
+    private static void populateNestedMap(JsonValue basePlayer, JsonValue categoryPaths, Map<String, Map<String, String>> targetMap, String categoryName) {
+        for (JsonValue firstLevel = categoryPaths.child; firstLevel != null; firstLevel = firstLevel.next) {
+            String firstKey = firstLevel.name; // Par exemple "P2", "BOW1", etc.
+            JsonValue secondLevel = firstLevel;
 
-        // Indices des frames et des timings pour les animations debout dans les 4 directions
-        FRAME_INDICES.put("STANDING_UP", new int[][] {{1, 0}});
-        FRAME_TIMINGS.put("STANDING_UP", new float[] {1f});
-        FRAME_INDICES.put("STANDING_DOWN", new int[][] {{0, 0}});
-        FRAME_TIMINGS.put("STANDING_DOWN", new float[] {1f});
-        FRAME_INDICES.put("STANDING_LEFT", new int[][] {{3, 0}});
-        FRAME_TIMINGS.put("STANDING_LEFT", new float[] {1f});
-        FRAME_INDICES.put("STANDING_RIGHT", new int[][] {{2, 0}});
-        FRAME_TIMINGS.put("STANDING_RIGHT", new float[] {1f});
+            if (secondLevel == null) continue;
 
-        // Indices des frames et des timings pour les animations de marche dans les 4 directions
-        FRAME_INDICES.put("WALKING_UP", new int[][] {{5, 0}, {5, 1}, {5, 2}, {5, 3}, {5, 4}, {5, 5}});
-        FRAME_TIMINGS.put("WALKING_UP", new float[] {0.135f, 0.135f, 0.135f, 0.135f, 0.135f, 0.135f});
-        FRAME_INDICES.put("WALKING_DOWN", new int[][] {{4, 0}, {4, 1}, {4, 2}, {4, 3}, {4, 4}, {4, 5}});
-        FRAME_TIMINGS.put("WALKING_DOWN", new float[] {0.135f, 0.135f, 0.135f, 0.135f, 0.135f, 0.135f});
-        FRAME_INDICES.put("WALKING_LEFT", new int[][] {{7, 0}, {7, 1}, {7, 2}, {7, 3}, {7, 4}, {7, 5}});
-        FRAME_TIMINGS.put("WALKING_LEFT", new float[] {0.135f, 0.135f, 0.135f, 0.135f, 0.135f, 0.135f});
-        FRAME_INDICES.put("WALKING_RIGHT", new int[][] {{6, 0}, {6, 1}, {6, 2}, {6, 3}, {6, 4}, {6, 5}});
-        FRAME_TIMINGS.put("WALKING_RIGHT", new float[] {0.135f, 0.135f, 0.135f, 0.135f, 0.135f, 0.135f});
+            // Initialiser la sous-map si elle n'existe pas
+            Map<String, String> subMap = targetMap.computeIfAbsent(firstKey, k -> new HashMap<>());
 
-        // Indices des frames et des timings pour les animations de course dans les 4 directions
-        FRAME_INDICES.put("RUNNING_UP", new int[][] {{5, 0}, {5, 1}, {5, 6}, {5, 3}, {5, 4}, {5, 7}});
-        FRAME_TIMINGS.put("RUNNING_UP", new float[] {0.080f, 0.055f, 0.115f, 0.080f, 0.055f, 0.115f});
-        FRAME_INDICES.put("RUNNING_DOWN", new int[][] {{4, 0}, {4, 1}, {4, 6}, {4, 3}, {4, 4}, {4, 7}});
-        FRAME_TIMINGS.put("RUNNING_DOWN", new float[] {0.080f, 0.055f, 0.115f, 0.080f, 0.055f, 0.115f});
-        FRAME_INDICES.put("RUNNING_LEFT", new int[][] {{7, 0}, {7, 1}, {7, 6}, {7, 3}, {7, 4}, {7, 7}});
-        FRAME_TIMINGS.put("RUNNING_LEFT", new float[] {0.080f, 0.055f, 0.115f, 0.080f, 0.055f, 0.115f});
-        FRAME_INDICES.put("RUNNING_RIGHT", new int[][] {{6, 0}, {6, 1}, {6, 6}, {6, 3}, {6, 4}, {6, 7}});
-        FRAME_TIMINGS.put("RUNNING_RIGHT", new float[] {0.080f, 0.055f, 0.115f, 0.080f, 0.055f, 0.115f});
+            for (JsonValue entry = secondLevel.child; entry != null; entry = entry.next) {
+                String secondKey = entry.name; // Par exemple "BNET", "FARM", etc.
+                JsonValue pathArray = entry; // Tableau des segments de chemin
 
-        // Indices des frames et des timings pour les animations de l'attaque (ONE_SLASH1) dans les 4 directions
-        FRAME_INDICES.put("ONE_SLASH1_UP", new int[][] {{1, 0}, {1, 1}, {1, 2}, {1, 3}});
-        FRAME_TIMINGS.put("ONE_SLASH1_UP", new float[] {0.075f, 0.075f, 0.075f, 0.075f});
-        FRAME_INDICES.put("ONE_SLASH1_DOWN", new int[][] {{0, 0}, {0, 1}, {0, 2}, {0, 3}});
-        FRAME_TIMINGS.put("ONE_SLASH1_DOWN", new float[] {0.075f, 0.075f, 0.075f, 0.075f});
-        FRAME_INDICES.put("ONE_SLASH1_LEFT", new int[][] {{3, 0}, {3, 1}, {3, 2}, {3, 3}});
-        FRAME_TIMINGS.put("ONE_SLASH1_LEFT", new float[] {0.075f, 0.075f, 0.075f, 0.075f});
-        FRAME_INDICES.put("ONE_SLASH1_RIGHT", new int[][] {{2, 0}, {2, 1}, {2, 2}, {2, 3}});
-        FRAME_TIMINGS.put("ONE_SLASH1_RIGHT", new float[] {0.075f, 0.075f, 0.075f, 0.075f});
-        STATES_REQUIRING_TOOLS.add("ONE_SLASH1_UP");
-        STATES_REQUIRING_TOOLS.add("ONE_SLASH1_DOWN");
-        STATES_REQUIRING_TOOLS.add("ONE_SLASH1_LEFT");
-        STATES_REQUIRING_TOOLS.add("ONE_SLASH1_RIGHT");
+                // Naviguer dans basePlayer en suivant le chemin spécifié dans pathArray
+                String path = navigatePath(basePlayer, pathArray);
+                if (path != null) {
+                    subMap.put(secondKey, path);
+                } else {
+                    // Gérer les erreurs ou les chemins manquants si nécessaire
+                    System.err.println("Chemin invalide ou valeur non trouvée pour la clé : " + secondKey + " dans la sous-catégorie : " + firstKey + " de la catégorie : " + categoryName);
+                }
+            }
+        }
+    }
 
-        // Indices des frames et des timings pour les animations de l'attaque (ONE_SLASH2) dans les 4 directions
-        FRAME_INDICES.put("ONE_SLASH2_UP", new int[][] {{1, 4}, {1, 5}, {1, 6}, {1, 7}});
-        FRAME_TIMINGS.put("ONE_SLASH2_UP", new float[] {0.075f, 0.075f, 0.075f, 0.075f});
-        FRAME_INDICES.put("ONE_SLASH2_DOWN", new int[][] {{0, 4}, {0, 5}, {0, 6}, {0, 7}});
-        FRAME_TIMINGS.put("ONE_SLASH2_DOWN", new float[] {0.075f, 0.075f, 0.075f, 0.075f});
-        FRAME_INDICES.put("ONE_SLASH2_LEFT", new int[][] {{3, 4}, {3, 5}, {3, 6}, {3, 7}});
-        FRAME_TIMINGS.put("ONE_SLASH2_LEFT", new float[] {0.075f, 0.075f, 0.075f, 0.075f});
-        FRAME_INDICES.put("ONE_SLASH2_RIGHT", new int[][] {{2, 4}, {2, 5}, {2, 6}, {2, 7}});
-        FRAME_TIMINGS.put("ONE_SLASH2_RIGHT", new float[] {0.075f, 0.075f, 0.075f, 0.075f});
-        STATES_REQUIRING_TOOLS.add("ONE_SLASH2_UP");
-        STATES_REQUIRING_TOOLS.add("ONE_SLASH2_DOWN");
-        STATES_REQUIRING_TOOLS.add("ONE_SLASH2_LEFT");
-        STATES_REQUIRING_TOOLS.add("ONE_SLASH2_RIGHT");
+    /**
+     * Méthode utilitaire pour naviguer dans le JsonValue en suivant un chemin spécifié par un tableau.
+     *
+     * @param basePlayer JsonValue de base (Player.json).
+     * @param pathArray  JsonValue représentant le tableau des segments de chemin.
+     * @return La chaîne de caractères finale si le chemin est valide, sinon null.
+     */
+    private static String navigatePath(JsonValue basePlayer, JsonValue pathArray) {
+        JsonValue current = basePlayer;
+        for (JsonValue pathElement = pathArray.child; pathElement != null; pathElement = pathElement.next) {
+            current = current.get(pathElement.asString());
+            if (current == null) {
+                return null; // Chemin invalide
+            }
+        }
+        return current.isString() ? current.asString() : null;
+    }
 
-        // Indices des frames et des timings pour les animations de blocage (ONE_DODGE) dans les 4 directions
-        FRAME_INDICES.put("ONE_DODGE_UP", new int[][] {{1, 4}});
-        FRAME_TIMINGS.put("ONE_DODGE_UP", new float[] {1f});
-        FRAME_INDICES.put("ONE_DODGE_DOWN", new int[][] {{0, 4}});
-        FRAME_TIMINGS.put("ONE_DODGE_DOWN", new float[] {1f});
-        FRAME_INDICES.put("ONE_DODGE_LEFT", new int[][] {{3, 4}});
-        FRAME_TIMINGS.put("ONE_DODGE_LEFT", new float[] {1f});
-        FRAME_INDICES.put("ONE_DODGE_RIGHT", new int[][] {{2, 4}});
-        FRAME_TIMINGS.put("ONE_DODGE_RIGHT", new float[] {1f});
-        STATES_REQUIRING_TOOLS.add("ONE_DODGE_UP");
-        STATES_REQUIRING_TOOLS.add("ONE_DODGE_DOWN");
-        STATES_REQUIRING_TOOLS.add("ONE_DODGE_LEFT");
-        STATES_REQUIRING_TOOLS.add("ONE_DODGE_RIGHT");
+    /**
+     * Méthode utilitaire pour remplir les animations.
+     *
+     * @param animations JsonValue contenant les animations.
+     */
+    private static void populateAnimations(JsonValue animations) {
+        for (JsonValue animEntry = animations.child; animEntry != null; animEntry = animEntry.next) {
+            String animName = animEntry.name; // Par exemple "STANDING_UP", "WALKING_UP", etc.
 
-        // Indices des frames et des timings pour les animations de l'attaque (POL_SLASH1) dans les 4 directions
-        FRAME_INDICES.put("POL_SLASH1_UP", new int[][] {{1, 0}, {1, 1}, {1, 2}, {1, 3}});
-        FRAME_TIMINGS.put("POL_SLASH1_UP", new float[] {0.075f, 0.075f, 0.075f, 0.075f});
-        FRAME_INDICES.put("POL_SLASH1_DOWN", new int[][] {{0, 0}, {0, 1}, {0, 2}, {0, 3}});
-        FRAME_TIMINGS.put("POL_SLASH1_DOWN", new float[] {0.075f, 0.075f, 0.075f, 0.075f});
-        FRAME_INDICES.put("POL_SLASH1_LEFT", new int[][] {{3, 0}, {3, 1}, {3, 2}, {3, 3}});
-        FRAME_TIMINGS.put("POL_SLASH1_LEFT", new float[] {0.075f, 0.075f, 0.075f, 0.075f});
-        FRAME_INDICES.put("POL_SLASH1_RIGHT", new int[][] {{2, 0}, {2, 1}, {2, 2}, {2, 3}});
-        FRAME_TIMINGS.put("POL_SLASH1_RIGHT", new float[] {0.075f, 0.075f, 0.075f, 0.075f});
-        STATES_REQUIRING_TOOLS.add("POL_SLASH1_UP");
-        STATES_REQUIRING_TOOLS.add("POL_SLASH1_DOWN");
-        STATES_REQUIRING_TOOLS.add("POL_SLASH1_LEFT");
-        STATES_REQUIRING_TOOLS.add("POL_SLASH1_RIGHT");
+            // Récupérer les frames et les timings
+            JsonValue frames = animEntry.get("frames");
+            JsonValue timings = animEntry.get("timings");
 
-        // Indices des frames et des timings pour les animations de l'attaque ("BOW_SHOOT1") dans les 4 directions
-        FRAME_INDICES.put("BOW_SHOOT1_UP", new int[][] {{5, 0}, {5, 1}, {5, 2}, {5, 3}, {5, 4}, {5, 5}, {5, 6}, {5, 7}});
-        FRAME_TIMINGS.put("BOW_SHOOT1_UP", new float[] {0.180f, 0.100f, 0.100f, 0.100f, 0.400f, 0.050f, 0.050f, 0.100f});
-        FRAME_INDICES.put("BOW_SHOOT1_DOWN", new int[][] {{4, 0}, {4, 1}, {4, 2}, {4, 3}, {4, 4}, {4, 5}, {4, 6}, {4, 7}});
-        FRAME_TIMINGS.put("BOW_SHOOT1_DOWN", new float[] {0.180f, 0.100f, 0.100f, 0.100f, 0.400f, 0.050f, 0.050f, 0.100f});
-        FRAME_INDICES.put("BOW_SHOOT1_LEFT", new int[][] {{7, 0}, {7, 1}, {7, 2}, {7, 3}, {7, 4}, {7, 5}, {7, 6}, {7, 7}});
-        FRAME_TIMINGS.put("BOW_SHOOT1_LEFT", new float[] {0.180f, 0.100f, 0.100f, 0.100f, 0.400f, 0.050f, 0.050f, 0.100f});
-        FRAME_INDICES.put("BOW_SHOOT1_RIGHT", new int[][] {{6, 0}, {6, 1}, {6, 2}, {6, 3}, {6, 4}, {6, 5}, {6, 6}, {6, 7}});
-        FRAME_TIMINGS.put("BOW_SHOOT1_RIGHT", new float[] {0.180f, 0.100f, 0.100f, 0.100f, 0.400f, 0.050f, 0.050f, 0.100f});
-        STATES_REQUIRING_TOOLS.add("BOW_SHOOT1_UP");
-        STATES_REQUIRING_TOOLS.add("BOW_SHOOT1_DOWN");
-        STATES_REQUIRING_TOOLS.add("BOW_SHOOT1_LEFT");
-        STATES_REQUIRING_TOOLS.add("BOW_SHOOT1_RIGHT");
+            // Convertir les frames en int[][]
+            int[][] frameIndices = new int[frames.size][2];
+            for (int i = 0; i < frames.size; i++) {
+                JsonValue frame = frames.get(i);
+                frameIndices[i][0] = frame.get(0).asInt();
+                frameIndices[i][1] = frame.get(1).asInt();
+            }
 
-            // Définition de l'attaque "ONE_SLASH1"
-        Map<String, AnimationState> oneSlash1States = new HashMap<>();
-        oneSlash1States.put("UP", AnimationState.ONE_SLASH1_UP);
-        oneSlash1States.put("DOWN", AnimationState.ONE_SLASH1_DOWN);
-        oneSlash1States.put("LEFT", AnimationState.ONE_SLASH1_LEFT);
-        oneSlash1States.put("RIGHT", AnimationState.ONE_SLASH1_RIGHT);
-        ATTACKS.put("ONE_SLASH1", new Attack(
-            "ONE_SLASH1", "Fente tranchante", "ONE3", oneSlash1States,
-            0.3f, 10f, 1.0f, 80f, 40f
-        ));
+            // Convertir les timings en float[]
+            float[] frameTimings = new float[timings.size];
+            for (int i = 0; i < timings.size; i++) {
+                frameTimings[i] = timings.get(i).asFloat();
+            }
 
-        // Définition de l'attaque "ONE_SLASH2"
-        Map<String, AnimationState> oneSlash2States = new HashMap<>();
-        oneSlash2States.put("UP", AnimationState.ONE_SLASH2_UP);
-        oneSlash2States.put("DOWN", AnimationState.ONE_SLASH2_DOWN);
-        oneSlash2States.put("LEFT", AnimationState.ONE_SLASH2_LEFT);
-        oneSlash2States.put("RIGHT", AnimationState.ONE_SLASH2_RIGHT);
-        ATTACKS.put("ONE_SLASH2", new Attack(
-            "ONE_SLASH2", "Fente tranchante", "ONE3", oneSlash2States,
-            0.3f, 10f, 1.0f, 80f, 40f
-        ));
+            // Remplir les maps FRAME_INDICES et FRAME_TIMINGS
+            FRAME_INDICES.put(animName, frameIndices);
+            FRAME_TIMINGS.put(animName, frameTimings);
+        }
+    }
 
-        // Définition de l'attaque "ONE_DODGE"
-        Map<String, AnimationState> oneDodgeStates = new HashMap<>();
-        oneDodgeStates.put("UP", AnimationState.ONE_DODGE_UP);
-        oneDodgeStates.put("DOWN", AnimationState.ONE_DODGE_DOWN);
-        oneDodgeStates.put("LEFT", AnimationState.ONE_DODGE_LEFT);
-        oneDodgeStates.put("RIGHT", AnimationState.ONE_DODGE_RIGHT);
-        ATTACKS.put("ONE_DODGE", new Attack(
-            "ONE_DODGE", "Blocage", "ONE1", oneDodgeStates,
-            0.3f, 0f, 0.5f, 50f, 25f
-        ));
+    /**
+     * Méthode utilitaire pour remplir les attaques.
+     *
+     * @param attacks JsonValue contenant les attaques.
+     */
+    private static void populateAttacks(JsonValue attacks) {
+        for (JsonValue attackEntry = attacks.child; attackEntry != null; attackEntry = attackEntry.next) {
+            String attackKey = attackEntry.name; // Par exemple "ONE_SLASH1", "POL_SLASH1", etc.
 
-        // Définition de l'attaque "POL_SLASH1"
-        Map<String, AnimationState> polSlash1States = new HashMap<>();
-        polSlash1States.put("UP", AnimationState.POL_SLASH1_UP);
-        polSlash1States.put("DOWN", AnimationState.POL_SLASH1_DOWN);
-        polSlash1States.put("LEFT", AnimationState.POL_SLASH1_LEFT);
-        polSlash1States.put("RIGHT", AnimationState.POL_SLASH1_RIGHT);
-        ATTACKS.put("POL_SLASH1", new Attack(
-            "POL_SLASH1", "Coup tranchante", "POL3", polSlash1States,
-            0.3f, 15f, 1.0f, 150f, 50f
-        ));
+            String id = attackEntry.get("id").asString();
+            String name = attackEntry.get("name").asString();
+            String toolId = attackEntry.get("toolId").asString();
 
-        // Définition de l'attaque "BOW_SHOOT1"
-        Map<String, AnimationState> bowShoot1States = new HashMap<>();
-        bowShoot1States.put("UP", AnimationState.BOW_SHOOT1_UP);
-        bowShoot1States.put("DOWN", AnimationState.BOW_SHOOT1_DOWN);
-        bowShoot1States.put("LEFT", AnimationState.BOW_SHOOT1_LEFT);
-        bowShoot1States.put("RIGHT", AnimationState.BOW_SHOOT1_RIGHT);
-        ATTACKS.put("BOW_SHOOT1", new Attack(
-            "BOW_SHOOT1", "Tir à l'arc", "BOW3", bowShoot1States,
-            1.08f, 0f, 2.2f, 0f, 0f
-        ));
+            // Récupérer les états
+            JsonValue statesJson = attackEntry.get("states");
+            Map<String, AnimationState> states = new HashMap<>();
+            for (JsonValue stateEntry = statesJson.child; stateEntry != null; stateEntry = stateEntry.next) {
+                String direction = stateEntry.name.toUpperCase(); // "up" -> "UP"
+                String stateName = stateEntry.asString();
+                AnimationState state = AnimationState.valueOf(stateName);
+                states.put(direction, state);
+            }
 
-        // Définition de l'outil
-        TOOLS.put("AX01", new Tool("AX01", "Hache", "AX01", Arrays.asList("ONE_SLASH1", "ONE_SLASH2")));
-        TOOLS.put("MC01", new Tool("MC01", "Marteau de guerre", "MC01", Arrays.asList("ONE_SLASH1", "ONE_SLASH2")));
-        TOOLS.put("SW01", new Tool("SW01", "Petite épée", "SW01", Arrays.asList("ONE_SLASH1", "ONE_SLASH2")));
-        TOOLS.put("SW02", new Tool("SW02", "Grosse épée", "SW02", Arrays.asList("ONE_SLASH1", "ONE_SLASH2")));
-        TOOLS.put("SH01", new Tool("SH01", "Bouclier de base", "SH01", Arrays.asList("ONE_DODGE")));
-        TOOLS.put("SH02", new Tool("SH02", "Bouclier moyen", "SH02", Arrays.asList("ONE_DODGE")));
-        TOOLS.put("SH03", new Tool("SH03", "Bouclier lourd", "SH03", Arrays.asList("ONE_DODGE")));
-        TOOLS.put("HB01", new Tool("HB01", "Lance", "HB01", Arrays.asList("POL_SLASH1")));
-        TOOLS.put("BO02", new Tool("BO02", "Arc de base", "BO02", Arrays.asList("BOW_SHOOT1")));
-        TOOLS.put("QV01", new Tool("QV01", "Carquois", "QV01", Arrays.asList()));
+            float duration = attackEntry.get("duration").asFloat();
+            float damage = attackEntry.get("damage").asFloat();
+            float cooldown = attackEntry.get("cooldown").asFloat();
+
+            // Récupérer les hitbox
+            JsonValue hitboxJson = attackEntry.get("hitbox");
+            float hitboxWidth = hitboxJson.get("width").asFloat();
+            float hitboxHeight = hitboxJson.get("height").asFloat();
+
+            // Créer et ajouter l'attaque
+            Attack attack = new Attack(id, name, toolId, states, duration, damage, cooldown, hitboxWidth, hitboxHeight);
+            ATTACKS.put(id, attack);
+        }
+    }
+
+    /**
+     * Méthode utilitaire pour remplir les outils.
+     *
+     * @param tools JsonValue contenant les outils.
+     */
+    private static void populateTools(JsonValue tools) {
+        for (JsonValue toolEntry = tools.child; toolEntry != null; toolEntry = toolEntry.next) {
+            String toolKey = toolEntry.name; // Par exemple "AX01", "MC01", etc.
+
+            String id = toolEntry.get("id").asString();
+            String name = toolEntry.get("name").asString();
+            String spritesheetKey = toolEntry.get("spritesheetKey").asString();
+
+            // Récupérer les attaques associées
+            JsonValue attackIdsJson = toolEntry.get("attackId");
+            List<String> attackIds = new ArrayList<>();
+            for (JsonValue attackIdEntry = attackIdsJson.child; attackIdEntry != null; attackIdEntry = attackIdEntry.next) {
+                attackIds.add(attackIdEntry.asString());
+            }
+
+            // Créer et ajouter l'outil
+            Tool tool = new Tool(id, name, spritesheetKey, attackIds);
+            TOOLS.put(id, tool);
+        }
     }
 }
