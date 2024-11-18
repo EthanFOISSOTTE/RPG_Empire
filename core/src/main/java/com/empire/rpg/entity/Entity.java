@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public abstract class Entity extends EntityManager {
     private final UUID id;  // Identifiant unique de l'entité
-    private final Map<Class<? extends Component>, Component> components; // Map des composants
+    protected final Map<Class<? extends Component>, Component> components; // Map des composants
 
     /**
      * Constructeur de l'entité.
