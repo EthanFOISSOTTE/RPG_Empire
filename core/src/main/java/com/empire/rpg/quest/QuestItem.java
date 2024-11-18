@@ -1,7 +1,6 @@
-package com.empire.rpg;
+package com.empire.rpg.quest;
 
 import java.util.List;
-import com.empire.rpg.QuestStep;
 
 public class QuestItem {
     private String title;

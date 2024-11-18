@@ -1,4 +1,4 @@
-package com.empire.rpg;
+package com.empire.rpg.quest;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.OrthographicCamera;

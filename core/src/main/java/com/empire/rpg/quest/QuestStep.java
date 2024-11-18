@@ -1,4 +1,4 @@
-package com.empire.rpg;
+package com.empire.rpg.quest;
 
 public class QuestStep {
     private int stepNumber;

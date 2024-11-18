@@ -1,4 +1,4 @@
-package com.empire.rpg;
+package com.empire.rpg.quest;
 
 public class Rewards {
     private int xp;

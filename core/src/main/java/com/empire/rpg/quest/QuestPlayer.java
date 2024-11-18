@@ -1,4 +1,4 @@
-package com.empire.rpg;
+package com.empire.rpg.quest;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import java.util.ArrayList;
-import com.empire.rpg.QuestStep;
 
 public class QuestPlayer {
     private OrthographicCamera camera;
@@ -84,7 +83,7 @@ public class QuestPlayer {
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         float separatorY = titleY - layout.height - 10;
-        shapeRenderer.line(frameX + padding, separatorY, frameX + frameWidth - padding, separatorY);
+        shapeRenderer.line(frameX, separatorY, frameX + frameWidth, separatorY);
         shapeRenderer.end();
     }
 
@@ -126,15 +125,15 @@ public class QuestPlayer {
     private void drawQuestList(float frameX, float frameY, float frameWidth, float frameHeight, float padding) {
         batch.begin();
         int displayIndex = 0;
-        float questStartY = frameY + frameHeight - 40;
+        float questStartY = frameY + frameHeight - 50;
         for (int i = 0; i < questList.size(); i++) {
             QuestItem quest = questList.get(i);
-            if (quest.getStatus() == 0 && quest.isUnique() == false) {  // Afficher uniquement les quêtes acceptées et non uniques
+            if (quest.getStatus() > 0 && quest.isUnique() == false) {  // Afficher uniquement les quêtes acceptées et non uniques
                 font.setColor(1, 1, 1, 1);
                 if (i == selectedQuestIndex) {
-                    font.draw(batch, "-> " + quest.getTitle(), frameX + 30, questStartY - (displayIndex * 30));  // Décalage à droite
+                    font.draw(batch, "-> " + quest.getTitle(), frameX + 15, questStartY - (displayIndex * 25));  // Décalage à droite
                 } else {
-                    font.draw(batch, quest.getTitle(), frameX + 30, questStartY - (displayIndex * 30));  // Décalage à droite
+                    font.draw(batch, quest.getTitle(), frameX + 15, questStartY - (displayIndex * 25));  // Décalage à droite
                 }
                 displayIndex++;
             }
@@ -200,11 +199,11 @@ public class QuestPlayer {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         // Dessiner la ligne de séparation avant le texte
         float separatorY = frameY + 50; // La position de la ligne de séparation juste au-dessus du texte
-        shapeRenderer.line(frameX + 15, separatorY, frameX + frameWidth - 15, separatorY); // Ligne horizontale
+        shapeRenderer.line(frameX, separatorY, frameX + frameWidth, separatorY); // Ligne horizontale
         shapeRenderer.end();
 
         batch.begin();
-        String acceptText = "APPUYEZ SUR ENTRÉE POUR ACCEPTER";
+        String acceptText = "APPUYEZ SUR \"G\" POUR FERMER";
         GlyphLayout acceptLayout = new GlyphLayout(font, acceptText);
         float acceptTextX = frameX + (frameWidth - acceptLayout.width) / 2;
         float acceptTextY = frameY + 30;
