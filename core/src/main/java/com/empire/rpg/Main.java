@@ -10,18 +10,21 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.empire.rpg.component.*;
 import com.empire.rpg.player.CollisionManager;
 import com.empire.rpg.player.Player;
 import com.badlogic.gdx.math.Vector2;
-import com.empire.rpg.player.PNJ;
-
+import com.empire.rpg.quest.Quest;
+import com.empire.rpg.quest.QuestPlayer;
+import java.util.Map;
+import java.util.UUID;
+import com.empire.rpg.entity.PNJ;
 
 public class Main extends ApplicationAdapter {
     private SpriteBatch batch;  // Objet pour dessiner des textures 2D
     private OrthographicCamera camera;  // Caméra orthographique pour la vue 2D
     private FitViewport viewport;  // Viewport qui ajuste la taille du monde en fonction de la taille de l'écran
     private Player player;  // Objet représentant le joueur
-    private PNJ pnj;  // Déclaration de l'objet PNJ
     private MapManager mapManager;  // Gestionnaire de carte
     private CollisionManager collisionManager;  // Gestionnaire de collisions pour le joueur
     private ShapeRenderer shapeRenderer;  // Outil pour dessiner des formes (utilisé pour le débogage)
@@ -38,6 +41,7 @@ public class Main extends ApplicationAdapter {
     private boolean showQuestPlayer = false;  // Booléen pour savoir si le cadre de quête est affiché
     private Quest quest;  // Objet Quest qui gère les quêtes dans le jeu
     private QuestPlayer questPlayer;  // Objet qui gère l'interface de gestion des quêtes pour le joueur
+    private PNJ pnj_radagast;
 
     @Override
     public void create() {
@@ -47,21 +51,28 @@ public class Main extends ApplicationAdapter {
         viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);  // Initialisation du viewport
         shapeRenderer = new ShapeRenderer();  // Initialisation du renderer pour les formes
         font = new BitmapFont();  // Initialisation de la police de texte
-
         // Initialisation des gestionnaires de carte et des autres objets du jeu
         mapManager = new MapManager("rpg-map.tmx", camera);  // Chargement de la carte avec le gestionnaire de carte
         collisionManager = new CollisionManager(mapManager.getTiledMap());  // Initialisation du gestionnaire de collisions
         player = new Player(collisionManager);  // Initialisation du joueur avec le gestionnaire de collisions
-        // Initialisation du PNJ
-        pnj = new PNJ(collisionManager);  // Création d'un objet PNJ
+
+
+        Map<Class<? extends Component>, Component> ComponentPNJ = Map.of(
+            PositionComponent.class, new PositionComponent(49 * 48 + 24, 44 * 48 + 24),
+            MovementComponent.class, new MovementComponent(1.5f, "north"),
+            CollisionComponent.class, new CollisionComponent(true),
+            TextureComponent.class, new TextureComponent(new Texture("PNJ/radagast.png"), 48, 48, 0, 0, 2.0f)
+        );
+
+        pnj_radagast = new PNJ("Radagast", ComponentPNJ, UUID.randomUUID());
+
+
         // Initialisation des objets liés aux quêtes
         quest = new Quest(camera, batch);  // Création de l'objet Quest pour gérer les quêtes
         questPlayer = new QuestPlayer(camera, batch, quest.getQuestList());  // Création de l'objet QuestPlayer pour gérer l'affichage des quêtes
 
         // Chargement de la texture de l'icône du tableau de quête
         questBoardTexture = new Texture(Gdx.files.internal("exclamation.png"));  // Chemin vers l'image du tableau de quêtes
-
-
     }
 
     @Override
@@ -85,7 +96,7 @@ public class Main extends ApplicationAdapter {
         // Rendu du joueur avec le SpriteBatch
         batch.setProjectionMatrix(camera.combined);  // Définir la matrice de projection de la caméra
         batch.begin();  // Démarre l'affichage des éléments 2D
-        pnj.render(batch); // Dessine le PNJ
+        pnj_radagast.render(batch);
         player.render(batch);  // Dessine le joueur
         batch.end();  // Fin de l'affichage des éléments 2D
 
