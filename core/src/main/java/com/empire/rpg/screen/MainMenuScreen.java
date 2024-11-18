@@ -1,47 +1,46 @@
 package com.empire.rpg.introScreen;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.empire.rpg.CollisionManager;
 import com.empire.rpg.GameEngine;
-import com.empire.rpg.MapManager;
-import com.empire.rpg.player.Player;
+import com.empire.rpg.component.CollisionComponent;
+import com.empire.rpg.component.PositionComponent;
+import com.empire.rpg.entity.Player;
+import com.empire.rpg.loader.MapLoader;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.UUID;
 
 public class MainMenuScreen implements Screen {
     private SpriteBatch batch;
     private OrthographicCamera camera;
     private FitViewport viewport;
     private Player player;
-    private MapManager mapManager;
-    private CollisionManager collisionManager;
+    private MapLoader mapLoader;
     private static final float WORLD_WIDTH = 854f;
     private static final float WORLD_HEIGHT = 480f;
 
-    public MainMenuScreen(GameEngine game) {
+    public MainMenuScreen(GameEngine game) throws IOException {
 
         batch = new SpriteBatch();
         camera = new OrthographicCamera();
         viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
-        mapManager = new MapManager("rpg-map.tmx", camera);
-        collisionManager = new CollisionManager(mapManager.getTiledMap());
-        player = new Player(collisionManager);
+        mapLoader = new MapLoader("rpg-map-ecs.json", camera);
+        player = new Player("player1", Map.of(
+            PositionComponent, new PositionComponent(0, 0),
+            CollisionComponent,new CollisionComponent(true)
+        ), UUID.randomUUID());
+
     }
 
     @Override
     public void show() {
-        batch = new SpriteBatch();
-        camera = new OrthographicCamera();
-        viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
 
-        mapManager = new MapManager("rpg-map.tmx", camera);
-        collisionManager = new CollisionManager(mapManager.getTiledMap());
-        player = new Player(collisionManager);
     }
 
     @Override
@@ -57,7 +56,7 @@ public class MainMenuScreen implements Screen {
         camera.update();
 
         // Rendre les couches inférieures (sous le joueur)
-        mapManager.renderLowerLayers(camera);
+        mapLoader.renderLowerLayers(camera);
 
         // Démarrer le batch pour dessiner le joueur
         batch.setProjectionMatrix(camera.combined);
@@ -66,7 +65,7 @@ public class MainMenuScreen implements Screen {
         batch.end();
 
         // Rendre les couches supérieures (au-dessus du joueur)
-        mapManager.renderUpperLayers(camera);
+        mapLoader.renderUpperLayers(camera);
     }
 
     @Override
@@ -93,7 +92,7 @@ public class MainMenuScreen implements Screen {
     @Override
     public void dispose() {
         batch.dispose();
-        mapManager.dispose();
+        mapLoader.dispose();
         player.dispose();
     }
 

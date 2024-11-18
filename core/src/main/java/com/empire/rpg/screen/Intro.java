@@ -12,6 +12,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.Screen;
 import com.empire.rpg.GameEngine;
 
+import java.io.IOException;
+
 public class Intro implements Screen {
     private Array<Texture> frames;
     private SpriteBatch batch;
@@ -22,7 +24,7 @@ public class Intro implements Screen {
     private GameEngine game;
     private MainMenuScreen mainMenuScreen;
 
-    public Intro(GameEngine game) {
+    public Intro(GameEngine game) throws IOException {
         this.batch = new SpriteBatch();
         this.frames = new Array<>();
         this.game = game;
