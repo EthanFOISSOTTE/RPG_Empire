@@ -75,6 +75,10 @@ public class PlayerCharacter extends Player {
     // File d'attaque des attaques à exécuter
     private Queue<AttackData> attackQueue;
 
+    // Position
+    private Vector2 position;
+    private Vector2 previousPosition;
+
     // Classe interne pour stocker les données d'une attaque en attente
     private class AttackData {
         public Attack attack; // Attaque à exécuter
@@ -92,7 +96,7 @@ public class PlayerCharacter extends Player {
     // Constructeurs
 
     /**
-     * Constructeur par défaut qui initialise le joueur à la position (0,0) avec l'échelle par défaut.
+     * Constructeur par défaut qui initialise le joueur.
      */
     public PlayerCharacter() {
         this(Constants.PLAYER_SCALE, UUID.randomUUID(), "PlayerCharacter", new HashMap<>());
@@ -142,6 +146,11 @@ public class PlayerCharacter extends Player {
         float offsetY = Constants.PLAYER_COLLISION_OFFSET_Y * scale;
 
         collisionComponent = new CollisionComponent(position.getX(), position.getY(), collisionWidth, collisionHeight, offsetX, offsetY);
+
+        // Position précédente
+        this.position = new Vector2(position.getX(), position.getY());
+        this.previousPosition = new Vector2(this.position);
+
 
         // État initial du joueur (debout)
         this.currentState = new StandingState(this);
@@ -195,6 +204,7 @@ public class PlayerCharacter extends Player {
 
     // Méthode de mise à jour appelée à chaque frame
     public void update(float deltaTime, CollisionManager collisionManager) {
+        previousPosition.set(position);
         handleInput(); // Gérer les entrées utilisateur
         currentState.update(deltaTime, collisionManager); // Mettre à jour l'état actuel
         updateCooldowns(deltaTime); // Mettre à jour les temps de recharge des attaques
@@ -574,6 +584,16 @@ public class PlayerCharacter extends Player {
     public float getY() {
         PositionComponent position = (PositionComponent) getComponent(PositionComponent.class);
         return position != null ? position.getY() : 0f;
+    }
+
+    // Méthode pour restaurer la position précédente en cas de collision
+    public void restorePreviousPosition() {
+        position.set(previousPosition);
+    }
+
+    public Vector2 getPosition() {
+        PositionComponent position = (PositionComponent) getComponent(PositionComponent.class);
+        return new Vector2(position.getX(), position.getY());
     }
 
     // Getter pour le composant de collision

@@ -136,7 +136,7 @@ public class DebugRenderer {
     }
 
     /**
-     * Gère l'ajout et la soustraction de points de vie via les touches "P" et "M".
+     * Gère l'ajout et la soustraction de points de vie via les touches "P" et "O".
      *
      * @param player Le joueur dont les points de vie sont modifiés.
      */
