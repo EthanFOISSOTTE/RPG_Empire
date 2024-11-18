@@ -47,7 +47,7 @@ public class Player {
     // Constructeur
     public Player(CollisionManager collisionManager) {
         this.collisionManager = collisionManager;
-        this.position = new Vector2(51 * 48 + 24, 45 * 48 + 24);
+        this.position = new Vector2(51 * 48 + 24, 45 * 48 + 24); // Position Tableau des quêtes du joueur
         this.spriteSheet = new SpriteSheet();
         loadAnimations();
         currentAnimation = standFaceAnimation;
