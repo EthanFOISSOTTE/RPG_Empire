@@ -1,0 +1,68 @@
+[
+  {
+    "class": "com.empire.rpg.QuestItem",
+    "title": "La Menace Gobeline",
+    "description": "Dans la région proche de la capitale, se trouve le repaire d'un groupe de gobelins qui ont commencé à attaquer les convois commerciaux et les fermiers aux alentours. Le Comte Alaric, un noble local, a mis une récompense pour quiconque parviendrait à éliminer cette menace.",
+    "id": 1,
+    "reward": {
+      "gold": 180,
+      "xp": 500
+    },
+    "author": "Comte Alaric"
+  },
+  {
+    "class": "com.empire.rpg.QuestItem",
+    "title": "RECHERCHE DE CHAMPIGNONS",
+    "description": "Un alchimiste recherche des champignons rares. Trouvez 5 champignons et rapportez-les lui.",
+    "id": 2,
+    "reward": {
+      "gold": 50,
+      "xp": 25
+    },
+    "author": "Monsieur Y"
+  },
+  {
+    "class": "com.empire.rpg.QuestItem",
+    "title": "RECHERCHE DE FLEURS",
+    "description": "Un alchimiste recherche des fleurs rares. Trouvez 5 fleurs et rapportez-les lui.",
+    "id": 3,
+    "reward": {
+      "gold": 50,
+      "xp": 25
+    },
+    "author": "Monsieur Z"
+  },
+  {
+    "class": "com.empire.rpg.QuestItem",
+    "title": "RECHERCHE DE PIERRES",
+    "description": "Un alchimiste recherche des pierres rares. Trouvez 5 pierres et rapportez-les lui.",
+    "id": 4,
+    "reward": {
+      "gold": 50,
+      "xp": 25
+    },
+    "author": "Monsieur A"
+  },
+  {
+    "class": "com.empire.rpg.QuestItem",
+    "title": "RECHERCHE DE PLANTES",
+    "description": "Un alchimiste recherche des plantes rares. Trouvez 5 plantes et rapportez-les lui.",
+    "id": 5,
+    "reward": {
+      "gold": 50,
+      "xp": 25
+    },
+    "author": "Monsieur X"
+  },
+  {
+    "class": "com.empire.rpg.QuestItem",
+    "title": "RECHERCHE DE RACINES",
+    "description": "Un alchimiste recherche des racines rares. Trouvez 5 racines et rapportez-les lui.",
+    "id": 6,
+    "reward": {
+      "gold": 50,
+      "xp": 25
+    },
+    "author": "Monsieur Y"
+  }
+]

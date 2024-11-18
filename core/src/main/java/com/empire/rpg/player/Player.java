@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.empire.rpg.CollisionManager;
+
 import java.util.List;
 
 // Classe Player
@@ -47,7 +47,7 @@ public class Player {
     // Constructeur
     public Player(CollisionManager collisionManager) {
         this.collisionManager = collisionManager;
-        this.position = new Vector2(100 * 48 + 24, 100 * 48 + 24);
+        this.position = new Vector2(51 * 48 + 24, 45 * 48 + 24);
         this.spriteSheet = new SpriteSheet();
         loadAnimations();
         currentAnimation = standFaceAnimation;
