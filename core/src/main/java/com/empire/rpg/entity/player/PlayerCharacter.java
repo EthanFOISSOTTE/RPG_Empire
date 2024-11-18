@@ -92,7 +92,6 @@ public class PlayerCharacter extends Player {
 
     // Composant de collision du joueur
     private CollisionComponent collisionComponent;
-
     // Constructeurs
 
     /**
@@ -150,7 +149,6 @@ public class PlayerCharacter extends Player {
         // Position précédente
         this.position = new Vector2(position.getX(), position.getY());
         this.previousPosition = new Vector2(this.position);
-
 
         // État initial du joueur (debout)
         this.currentState = new StandingState(this);

@@ -63,7 +63,7 @@ public class Main extends ApplicationAdapter {
         player = new PlayerCharacter(2.0f, UUID.randomUUID(), "Hero", components);
         // Initialiser l'UI du joueur
         playerUI = new PlayerUI(player);
-
+        
         // Initialiser le pathfinding
         pathfinding = new Pathfinding(collisionManager);
         // Définit le pathfinding global pour tous les mobs
@@ -89,6 +89,9 @@ public class Main extends ApplicationAdapter {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        // Rendre les couches inférieures (en-dessous du joueur)
+        mapManager.renderLowerLayers(camera);
+
         // Mettre à jour le joueur
         float deltaTime = Gdx.graphics.getDeltaTime();
         player.update(deltaTime, collisionManager);
@@ -98,9 +101,6 @@ public class Main extends ApplicationAdapter {
             mob.update(Gdx.graphics.getDeltaTime(), player, camera);
         }
         collisionHandler.handleCollisions(player, Mob.allMobs);
-
-        // Rendre les couches inférieures (en-dessous du joueur)
-        mapManager.renderLowerLayers(camera);
 
         // Démarrer le batch pour dessiner le joueur
         batch.setProjectionMatrix(camera.combined);
