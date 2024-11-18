@@ -44,6 +44,7 @@ public class Main extends ApplicationAdapter {
 
     private PNJ pnj_radagast;
     private PNJ pnj_duc;
+    private PNJ pnj_archeologue;
 
     @Override
     public void create() {
@@ -73,8 +74,15 @@ public class Main extends ApplicationAdapter {
             CollisionComponent.class, new CollisionComponent(true),
             TextureComponent.class, new TextureComponent(new Texture("PNJ/Duc_Michel.png"), 48, 48, 0, 0, 2.0f)
         );
-        pnj_duc = new PNJ("Duc_Michel", Component_Duc, UUID.randomUUID());
+        pnj_duc = new PNJ("Duc_Michel", Component_Duc, UUID.randomUUID()); // Animation de marche à droite : 65/66
 
+        Map<Class<? extends Component>, Component> Component_Archeologue = Map.of(
+            PositionComponent.class, new PositionComponent(49 * 48 + 24, 40 * 48 + 24),
+            MovementComponent.class, new MovementComponent(1.5f, "north"),
+            CollisionComponent.class, new CollisionComponent(true),
+            TextureComponent.class, new TextureComponent(new Texture("PNJ/Archeologue.png"), 48, 48, 0, 0, 2.0f)
+        );
+        pnj_archeologue = new PNJ("Archéologue", Component_Duc, UUID.randomUUID());
 
         // Initialisation des objets liés aux quêtes
         quest = new Quest(camera, batch);  // Création de l'objet Quest pour gérer les quêtes
@@ -107,6 +115,7 @@ public class Main extends ApplicationAdapter {
         batch.begin();  // Démarre l'affichage des éléments 2D
         pnj_radagast.render(batch);
         pnj_duc.render(batch);
+        pnj_archeologue.render(batch);
         player.render(batch);  // Dessine le joueur
         batch.end();  // Fin de l'affichage des éléments 2D
 
