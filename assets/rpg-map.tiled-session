@@ -5,8 +5,8 @@
     },
     "activeFile": "rpg-map.tmx",
     "expandedProjectPaths": [
-        "Spritesheets",
-        "."
+        ".",
+        "Spritesheets"
     ],
     "fileStates": {
         "C:/Users/88mat/Documents/four tout/map-tiled/Ow_Test2/Spritesheets/A1_Liquids_And_Misc.tsx": {
@@ -216,19 +216,19 @@
         },
         "rpg-map.tmx": {
             "expandedGroupLayers": [
-                14,
-                13
+                13,
+                14
             ],
-            "scale": 0.25,
+            "scale": 0.0625,
             "selectedLayer": 12,
             "viewCenter": {
-                "x": 7940,
-                "y": 4922
+                "x": 3296,
+                "y": 4168
             }
         }
     },
     "frame.defaultDuration": 400,
-    "last.exportedFilePath": "C:/Users/banck/OneDrive/Bureau/EPITECH/PROJECT/T-JAV-501/T-JAV-501-NCY_1/assets",
+    "last.exportedFilePath": "C:/Users/user/Desktop/RPG_Empire/assets",
     "last.imagePath": "C:/Users/user/Desktop/CarteTiledJava/assets/Spritesheets",
     "map.height": 200,
     "map.lastUsedExportFilter": "Fichiers de carte JSON (*.tmj *.json)",

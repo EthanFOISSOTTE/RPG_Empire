@@ -6,15 +6,32 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.empire.rpg.player.Player;
+import com.badlogic.gdx.Input;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+import com.empire.rpg.component.HealthComponent;
+import com.empire.rpg.component.PositionComponent;
+import com.empire.rpg.component.WeaponComponent;
+import com.empire.rpg.entity.player.PlayerCharacter;
+import com.empire.rpg.component.Component;
+import com.empire.rpg.entity.player.audio.SoundManager;
+import com.empire.rpg.debug.DebugRenderer;
+import com.empire.rpg.ui.PlayerUI;
 
 public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
     private OrthographicCamera camera;
     private FitViewport viewport;
-    private Player player;
     private MapManager mapManager;
     private CollisionManager collisionManager;
+    private PlayerCharacter player;
+    private SoundManager soundManager;
+    private DebugRenderer debugRenderer;
+    private PlayerUI playerUI;
+
+    private boolean debugMode = false;
 
     private static final float WORLD_WIDTH = 854f;
     private static final float WORLD_HEIGHT = 480f;
@@ -25,9 +42,28 @@ public class Main extends ApplicationAdapter {
         camera = new OrthographicCamera();
         viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
 
+        // Charger la carte et les collisions
         mapManager = new MapManager("rpg-map.tmx", camera);
         collisionManager = new CollisionManager(mapManager.getTiledMap());
-        player = new Player(collisionManager);
+
+        // Création d'une map de composants avec PositionComponent et HealthComponent
+        Map<Class<? extends Component>, Component> components = Map.of(
+            HealthComponent.class, new HealthComponent(90, 100),
+            PositionComponent.class, new PositionComponent(4800f, 4800f)
+        );
+
+        // Création et initialisation de l'instance de PlayerCharacter
+        player = new PlayerCharacter(2.0f, UUID.randomUUID(), "Hero", components);
+
+        // Initialiser le débogueur
+        debugRenderer = new DebugRenderer();
+
+        // Initialiser l'UI du joueur
+        playerUI = new PlayerUI(player);
+
+        // Mettre à jour la caméra sur le joueur
+        camera.position.set(player.getX(), player.getY(), 0);
+        camera.update();
     }
 
     @Override
@@ -35,24 +71,36 @@ public class Main extends ApplicationAdapter {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // Mise à jour du joueur
-        player.update(Gdx.graphics.getDeltaTime());
-
-        // La caméra suit la position du joueur
-        camera.position.set(player.getPosition().x, player.getPosition().y, 0);
-        camera.update();
-
-        // Rendre les couches inférieures (sous le joueur)
+        // Rendre les couches inférieures (en-dessous du joueur)
         mapManager.renderLowerLayers(camera);
+
+        // Mettre à jour le joueur
+        float deltaTime = Gdx.graphics.getDeltaTime();
+        player.update(deltaTime, collisionManager);
 
         // Démarrer le batch pour dessiner le joueur
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-        player.render(batch); // Rendre le joueur sans vérification de collision
+        player.render(batch);
         batch.end();
 
         // Rendre les couches supérieures (au-dessus du joueur)
         mapManager.renderUpperLayers(camera);
+
+        // Activer/Désactiver le mode de débogage
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F1)) {
+            debugMode = !debugMode;
+        }
+        if (debugMode) {
+            debugRenderer.renderDebugBounds(camera, player, collisionManager);
+        }
+
+        // Rendre l'UI du joueur (après le rendu des éléments du jeu)
+        playerUI.render(batch);
+
+        // Mettre à jour la caméra pour suivre le joueur
+        camera.position.set(player.getX(), player.getY(), 0);
+        camera.update();
     }
 
     @Override
@@ -65,5 +113,10 @@ public class Main extends ApplicationAdapter {
         batch.dispose();
         mapManager.dispose();
         player.dispose();
+        if (soundManager != null) {
+            soundManager.dispose();
+        }
+        debugRenderer.dispose();
+        playerUI.dispose();
     }
 }
