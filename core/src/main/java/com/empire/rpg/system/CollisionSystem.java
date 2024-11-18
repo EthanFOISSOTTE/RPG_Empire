@@ -1,114 +1,83 @@
 package com.empire.rpg.system;
 
-import com.empire.rpg.component.Component;
-import com.empire.rpg.component.PositionComponent;
-import com.empire.rpg.entity.Entity;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapObjects;
+import com.badlogic.gdx.maps.objects.EllipseMapObject;
+import com.badlogic.gdx.maps.objects.PolygonMapObject;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.math.Ellipse;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Polygon;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
 
-/**
- * Système de Collision (CollisionSystem)
- * Ce système détecte les collisions entre entités ayant un CollisionComponent. Lorsqu’une collision est détectée,
- * le système peut déclencher des actions spécifiques, comme empêcher le passage ou déclencher une interaction
- * (par exemple, un combat ou une ouverture de coffre).
- */
+public class CollisionSystem {
+    private final Array<Rectangle> collisionRectangles = new Array<>();
+    private final Array<Ellipse> collisionEllipses = new Array<>();
+    private final Array<Polygon> collisionPolygons = new Array<>();
 
-public class CollisionSystem implements GameSystem<Component> {
-    private Entity entity;
-    private PositionComponent positionComponent;
-    private boolean isColliding;
-    private boolean isBlocking;
+    public CollisionSystem(TiledMap tiledMap) {
+        // Charger la couche de collision
+        MapLayer collisionLayer = tiledMap.getLayers().get("collision");
+        if (collisionLayer != null) {
+            MapObjects objects = collisionLayer.getObjects();
 
-    public CollisionSystem(Entity entity){
-        this.entity = entity;
-        this.positionComponent = (PositionComponent) entity.getComponent(PositionComponent.class);
-        this.isColliding = false;
-        this.isBlocking = false;
-    }
-
-    public Entity getEntity() {
-        return entity;
-    }
-
-    public void setEntity(Entity entity) {
-        this.entity = entity;
-    }
-
-    public PositionComponent getPositionComponent() {
-        return positionComponent;
-    }
-
-    public void setPositionComponent(PositionComponent positionComponent) {
-        this.positionComponent = positionComponent;
-    }
-
-    public boolean isColliding() {
-        return isColliding;
-    }
-
-    public void setColliding(boolean isColliding) {
-        this.isColliding = isColliding;
-    }
-
-    public boolean isBlocking() {
-        return isBlocking;
-    }
-
-    public void setBlocking(boolean blocking) {
-        isBlocking = blocking;
-    }
-
-    public void detectCollision(){
-        if (isColliding()){
-            // Actions à effectuer en cas de collision
-            setBlocking(true);
-        }else {
-            setBlocking(false);
+            // Traiter chaque type d'objet
+            for (RectangleMapObject rectangleObject : objects.getByType(RectangleMapObject.class)) {
+                collisionRectangles.add(rectangleObject.getRectangle());
+            }
+            for (EllipseMapObject ellipseObject : objects.getByType(EllipseMapObject.class)) {
+                collisionEllipses.add(ellipseObject.getEllipse());
+            }
+            for (PolygonMapObject polygonObject : objects.getByType(PolygonMapObject.class)) {
+                collisionPolygons.add(polygonObject.getPolygon());
+            }
         }
     }
 
-    public void collided(){
-        // Actions à effectuer en cas de collision
-        setColliding(true);
-    }
-
-    public void uncollided(){
-        // Actions à effectuer en cas de fin de collision
-        setColliding(false);
-    }
-
-    public void block(){
-        // Actions à effectuer en cas de blocage
-        if (isBlocking()){
-            System.out.println("Collision détectée, le passage est bloqué.");
-        }else {
-            System.out.println("Pas de collision détectée, le passage est libre.");
+    public boolean isColliding(Rectangle playerRect) {
+        // Vérifier les collisions avec les rectangles
+        for (Rectangle rect : collisionRectangles) {
+            if (playerRect.overlaps(rect)) {
+                return true;
+            }
         }
-    }
 
-    public void unblock(){
-        // Actions à effectuer en cas de déblocage
-        if (!isBlocking()){
-            System.out.println("Pas de collision détectée, le passage est libre.");
-        }else {
-            System.out.println("Collision détectée, le passage est bloqué.");
+        // Vérifier les collisions avec les ellipses (approximation par cercle)
+        for (Ellipse ellipse : collisionEllipses) {
+            float ellipseCenterX = ellipse.x + ellipse.width / 2;
+            float ellipseCenterY = ellipse.y + ellipse.height / 2;
+            float radius = Math.min(ellipse.width, ellipse.height) / 2; // Approximation
+
+            if (overlapsCircleRectangle(ellipseCenterX, ellipseCenterY, radius, playerRect)) {
+                return true;
+            }
         }
-    }
 
-    public void interact(){
-        // Actions à effectuer en cas d'interaction
-        if (isColliding()){
-            System.out.println("Collision détectée, interaction possible.");
-        }else {
-            System.out.println("Pas de collision détectée, pas d'interaction possible.");
+        // Vérifier les collisions avec les polygones
+        for (Polygon polygon : collisionPolygons) {
+            if (Intersector.overlapConvexPolygons(new Polygon(new float[]{
+                playerRect.x, playerRect.y,
+                playerRect.x + playerRect.width, playerRect.y,
+                playerRect.x + playerRect.width, playerRect.y + playerRect.height,
+                playerRect.x, playerRect.y + playerRect.height
+            }), polygon)) {
+                return true;
+            }
         }
+
+        return false;
     }
 
-    @Override
-    public void update(Component component) {
-        detectCollision();
-        collided();
-        uncollided();
-        block();
-        unblock();
-        interact();
+    // Fonction pour vérifier la collision entre un cercle et un rectangle
+    private boolean overlapsCircleRectangle(float circleX, float circleY, float radius, Rectangle rectangle) {
+        float closestX = Math.max(rectangle.x, Math.min(circleX, rectangle.x + rectangle.width));
+        float closestY = Math.max(rectangle.y, Math.min(circleY, rectangle.y + rectangle.height));
+
+        float distanceX = circleX - closestX;
+        float distanceY = circleY - closestY;
+
+        return (distanceX * distanceX + distanceY * distanceY) < (radius * radius);
     }
 }
