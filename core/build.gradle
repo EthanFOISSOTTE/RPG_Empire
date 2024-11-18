@@ -10,7 +10,10 @@ dependencies {
   api "com.crashinvaders.lml:gdx-kiwi:$lmlVersion"
   api "io.github.libktx:ktx-tiled:$ktxVersion"
 
-  if(enableGraalNative == 'true') {
+  implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.3' // Déplacé en dehors de la condition
+
+  if (enableGraalNative == 'true') {
     implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
   }
 }
+
