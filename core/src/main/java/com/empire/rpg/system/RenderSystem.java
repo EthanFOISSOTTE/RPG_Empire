@@ -1,5 +1,6 @@
 package com.empire.rpg.system;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.empire.rpg.component.Component;
 import com.empire.rpg.component.PositionComponent;
@@ -35,6 +36,11 @@ public class RenderSystem implements GameSystem<Component> {
     @Override
     public void update(Component component) {
         // Logique de mise à jour du rendu
+
+    }
+
+    public void setView(OrthographicCamera camera) {
+        batch.setProjectionMatrix(camera.combined);
 
     }
 }

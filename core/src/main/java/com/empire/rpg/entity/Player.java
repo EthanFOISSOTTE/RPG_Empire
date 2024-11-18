@@ -1,6 +1,9 @@
 package com.empire.rpg.entity;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.empire.rpg.component.Component;
+import com.empire.rpg.loader.Layer;
+
 import java.util.Map;
 import java.util.UUID;
 
@@ -11,6 +14,8 @@ import java.util.UUID;
  */
 
 public class Player extends Entity  {
+
+    public Component PositionComponent;
 
     /**
      * Ajoute une entité.
@@ -47,4 +52,18 @@ public class Player extends Entity  {
         super(name, components, id);
     }
 
+    public void render(SpriteBatch batch) {
+        // Implémenter le rendu du joueur
+        UUID id = UUID.randomUUID();
+        Player player = new Player("player1", Map.of(), id);
+        EntityManager playerRendering = player.addEntity();
+        playerRendering.createEntity(id);
+
+
+
+    }
+
+    public void dispose() {
+
+    }
 }
