@@ -41,7 +41,9 @@ public class Main extends ApplicationAdapter {
     private boolean showQuestPlayer = false;  // Booléen pour savoir si le cadre de quête est affiché
     private Quest quest;  // Objet Quest qui gère les quêtes dans le jeu
     private QuestPlayer questPlayer;  // Objet qui gère l'interface de gestion des quêtes pour le joueur
+
     private PNJ pnj_radagast;
+    private PNJ pnj_duc;
 
     @Override
     public void create() {
@@ -57,14 +59,21 @@ public class Main extends ApplicationAdapter {
         player = new Player(collisionManager);  // Initialisation du joueur avec le gestionnaire de collisions
 
 
-        Map<Class<? extends Component>, Component> ComponentPNJ = Map.of(
+        Map<Class<? extends Component>, Component> Component_Radagast = Map.of(
             PositionComponent.class, new PositionComponent(49 * 48 + 24, 44 * 48 + 24),
             MovementComponent.class, new MovementComponent(1.5f, "north"),
             CollisionComponent.class, new CollisionComponent(true),
-            TextureComponent.class, new TextureComponent(new Texture("PNJ/radagast.png"), 48, 48, 0, 0, 2.0f)
+            TextureComponent.class, new TextureComponent(new Texture("PNJ/Radagast.png"), 48, 48, 0, 0, 2.0f)
         );
+        pnj_radagast = new PNJ("Radagast", Component_Radagast, UUID.randomUUID());
 
-        pnj_radagast = new PNJ("Radagast", ComponentPNJ, UUID.randomUUID());
+        Map<Class<? extends Component>, Component> Component_Duc = Map.of(
+            PositionComponent.class, new PositionComponent(49 * 48 + 24, 42 * 48 + 24),
+            MovementComponent.class, new MovementComponent(1.5f, "north"),
+            CollisionComponent.class, new CollisionComponent(true),
+            TextureComponent.class, new TextureComponent(new Texture("PNJ/Duc_Michel.png"), 48, 48, 0, 0, 2.0f)
+        );
+        pnj_duc = new PNJ("Duc_Michel", Component_Duc, UUID.randomUUID());
 
 
         // Initialisation des objets liés aux quêtes
@@ -97,6 +106,7 @@ public class Main extends ApplicationAdapter {
         batch.setProjectionMatrix(camera.combined);  // Définir la matrice de projection de la caméra
         batch.begin();  // Démarre l'affichage des éléments 2D
         pnj_radagast.render(batch);
+        pnj_duc.render(batch);
         player.render(batch);  // Dessine le joueur
         batch.end();  // Fin de l'affichage des éléments 2D
 
