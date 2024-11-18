@@ -66,14 +66,52 @@ public class Inventory {
             int quantity = itemJson.getInt("quantity");
             String description = itemJson.getString("description");
             int valeur = itemJson.getInt("valeur", 0);  // Valeur par défaut 0 si absent
-            boolean states = itemJson.getBoolean("states",false);
-            String style = itemJson.getString("style","null");
+            boolean states = itemJson.getBoolean("states", false);
+            String style = itemJson.getString("style", "null");
 
             Item item = new Item(type, nom, quantity, description, valeur, states, style);
             items.add(item);
+
+            // Restaurer les équipements
+            if (states) {
+                if (type.equalsIgnoreCase("Tenue")) {
+                    equippedArmor = item;
+                } else if (type.equalsIgnoreCase("Consommable")) {
+                    equippedConsommable = item;
+                } else if (type.equalsIgnoreCase("Armes")) {
+                    switch (style.toLowerCase()) {
+                        case "lance":
+                            equippedLance = item;
+                            break;
+                        case "épée":
+                            equippedEpee = item;
+                            break;
+                        case "arc":
+                            equippedArc = item;
+                            break;
+                        case "bouclier":
+                            equippedBouclier = item;
+                            break;
+                        case "carquois":
+                            equippedCarquois = item;
+                            break;
+                    }
+                }
+            }
         }
     }
 
+    private void saveInventoryToJson() {
+        Json json = new Json();
+
+        // Filtrer les objets avec une quantité > 0
+        List<Item> itemsToSave = items.stream()
+            .filter(item -> item.getQuantity() > 0)
+            .collect(Collectors.toList());
+
+        String inventoryJson = json.prettyPrint(items); // Convertit la liste des objets en JSON
+        Gdx.files.local("Bdd/inventory.json").writeString("{\"inventory\":" + inventoryJson + "}", false);
+    }
 
     public void render(Vector2 playerPosition) {
         if (showInteractionFrame) {
@@ -165,6 +203,8 @@ public class Inventory {
         }
     }
 
+
+
     // partie création de la partie objet
     private void drawObjectsMenu(float frameX, float frameY, float frameHeight) {
         String category = categories[selectedCategoryIndex];
@@ -216,6 +256,7 @@ public class Inventory {
             }
         }
     }
+
 
     // Appelle un objet selon son type
     private List<Item> getItemsByType(String type) {
@@ -275,6 +316,9 @@ public class Inventory {
             if (!inCategorySelection && !currentItems.isEmpty() && selectedObjectIndex < currentItems.size()) {
                 Item selectedItem = currentItems.get(selectedObjectIndex);
 
+                // Vérifier si la quantité de l'objet est à 0 et le supprimer
+                items.removeIf(item -> item.getQuantity() == 0);
+
                 // Si l'objet est déjà équipé, on le déséquipe
                 if (selectedItem.getStates()) {
                     selectedItem.setStates(false);
@@ -282,70 +326,70 @@ public class Inventory {
                     // Déséquipement selon le type
                     if (selectedItem.getType().equalsIgnoreCase("Tenue")) {
                         equippedArmor = null;
-                    }
-                    else if (selectedItem.getType().equalsIgnoreCase("Consommable")) {
+                    } else if (selectedItem.getType().equalsIgnoreCase("Consommable")) {
                         equippedConsommable = null;
-                    }
-                    else if (selectedItem.getType().equalsIgnoreCase("Armes")) {
+                    } else if (selectedItem.getType().equalsIgnoreCase("Armes")) {
                         // Déséquiper une arme spécifique selon son style
                         if (selectedItem.getStyle().equalsIgnoreCase("lance")) {
                             equippedLance = null;
-                        }
-                        else if (selectedItem.getStyle().equalsIgnoreCase("épée")) {
+                        } else if (selectedItem.getStyle().equalsIgnoreCase("épée")) {
                             equippedEpee = null;
-                        }
-                        else if (selectedItem.getStyle().equalsIgnoreCase("arc")) {
+                        } else if (selectedItem.getStyle().equalsIgnoreCase("arc")) {
                             equippedArc = null;
-                        }
-                        else if (selectedItem.getStyle().equalsIgnoreCase("bouclier")) {
+                        } else if (selectedItem.getStyle().equalsIgnoreCase("bouclier")) {
                             equippedBouclier = null;
-                        }
-                        else if (selectedItem.getStyle().equalsIgnoreCase("carquois")) {
+                        } else if (selectedItem.getStyle().equalsIgnoreCase("carquois")) {
                             equippedCarquois = null;
                         }
                     }
-                }
-                else { // Si l'objet n'est pas équipé, on l'équipe
-                    if (selectedItem.getType().equalsIgnoreCase("Tenue")) {
-                        if (equippedArmor != null) equippedArmor.setStates(false); // Déséquipement de l'armure précédente
+                } else { // Si l'objet n'est pas équipé, on l'équipe
+                     if (selectedItem.getType().equalsIgnoreCase("Tenue")) {
+                        // Si une tenue est déjà équipée, la déséquiper
+                        if (equippedArmor != null) equippedArmor.setStates(false);
                         equippedArmor = selectedItem;
-                        selectedItem.setStates(true);
+                        selectedItem.setStates(true);  // Marquer comme équipé
                     }
-                    else if (selectedItem.getType().equalsIgnoreCase("Consommable")) {
-                        if (equippedConsommable != null) equippedConsommable.setStates(false); // Déséquipement de l'objet consommable précédent
-                        equippedConsommable = selectedItem;
-                        selectedItem.setStates(true);
-                    }
-                    else if (selectedItem.getType().equalsIgnoreCase("Armes")) {
-                        // Gestion des armes par style pour éviter de multiples armes du même style
-                        if (selectedItem.getStyle().equalsIgnoreCase("lance")) {
-                            if (equippedLance != null) equippedLance.setStates(false); // Déséquiper la lance précédente
-                            equippedLance = selectedItem;
-                        }
-                        else if (selectedItem.getStyle().equalsIgnoreCase("épée")) {
-                            if (equippedEpee != null) equippedEpee.setStates(false); // Déséquiper l'épée précédente
-                            equippedEpee = selectedItem;
-                        }
-                        else if (selectedItem.getStyle().equalsIgnoreCase("arc")) {
-                            if (equippedArc != null) equippedArc.setStates(false); // Déséquiper l'arc précédent
-                            equippedArc = selectedItem;
-                        }
-                        else if (selectedItem.getStyle().equalsIgnoreCase("bouclier")) {
-                            if (equippedBouclier != null) equippedBouclier.setStates(false); // Déséquiper le bouclier précédent
-                            equippedBouclier = selectedItem;
-                        }
-                        else if (selectedItem.getStyle().equalsIgnoreCase("carquois")) {
-                            if (equippedCarquois != null) equippedCarquois.setStates(false); // Déséquiper le carquois précédent
-                            equippedCarquois = selectedItem;
-                        }
 
+                    else if (selectedItem.getType().equalsIgnoreCase("Consommable")) {
+                        // Si un consommable est déjà équipé, la déséquiper
+                        if (equippedConsommable != null) equippedConsommable.setStates(false);
+                        equippedConsommable = selectedItem;
+                        selectedItem.setStates(true);  // Marquer comme équipé
+                    }
+
+                    else if (selectedItem.getType().equalsIgnoreCase("Armes")) {
+                        switch (selectedItem.getStyle().toLowerCase()) {
+                            case "lance":
+                                if (equippedLance != null) equippedLance.setStates(false); // Déséquiper la lance précédente
+                                equippedLance = selectedItem;
+                                break;
+                            case "épée":
+                                if (equippedEpee != null) equippedEpee.setStates(false); // Déséquiper l'épée précédente
+                                equippedEpee = selectedItem;
+                                break;
+                            case "arc":
+                                if (equippedArc != null) equippedArc.setStates(false); // Déséquiper l'arc précédent
+                                equippedArc = selectedItem;
+                                break;
+                            case "bouclier":
+                                if (equippedBouclier != null) equippedBouclier.setStates(false); // Déséquiper le bouclier précédent
+                                equippedBouclier = selectedItem;
+                                break;
+                            case "carquois":
+                                if (equippedCarquois != null) equippedCarquois.setStates(false); // Déséquiper le carquois précédent
+                                equippedCarquois = selectedItem;
+                                break;
+                        }
                         selectedItem.setStates(true);
                     }
+
                 }
+                saveInventoryToJson(); // Sauvegarde après modification
             }
         }
 
     }
+
 
     public void setShowInteractionFrame(boolean show) {
         this.showInteractionFrame = show;

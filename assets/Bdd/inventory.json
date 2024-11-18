@@ -1,285 +1,282 @@
+{"inventory":[
 {
-  "inventory": [
-    {
-      "type": "Armes",
-      "nom": "Lance en fer",
-      "quantity": 1,
-      "description": "Blablabla",
-      "valeur": 30,
-      "states": false,
-      "style": "lance"
-    },
-    {
-      "type": "Armes",
-      "nom": "Lance en acier",
-      "quantity": 1,
-      "description": "Blablabla",
-      "valeur": 30,
-      "states": false,
-      "style": "lance"
-    },
-    {
-      "type": "Armes",
-      "nom": "Lance en carbone",
-      "quantity": 1,
-      "description": "Blablabla",
-      "valeur": 30,
-      "states": false,
-      "style": "lance"
-    },
-    {
-      "type": "Armes",
-      "nom": "Épée en fer",
-      "quantity": 1,
-      "description": "Blablabla",
-      "valeur": 30,
-      "states": false,
-      "style": "épée"
-    },
-    {
-      "type": "Armes",
-      "nom": "Épée en acier",
-      "quantity": 1,
-      "description": "Blablabla",
-      "valeur": 30,
-      "states": false,
-      "style": "épée"
-    },
-    {
-      "type": "Armes",
-      "nom": "Épée en carbone",
-      "quantity": 1,
-      "description": "Blablabla",
-      "valeur": 30,
-      "states": false,
-      "style": "épée"
-    },
-    {
-      "type": "Armes",
-      "nom": "Arc en bois",
-      "quantity": 1,
-      "description": "Blablabla",
-      "valeur": 30,
-      "states": false,
-      "style": "arc"
-    },
-    {
-      "type": "Armes",
-      "nom": "Arc en fer",
-      "quantity": 1,
-      "description": "Blablabla",
-      "valeur": 30,
-      "states": false,
-      "style": "arc"
-    },
-    {
-      "type": "Armes",
-      "nom": "Arc en carbone",
-      "quantity": 1,
-      "description": "Blablabla",
-      "valeur": 30,
-      "states": false,
-      "style": "arc"
-    },
-    {
-      "type": "Armes",
-      "nom": "Bouclier en bois",
-      "quantity": 1,
-      "description": "Blablabla",
-      "valeur": 30,
-      "states": false,
-      "style": "bouclier"
-    },
-    {
-      "type": "Armes",
-      "nom": "Bouclier en fer",
-      "quantity": 1,
-      "description": "Blablabla",
-      "valeur": 30,
-      "states": false,
-      "style": "bouclier"
-    },
-    {
-      "type": "Armes",
-      "nom": "Bouclier en carbone",
-      "quantity": 1,
-      "description": "Blablabla",
-      "valeur": 30,
-      "states": false,
-      "style": "bouclier"
-    },
-    {
-      "type": "Armes",
-      "nom": "flèche en bois",
-      "quantity": 1,
-      "description": "Blablabla",
-      "valeur": 30,
-      "states": false,
-      "style": "carquois"
-    },
-    {
-      "type": "Armes",
-      "nom": "flèche en fer",
-      "quantity": 1,
-      "description": "Blablabla",
-      "valeur": 30,
-      "states": false,
-      "style": "carquois"
-    },
-    {
-      "type": "Armes",
-      "nom": "flèche en carbone",
-      "quantity": 1,
-      "description": "Blablabla",
-      "valeur": 30,
-      "states": false,
-      "style": "carquois"
-    },
-    {
-      "type": "Tenue",
-      "nom": "Armure de fer",
-      "quantity": 1,
-      "description": "Blablabla",
-      "valeur": 30,
-      "states": false
-    },
-    {
-      "type": "Tenue",
-      "nom": "Armure en acier",
-      "quantity": 1,
-      "description": "Blablabla",
-      "valeur": 30,
-      "states": false
-    },
-    {
-      "type": "Tenue",
-      "nom": "Armure en carbone",
-      "quantity": 1,
-      "description": "Blablabla",
-      "valeur": 30,
-      "states": false
-    },
-    {
-      "type": "Outil",
-      "nom": "Hache",
-      "quantity": 1,
-      "description": "Blablabla",
-      "valeur": 30
-
-    },
-    {
-      "type": "Outil",
-      "nom": "Pioche",
-      "quantity": 1,
-      "description": "Blablabla",
-      "valeur": 30
-
-    },
-    {
-      "type": "Consommable",
-      "nom": "Potion",
-      "quantity": 99,
-      "description": "Blablabla",
-      "valeur": 25,
-      "states": false
-    },
-    {
-      "type": "Consommable",
-      "nom": "Porc",
-      "quantity": 50,
-      "description": "Blablabla",
-      "valeur": 10,
-      "states": false
-    },
-    {
-      "type": "Consommable",
-      "nom": "pain",
-      "quantity": 50,
-      "description": "Blablabla",
-      "valeur": 10,
-      "states": false
-    },
-    {
-      "type": "Consommable",
-      "nom": "cerise",
-      "quantity": 50,
-      "description": "Blablabla",
-      "valeur": 10,
-      "states": false
-    },
-    {
-      "type": "Consommable",
-      "nom": "boeuf",
-      "quantity": 50,
-      "description": "Blablabla",
-      "valeur": 10,
-      "states": false
-    },
-    {
-      "type": "Consommable",
-      "nom": "poulet",
-      "quantity": 50,
-      "description": "Blablabla",
-      "valeur": 10,
-      "states": false
-    },
-    {
-      "type": "Consommable",
-      "nom": "cordon bleu",
-      "quantity": 50,
-      "description": "Blablabla",
-      "valeur": 10,
-      "states": false
-    },
-    {
-      "type": "Consommable",
-      "nom": "pate",
-      "quantity": 50,
-      "description": "Blablabla",
-      "valeur": 10,
-      "states": false
-    },
-    {
-      "type": "Consommable",
-      "nom": "pomme",
-      "quantity": 50,
-      "description": "Blablabla",
-      "valeur": 10,
-      "states": false
-    },
-    {
-      "type": "Consommable",
-      "nom": "poire",
-      "quantity": 50,
-      "description": "Blablabla",
-      "valeur": 10,
-      "states": false
-    },
-    {
-      "type": "Objet de quête",
-      "nom": "Lettre",
-      "quantity": 1,
-      "description": "Blablabla"
-    },
-    {
-      "type": "Objet de quête",
-      "nom": "Carte",
-      "quantity": 1,
-      "description": "Blablabla"
-    },
-    {
-      "type": "Divers",
-      "nom": "Divers 1",
-      "quantity": 30,
-      "description": "Blablabla",
-      "valeur": 10
-    },
-    {
-      "type": "Divers",
-      "nom": "Divers 2",
-      "quantity": 10,
-      "description": "Blablabla",
-      "valeur": 20
-    }
-  ]
+	class: com.empire.rpg.player.Inventory.Item
+	type: Armes
+	nom: Lance en fer
+	quantity: 1
+	description: Blablabla
+	valeur: 30
+	states: false
+	style: lance
 }
+{
+	class: com.empire.rpg.player.Inventory.Item
+	type: Armes
+	nom: Lance en acier
+	quantity: 1
+	description: Blablabla
+	valeur: 30
+	states: false
+	style: lance
+}
+{
+	class: com.empire.rpg.player.Inventory.Item
+	type: Armes
+	nom: Lance en carbone
+	quantity: 1
+	description: Blablabla
+	valeur: 30
+	states: false
+	style: lance
+}
+{
+	class: com.empire.rpg.player.Inventory.Item
+	type: Armes
+	nom: Épée en fer
+	quantity: 1
+	description: Blablabla
+	valeur: 30
+	states: false
+	style: épée
+}
+{
+	class: com.empire.rpg.player.Inventory.Item
+	type: Armes
+	nom: Épée en acier
+	quantity: 1
+	description: Blablabla
+	valeur: 30
+	states: false
+	style: épée
+}
+{
+	class: com.empire.rpg.player.Inventory.Item
+	type: Armes
+	nom: Épée en carbone
+	quantity: 1
+	description: Blablabla
+	valeur: 30
+	states: false
+	style: épée
+}
+{
+	class: com.empire.rpg.player.Inventory.Item
+	type: Armes
+	nom: Arc en bois
+	quantity: 1
+	description: Blablabla
+	valeur: 30
+	states: false
+	style: arc
+}
+{
+	class: com.empire.rpg.player.Inventory.Item
+	type: Armes
+	nom: Arc en fer
+	quantity: 1
+	description: Blablabla
+	valeur: 30
+	states: false
+	style: arc
+}
+{
+	class: com.empire.rpg.player.Inventory.Item
+	type: Armes
+	nom: Arc en carbone
+	quantity: 1
+	description: Blablabla
+	valeur: 30
+	states: false
+	style: arc
+}
+{
+	class: com.empire.rpg.player.Inventory.Item
+	type: Armes
+	nom: Bouclier en bois
+	quantity: 1
+	description: Blablabla
+	valeur: 30
+	states: false
+	style: bouclier
+}
+{
+	class: com.empire.rpg.player.Inventory.Item
+	type: Armes
+	nom: Bouclier en fer
+	quantity: 1
+	description: Blablabla
+	valeur: 30
+	states: false
+	style: bouclier
+}
+{
+	class: com.empire.rpg.player.Inventory.Item
+	type: Armes
+	nom: Bouclier en carbone
+	quantity: 1
+	description: Blablabla
+	valeur: 30
+	states: false
+	style: bouclier
+}
+{
+	class: com.empire.rpg.player.Inventory.Item
+	type: Armes
+	nom: flèche en bois
+	quantity: 1
+	description: Blablabla
+	valeur: 30
+	states: false
+	style: carquois
+}
+{
+	class: com.empire.rpg.player.Inventory.Item
+	type: Armes
+	nom: flèche en fer
+	quantity: 1
+	description: Blablabla
+	valeur: 30
+	states: false
+	style: carquois
+}
+{
+	class: com.empire.rpg.player.Inventory.Item
+	type: Armes
+	nom: flèche en carbone
+	quantity: 1
+	description: Blablabla
+	valeur: 30
+	states: false
+	style: carquois
+}
+{
+	class: com.empire.rpg.player.Inventory.Item
+	type: Tenue
+	nom: Armure de fer
+	quantity: 1
+	description: Blablabla
+	valeur: 30
+	states: false
+	style: "null"
+}
+{
+	class: com.empire.rpg.player.Inventory.Item
+	type: Tenue
+	nom: Armure en acier
+	quantity: 1
+	description: Blablabla
+	valeur: 30
+	states: false
+	style: "null"
+}
+{
+	class: com.empire.rpg.player.Inventory.Item
+	type: Tenue
+	nom: Armure en carbone
+	quantity: 1
+	description: Blablabla
+	valeur: 30
+	states: false
+	style: "null"
+}
+{
+	class: com.empire.rpg.player.Inventory.Item
+	type: Outil
+	nom: Hache
+	quantity: 1
+	description: Blablabla
+	valeur: 30
+	states: false
+	style: "null"
+}
+{
+	class: com.empire.rpg.player.Inventory.Item
+	type: Outil
+	nom: Pioche
+	quantity: 1
+	description: Blablabla
+	valeur: 30
+	states: false
+	style: "null"
+}
+{
+	class: com.empire.rpg.player.Inventory.Item
+	type: Consommable
+	nom: Potion
+	quantity: 99
+	description: Blablabla
+	valeur: 25
+	states: false
+	style: "null"
+}
+{
+	class: com.empire.rpg.player.Inventory.Item
+	type: Consommable
+	nom: boeuf
+	quantity: 50
+	description: Blablabla
+	valeur: 10
+	states: false
+	style: "null"
+}
+{
+	class: com.empire.rpg.player.Inventory.Item
+	type: Consommable
+	nom: Porc
+	quantity: 50
+	description: Blablabla
+	valeur: 10
+	states: false
+	style: "null"
+}
+{
+	class: com.empire.rpg.player.Inventory.Item
+	type: Consommable
+	nom: poulet
+	quantity: 50
+	description: Blablabla
+	valeur: 10
+	states: false
+	style: "null"
+}
+{
+	class: com.empire.rpg.player.Inventory.Item
+	type: Objet de quête
+	nom: Lettre
+	quantity: 1
+	description: Blablabla
+	valeur: 0
+	states: false
+	style: "null"
+}
+{
+	class: com.empire.rpg.player.Inventory.Item
+	type: Objet de quête
+	nom: Carte
+	quantity: 1
+	description: Blablabla
+	valeur: 0
+	states: false
+	style: "null"
+}
+{
+	class: com.empire.rpg.player.Inventory.Item
+	type: Divers
+	nom: Divers 1
+	quantity: 30
+	description: Blablabla
+	valeur: 10
+	states: false
+	style: "null"
+}
+{
+	class: com.empire.rpg.player.Inventory.Item
+	type: Divers
+	nom: Divers 2
+	quantity: 10
+	description: Blablabla
+	valeur: 20
+	states: false
+	style: "null"
+}
+]}
