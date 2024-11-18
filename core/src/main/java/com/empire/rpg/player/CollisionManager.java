@@ -16,15 +16,17 @@ public class CollisionManager {
     private final Array<Rectangle> collisionRectangles = new Array<>();
     private final Array<Ellipse> collisionEllipses = new Array<>();
     private final Array<Polygon> collisionPolygons = new Array<>();
-    private final Array<Rectangle> pnjCollisionRectangles = new Array<>();  // Ajout pour les PNJ
 
     public CollisionManager(TiledMap tiledMap) {
-        // Charger la couche de collision
+        loadCollisionObjects(tiledMap);
+    }
+
+    // Méthode pour charger les objets de collision de la carte
+    private void loadCollisionObjects(TiledMap tiledMap) {
         MapLayer collisionLayer = tiledMap.getLayers().get("collision");
         if (collisionLayer != null) {
             MapObjects objects = collisionLayer.getObjects();
 
-            // Traiter chaque type d'objet
             for (RectangleMapObject rectangleObject : objects.getByType(RectangleMapObject.class)) {
                 collisionRectangles.add(rectangleObject.getRectangle());
             }
@@ -37,34 +39,16 @@ public class CollisionManager {
         }
     }
 
-    // Ajouter un rectangle de collision pour un PNJ
-    public void addPnjCollisionRectangle(Rectangle pnjRectangle) {
-        pnjCollisionRectangles.add(pnjRectangle);
+    // Méthode pour ajouter un rectangle de collision supplémentaire
+    public void addCollisionRectangle(Rectangle rectangle) {
+        collisionRectangles.add(rectangle);
     }
 
-    // Mettre à jour la position du rectangle de collision d'un PNJ
-    public void updatePnjCollisionRectangle(int index, Rectangle newRectangle) {
-        if (index >= 0 && index < pnjCollisionRectangles.size) {
-            pnjCollisionRectangles.set(index, newRectangle);
-        }
-    }
-
-    // Effacer les rectangles de PNJ
-    public void clearPnjCollisionRectangles() {
-        pnjCollisionRectangles.clear();
-    }
-
+    // Méthode pour vérifier les collisions avec un rectangle
     public boolean isColliding(Rectangle playerRect) {
-        // Vérifier les collisions avec les rectangles de la carte
+        // Vérifier les collisions avec les rectangles
         for (Rectangle rect : collisionRectangles) {
             if (playerRect.overlaps(rect)) {
-                return true;
-            }
-        }
-
-        // Vérifier les collisions avec les rectangles des PNJ
-        for (Rectangle pnjRect : pnjCollisionRectangles) {
-            if (playerRect.overlaps(pnjRect)) {
                 return true;
             }
         }
@@ -73,7 +57,7 @@ public class CollisionManager {
         for (Ellipse ellipse : collisionEllipses) {
             float ellipseCenterX = ellipse.x + ellipse.width / 2;
             float ellipseCenterY = ellipse.y + ellipse.height / 2;
-            float radius = Math.min(ellipse.width, ellipse.height) / 2; // Approximation
+            float radius = Math.min(ellipse.width, ellipse.height) / 2;
 
             if (overlapsCircleRectangle(ellipseCenterX, ellipseCenterY, radius, playerRect)) {
                 return true;
@@ -95,7 +79,7 @@ public class CollisionManager {
         return false;
     }
 
-    // Fonction pour vérifier la collision entre un cercle et un rectangle
+    // Vérification de la collision entre un cercle et un rectangle
     private boolean overlapsCircleRectangle(float circleX, float circleY, float radius, Rectangle rectangle) {
         float closestX = Math.max(rectangle.x, Math.min(circleX, rectangle.x + rectangle.width));
         float closestY = Math.max(rectangle.y, Math.min(circleY, rectangle.y + rectangle.height));
