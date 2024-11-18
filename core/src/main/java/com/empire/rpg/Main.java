@@ -11,7 +11,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.empire.rpg.player.Inventory.Inventory;
 import com.empire.rpg.player.Player;
-import com.badlogic.gdx.math.Vector2;
+
 
 public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
@@ -25,8 +25,7 @@ public class Main extends ApplicationAdapter {
 
     private static final float WORLD_WIDTH = 854f;
     private static final float WORLD_HEIGHT = 480f;
-    private static final Vector2 squarePosition = new Vector2(52 * 48, 45 * 49);
-    private static final float INTERACTION_DISTANCE = 500;
+
 
     private boolean showInteractionFrame = false;
     private Inventory inventaire;  // Ajout de l'instance de l'inventaire
