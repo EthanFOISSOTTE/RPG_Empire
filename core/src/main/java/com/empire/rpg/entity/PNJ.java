@@ -8,11 +8,17 @@ import com.empire.rpg.component.MovementComponent;
 import com.empire.rpg.component.PositionComponent;
 import java.util.Map;
 import java.util.UUID;
+import com.badlogic.gdx.math.Vector2;
 
 /**
  * PNJ (Personnage Non Joueur) est une classe représentant un personnage non joueur dans le jeu.
  */
 public class PNJ extends Entity {
+
+    public Vector2 getPosition() {
+        PositionComponent positionComponent = (PositionComponent) this.getComponent(PositionComponent.class);
+        return new Vector2(positionComponent.getX(), positionComponent.getY());
+    }
 
     /**
      * Ajoute une nouvelle entité PNJ.
@@ -48,6 +54,10 @@ public class PNJ extends Entity {
      */
     public PNJ(String name, Map<Class<? extends Component>, Component> components, UUID id) {
         super(name, components, id);
+    }
+
+    public String getName() {
+        return name;
     }
 
     /**
