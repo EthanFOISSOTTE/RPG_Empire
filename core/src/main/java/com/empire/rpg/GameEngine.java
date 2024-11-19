@@ -87,11 +87,7 @@ public class GameEngine {
         FightSystem fightSystem = new FightSystem(mobBalrog);
 
 
-        // Ajout d'items à l'inventaire du joueur
-        Item healthPotion20 = new Item("Potion de vie", 20, "Sante");
-        Item goldCoin5 = new Item("Piece d'or", 5, "Monnaie");
-        inventorySystem.addItem(healthPotion20, 2);
-        inventorySystem.addItem(goldCoin5, 10);
+
 
         // Affichage initial de l'inventaire et des positions
         System.out.println("=== Etat Initial du Joueur ===");
@@ -119,16 +115,6 @@ public class GameEngine {
         System.out.println("Vie du joueur : " + (player.getComponent(HealthComponent.class)).getCurrentHealthPoints() + " / " + ((HealthComponent) player.getComponent(HealthComponent.class)).getMaxHealthPoints());
         System.out.println("Vie de l'ennemi : " + (enemy.getComponent(HealthComponent.class)).getCurrentHealthPoints() + " / " + ((HealthComponent) enemy.getComponent(HealthComponent.class)).getMaxHealthPoints());
 
-        // Test de l'inventaire : utilisation de la potion de vie
-        System.out.println("\n=== Utilisation d'une Potion de Vie ===");
-        if (inventorySystem.hasItem(healthPotion20)) {
-            HealthComponent health = (HealthComponent) player.getComponent(HealthComponent.class);
-
-            // Soigne le joueur de 30 points de vie
-            new HealingComponent(30);
-            health.setCurrentHealthPoints(health.getCurrentHealthPoints() + 30);
-            inventorySystem.removeItem(healthPotion20, 1);  // Retire une potion de l'inventaire
-        }
 
         // Affichage de l'inventaire et de la santé après l'utilisation de la potion
         System.out.println("\n=== Etat Final ===");

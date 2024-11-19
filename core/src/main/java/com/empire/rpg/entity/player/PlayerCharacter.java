@@ -24,6 +24,9 @@ import com.empire.rpg.entity.player.utils.Constants;
 
 import java.util.*;
 
+import com.empire.rpg.entity.player.Inventory.Inventory;
+
+
 /**
  * Classe principale représentant le joueur dans le jeu.
  * Elle gère l'état du joueur, les entrées utilisateur, les mouvements,
@@ -107,6 +110,9 @@ public class PlayerCharacter extends Player {
      * @param name       Nom du joueur.
      * @param components Map des composants associés.
      */
+
+    private static boolean showInteractionFrame = false;
+
     public PlayerCharacter(float scale, UUID id, String name, Map<Class<? extends Component>, Component> components) {
         super(name, components, id); // Appel au constructeur de la superclasse
 
@@ -160,6 +166,8 @@ public class PlayerCharacter extends Player {
         // Initialisation des ensembles d'outils
         initializeToolSets();
     }
+
+
 
     // Méthode pour initialiser les ensembles d'outils
     private void initializeToolSets() {
@@ -284,6 +292,14 @@ public class PlayerCharacter extends Player {
                 }
             }
         }
+
+        // Gérer l'affichage et la mise à jour de l'inventaire
+        if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+
+            showInteractionFrame = !showInteractionFrame;   //inverse true en false et inversement
+            Inventory.setShowInteractionFrame(showInteractionFrame);  // Active le cadre d'inventaire
+        }
+
     }
 
     // Méthode pour changer l'ensemble d'outils équipé
@@ -435,6 +451,9 @@ public class PlayerCharacter extends Player {
     public void move(float deltaTime, CollisionManager collisionManager) {
         // Empêcher le mouvement pendant une attaque
         if (currentState instanceof AttackingState) {
+            return;
+        }
+        if (Inventory.getShowInteractionFrame()){
             return;
         }
 

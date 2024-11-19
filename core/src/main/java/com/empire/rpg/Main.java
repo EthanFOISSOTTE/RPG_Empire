@@ -4,7 +4,10 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.Input;
 import java.util.HashMap;
@@ -19,6 +22,10 @@ import com.empire.rpg.component.Component;
 import com.empire.rpg.entity.player.audio.SoundManager;
 import com.empire.rpg.debug.DebugRenderer;
 import com.empire.rpg.ui.PlayerUI;
+
+import com.empire.rpg.entity.player.Inventory.Inventory;
+
+
 
 public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
@@ -36,11 +43,18 @@ public class Main extends ApplicationAdapter {
     private static final float WORLD_WIDTH = 854f;
     private static final float WORLD_HEIGHT = 480f;
 
+    private Inventory inventaire; // Instance de l'inventaire
+    private boolean showInteractionFrame = false;
+    private ShapeRenderer shapeRenderer; // Déclaration de ShapeRenderer
+    private BitmapFont font;
+
     @Override
     public void create() {
         batch = new SpriteBatch();
         camera = new OrthographicCamera();
         viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
+        shapeRenderer = new ShapeRenderer(); // Initialisation de ShapeRenderer
+        font = new BitmapFont();
 
         // Charger la carte et les collisions
         mapManager = new MapManager("rpg-map.tmx", camera);
@@ -64,6 +78,8 @@ public class Main extends ApplicationAdapter {
         // Mettre à jour la caméra sur le joueur
         camera.position.set(player.getX(), player.getY(), 0);
         camera.update();
+
+        inventaire = new Inventory(camera, batch);  // Initialisation de l'inventaire
     }
 
     @Override
@@ -87,6 +103,16 @@ public class Main extends ApplicationAdapter {
         // Rendre les couches supérieures (au-dessus du joueur)
         mapManager.renderUpperLayers(camera);
 
+
+        // Mettre à jour l'inventaire pour gérer les entrées
+        if (!showInteractionFrame) {
+            inventaire.update();  // Appel de update() pour gérer la navigation dans l'inventaire
+            inventaire.render(new Vector2(player.getX(),player.getY()));
+        }
+
+        // Rendre l'UI du joueur (après le rendu des éléments du jeu)
+        playerUI.render(batch);
+
         // Activer/Désactiver le mode de débogage
         if (Gdx.input.isKeyJustPressed(Input.Keys.F1)) {
             debugMode = !debugMode;
@@ -94,9 +120,6 @@ public class Main extends ApplicationAdapter {
         if (debugMode) {
             debugRenderer.renderDebugBounds(camera, player, collisionManager);
         }
-
-        // Rendre l'UI du joueur (après le rendu des éléments du jeu)
-        playerUI.render(batch);
 
         // Mettre à jour la caméra pour suivre le joueur
         camera.position.set(player.getX(), player.getY(), 0);
@@ -118,5 +141,10 @@ public class Main extends ApplicationAdapter {
         }
         debugRenderer.dispose();
         playerUI.dispose();
+
+        shapeRenderer.dispose(); // Libère ShapeRenderer
+        font.dispose();
+        inventaire.dispose();  // Libère les ressources utilisées dans inventaire
+
     }
 }
