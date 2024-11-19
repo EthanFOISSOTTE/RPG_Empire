@@ -1,10 +1,8 @@
 {
-  "radagast_dialogue": [
-    "Bonjour, aventurier. Puis-je t'aider ?",
-    "Le chemin vers la forêt est dangereux, fais attention."
-  ],
-  "gandalf_dialogue": [
-    "Je suis Gandalf le Gris.",
-    "La route est longue et semée d'embûches."
-  ]
+  "Radagast": {
+    "dialogues": ["Bonjour, aventurier!", "Comment puis-je t'aider aujourd'hui?"]
+  },
+  "Duc_Michel": {
+    "dialogues": ["Salut!", "Avez-vous entendu les nouvelles?"]
+  }
 }
