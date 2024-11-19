@@ -202,7 +202,15 @@ public class PlayerCharacter extends Player {
 
     // Méthode de mise à jour appelée à chaque frame
     public void update(float deltaTime, CollisionManager collisionManager) {
+        // Synchroniser la position locale avec le PositionComponent
+        PositionComponent posComponent = (PositionComponent) getComponent(PositionComponent.class);
+        if (posComponent != null) {
+            position.set(posComponent.getX(), posComponent.getY());
+        }
+
+        // Sauvegarder la position précédente avant de la mettre à jour
         previousPosition.set(position);
+
         handleInput(); // Gérer les entrées utilisateur
         currentState.update(deltaTime, collisionManager); // Mettre à jour l'état actuel
         updateCooldowns(deltaTime); // Mettre à jour les temps de recharge des attaques
@@ -471,31 +479,31 @@ public class PlayerCharacter extends Player {
         float deltaY = direction.y * speed * deltaTime;
 
         // Récupérer PositionComponent
-        PositionComponent position = (PositionComponent) getComponent(PositionComponent.class);
-        if (position == null) {
+        PositionComponent posComponent = (PositionComponent) getComponent(PositionComponent.class);
+        if (posComponent == null) {
             System.out.println("PositionComponent missing");
             return;
         }
 
-        float oldX = position.getX();
-        float oldY = position.getY();
+        float oldX = posComponent.getX();
+        float oldY = posComponent.getY();
 
         // Tentative de déplacement en X
-        position.setPosition(oldX + deltaX, oldY);
-        collisionComponent.setPosition(position.getX(), position.getY());
+        posComponent.setPosition(oldX + deltaX, oldY);
+        collisionComponent.setPosition(posComponent.getX(), posComponent.getY());
         if (collisionManager.isColliding(collisionComponent.getBoundingBox())) {
             // Collision détectée, annuler le déplacement en X
-            position.setPosition(oldX, oldY);
-            collisionComponent.setPosition(position.getX(), position.getY());
+            posComponent.setPosition(oldX, oldY);
+            collisionComponent.setPosition(posComponent.getX(), posComponent.getY());
         }
 
         // Tentative de déplacement en Y
-        position.setPosition(position.getX(), position.getY() + deltaY);
-        collisionComponent.setPosition(position.getX(), position.getY());
+        posComponent.setPosition(posComponent.getX(), posComponent.getY() + deltaY);
+        collisionComponent.setPosition(posComponent.getX(), posComponent.getY());
         if (collisionManager.isColliding(collisionComponent.getBoundingBox())) {
             // Collision détectée, annuler le déplacement en Y
-            position.setPosition(position.getX(), oldY);
-            collisionComponent.setPosition(position.getX(), position.getY());
+            posComponent.setPosition(posComponent.getX(), oldY);
+            collisionComponent.setPosition(posComponent.getX(), posComponent.getY());
         }
     }
 
@@ -575,23 +583,27 @@ public class PlayerCharacter extends Player {
 
     // Getters pour la position du joueur via PositionComponent
     public float getX() {
-        PositionComponent position = (PositionComponent) getComponent(PositionComponent.class);
-        return position != null ? position.getX() : 0f;
+        PositionComponent posComponent = (PositionComponent) getComponent(PositionComponent.class);
+        return posComponent != null ? posComponent.getX() : 0f;
     }
 
     public float getY() {
-        PositionComponent position = (PositionComponent) getComponent(PositionComponent.class);
-        return position != null ? position.getY() : 0f;
+        PositionComponent posComponent = (PositionComponent) getComponent(PositionComponent.class);
+        return posComponent != null ? posComponent.getY() : 0f;
     }
 
     // Méthode pour restaurer la position précédente en cas de collision
     public void restorePreviousPosition() {
-        position.set(previousPosition);
+        PositionComponent posComponent = (PositionComponent) getComponent(PositionComponent.class);
+        if (posComponent != null) {
+            posComponent.setPosition(previousPosition.x, previousPosition.y);
+            collisionComponent.setPosition(posComponent.getX(), posComponent.getY());
+        }
     }
 
     public Vector2 getPosition() {
-        PositionComponent position = (PositionComponent) getComponent(PositionComponent.class);
-        return new Vector2(position.getX(), position.getY());
+        PositionComponent posComponent = (PositionComponent) getComponent(PositionComponent.class);
+        return new Vector2(posComponent.getX(), posComponent.getY());
     }
 
     // Getter pour le composant de collision
