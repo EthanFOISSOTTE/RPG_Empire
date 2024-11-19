@@ -1,10 +1,10 @@
 package com.empire.rpg.component.pathfinding;
 
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.empire.rpg.CollisionManager;
-import com.empire.rpg.entity.mob.*;
+import com.empire.rpg.entity.mob.Mob;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import java.util.*;
 
@@ -162,7 +162,7 @@ public class Pathfinding {
      * @param pixel Position en pixels
      * @return Coordonnées de tuile correspondantes
      */
-    private Vector2 pixelToTile(Vector2 pixel) {
+    public Vector2 pixelToTile(Vector2 pixel) {
         return new Vector2((int) (pixel.x / TILE_SIZE), (int) (pixel.y / TILE_SIZE));
     }
 
@@ -171,7 +171,7 @@ public class Pathfinding {
      * @param tile Coordonnées de tuile
      * @return Position en pixels correspondante
      */
-    private Vector2 tileToPixel(Vector2 tile) {
+    public Vector2 tileToPixel(Vector2 tile) {
         return new Vector2(tile.x * TILE_SIZE, tile.y * TILE_SIZE);
     }
 
@@ -182,7 +182,7 @@ public class Pathfinding {
      * @return Une liste de positions en pixels représentant le chemin
      */
     public List<Vector2> calculateSegmentPath(Vector2 start, Vector2 end) {
-        List<Vector2> path = new ArrayList<>(); // Déclare la liste 'path' ici
+        List<Vector2> path = new ArrayList<>();
         Vector2 startTile = pixelToTile(start);
         Vector2 targetTile = pixelToTile(end);
 

@@ -1,49 +1,49 @@
 package com.empire.rpg.entity.mob;
 
 import com.badlogic.gdx.math.Vector2;
-import com.empire.rpg.component.pathfinding.*;
 import com.empire.rpg.CollisionManager;
+import com.empire.rpg.component.pathfinding.Pathfinding;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
- * Fabrique pour créer des instances de mobs avec des comportements définis.
+ * Factory pour créer des mobs en tant qu'entités avec des composants.
  */
 public class MobFactory {
     private static Pathfinding pathfinding;
 
-    /**
-     * Définit l'instance de pathfinding pour les mobs.
-     * @param pathfindingInstance Instance de pathfinding
-     */
     public static void setPathfinding(Pathfinding pathfindingInstance) {
         pathfinding = pathfindingInstance;
     }
 
-    /**
-     * Accède à l'instance de pathfinding.
-     * @return Instance de pathfinding
-     */
     public static Pathfinding getPathfinding() {
         return pathfinding;
     }
 
-    /**
-     * Crée un mob de type spécifique à une position donnée.
-     * @param type Type de mob (ex: "gobelinvert")
-     * @param position Position initiale du mob
-     * @return Instance de Mob
-     */
-    public static Mob createMob(String type, Vector2 position, CollisionManager collisionManager) {
+    public static void createMob(String type, Vector2 position, CollisionManager collisionManager) {
+        Mob mob = null;
         switch (type.toLowerCase()) {
-            case "gobelinvert":
-                return new GobelinVert(position, collisionManager);
             case "gobelinrouge":
-                return new GobelinRouge(position, collisionManager);
+                mob = new GobelinRouge(position, collisionManager);
+                break;
+            case "gobelinvert":
+                mob = new GobelinVert(position, collisionManager);
+                break;
             case "chatgris":
-                return new ChatGris(position, collisionManager);
+                mob = new ChatGris(position, collisionManager);
+                break;
             case "lapinblanc":
-                return new LapinBlanc(position, collisionManager);
+                mob = new LapinBlanc(position, collisionManager);
+                break;
             default:
-                throw new IllegalArgumentException("Type de mob inconnu: " + type);
+                System.out.println("Type de mob inconnu: " + type);
+        }
+
+        if (mob != null) {
+            // Mob ajouté à la liste des mobs dans la classe Mob
+            // Pas besoin d'action supplémentaire car Mob ajoute automatiquement à allMobs
         }
     }
 }

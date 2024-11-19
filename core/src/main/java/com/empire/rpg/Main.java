@@ -55,15 +55,15 @@ public class Main extends ApplicationAdapter {
         collisionManager = new CollisionManager(mapManager.getTiledMap());
 
         // Création d'une map de composants avec PositionComponent et HealthComponent
-        Map<Class<? extends Component>, Component> components = Map.of(
-            HealthComponent.class, new HealthComponent(90, 100),
-            PositionComponent.class, new PositionComponent(4800f, 4800f)
-        );
+        Map<Class<? extends Component>, Component> components = new HashMap<>();
+        components.put(HealthComponent.class, new HealthComponent(90, 100));
+        components.put(PositionComponent.class, new PositionComponent(4800f, 4800f));
+
         // Création et initialisation de l'instance de PlayerCharacter
         player = new PlayerCharacter(2.0f, UUID.randomUUID(), "Hero", components);
         // Initialiser l'UI du joueur
         playerUI = new PlayerUI(player);
-        
+
         // Initialiser le pathfinding
         pathfinding = new Pathfinding(collisionManager);
         // Définit le pathfinding global pour tous les mobs

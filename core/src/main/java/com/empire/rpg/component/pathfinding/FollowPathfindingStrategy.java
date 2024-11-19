@@ -1,10 +1,10 @@
 package com.empire.rpg.component.pathfinding;
 
 import com.badlogic.gdx.math.Vector2;
-import com.empire.rpg.entity.mob.*;
+import com.empire.rpg.entity.mob.Mob;
 
 /**
- * Stratégie de pathfinding où le mob suit le joueur.
+ * Stratégie de pathfinding où le mob suit la cible (généralement le joueur).
  */
 public class FollowPathfindingStrategy implements PathfindingStrategy {
     private final Pathfinding pathfinding;

@@ -1,9 +1,11 @@
 package com.empire.rpg.component.pathfinding;
 
 import com.badlogic.gdx.math.Vector2;
-import com.empire.rpg.entity.mob.*;
+import com.empire.rpg.entity.mob.Mob;
 
 import java.util.Random;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Stratégie de pathfinding aléatoire pour les mobs en mode passif.
@@ -49,7 +51,7 @@ public class RandomPathfindingStrategy implements PathfindingStrategy {
             int offsetY = random.nextInt(2 * MAX_RANDOM_DISTANCE + 1) - MAX_RANDOM_DISTANCE;
             Vector2 candidatePosition = new Vector2(startPosition.x + offsetX * TILE_SIZE, startPosition.y + offsetY * TILE_SIZE);
 
-            if (!pathfinding.isTileBlocked(candidatePosition) && startPosition.dst(candidatePosition) <= MAX_RANDOM_DISTANCE * TILE_SIZE) {
+            if (!pathfinding.isTileBlocked(pathfinding.pixelToTile(candidatePosition)) && startPosition.dst(candidatePosition) <= MAX_RANDOM_DISTANCE * TILE_SIZE) {
                 return candidatePosition;
             }
             attempts++;

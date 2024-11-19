@@ -1,13 +1,13 @@
 package com.empire.rpg.component.pathfinding;
 
 import com.badlogic.gdx.math.Vector2;
-import com.empire.rpg.entity.mob.*;
+import com.empire.rpg.entity.mob.Mob;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Stratégie de pathfinding pour aller d'un point A à un point B avec des points intermédiaires si la distance est trop grande.
+ * Stratégie de pathfinding pour retourner au spawn.
  */
 public class GoToPathfindingStrategy implements PathfindingStrategy {
     private final Pathfinding pathfinding;

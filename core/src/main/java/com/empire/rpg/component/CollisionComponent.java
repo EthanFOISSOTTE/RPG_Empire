@@ -1,21 +1,24 @@
 package com.empire.rpg.component;
 
+import com.badlogic.gdx.math.Rectangle;
+
 /**
  * La classe CollisionComponent représente un composant qui gère la détection de collision
- * et l'état de collision pour une entité dans le jeu.
+ * et la bounding box pour une entité dans le jeu.
  */
-
 public class CollisionComponent implements Component {
     private boolean isCollidable;
+    private Rectangle boundingBox;
 
     /**
-     * Constructeur d'un CollisionComponent avec un état de collision spécifié.
+     * Constructeur d'un CollisionComponent avec une BoundingBox.
      *
      * @param isCollidable l'état de collision initial
+     * @param boundingBox  la bounding box de l'entité
      */
-
-    public CollisionComponent(boolean isCollidable) {
+    public CollisionComponent(boolean isCollidable, Rectangle boundingBox) {
         this.isCollidable = isCollidable;
+        this.boundingBox = boundingBox;
     }
 
     /**
@@ -32,60 +35,38 @@ public class CollisionComponent implements Component {
      *
      * @param collidable le nouvel état de collision
      */
-
     public void setCollidable(boolean collidable) {
         isCollidable = collidable;
     }
 
     /**
-     * Detecte une collision et affiche un message dans la console.
+     * Retourne la bounding box de l'entité.
      *
-     * @return true si une collision est détectée
+     * @return la bounding box
      */
-
-    public boolean detectCollision() {
-        System.out.println("Collision detected");
-        return true;
+    public Rectangle getBoundingBox() {
+        return boundingBox;
     }
 
     /**
-     * Inverse l'état de collision du composant.
+     * Définit une nouvelle bounding box.
      *
-     * @return le nouvel état de collision
+     * @param boundingBox la nouvelle bounding box
      */
-
-    public boolean toggleCollision() {
-        isCollidable = !isCollidable;
-        return isCollidable;
+    public void setBoundingBox(Rectangle boundingBox) {
+        this.boundingBox = boundingBox;
     }
-
-    /**
-     * Retourne le type du composant.
-     *
-     * @return le type du composant
-     */
 
     @Override
     public int getDamageReduction() {
         return 0;
     }
 
-    /**
-     * Affecte le type du composant.
-     *
-     * @param i le nouveau type du composant
-     */
-
     @Override
     public void setCurrentHealthPoints(int i) {
         // No implementation needed
     }
 
-    /**
-     * Retourne les points de vie actuels du composant.
-     *
-     * @return les points de vie actuels
-     */
     @Override
     public int getCurrentHealthPoints() {
         return 0;

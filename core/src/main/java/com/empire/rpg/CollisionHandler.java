@@ -15,7 +15,7 @@ public class CollisionHandler {
      * Si une collision est détectée, retourne le joueur à sa position précédente.
      *
      * @param player L'instance du joueur
-     * @param mob L'instance du mob
+     * @param mob    L'instance du mob
      */
     public void handlePlayerMobCollision(PlayerCharacter player, Mob mob) {
         if (collisionManager.isColliding(player.getCollisionBounds(), mob.getCollisionBounds())) {
@@ -28,7 +28,7 @@ public class CollisionHandler {
      * Vérifie et gère les collisions entre le joueur et tous les mobs.
      *
      * @param player L'instance du joueur
-     * @param mobs La liste de tous les mobs dans le jeu
+     * @param mobs   La liste de tous les mobs dans le jeu
      */
     public void handleCollisions(PlayerCharacter player, Iterable<Mob> mobs) {
         for (Mob mob : mobs) {

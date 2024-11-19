@@ -4,37 +4,40 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
+import com.empire.rpg.component.CollisionComponent;
+import com.empire.rpg.component.HealthComponent;
+import com.empire.rpg.component.PositionComponent;
 import com.empire.rpg.component.pathfinding.*;
 import com.empire.rpg.CollisionManager;
+import com.empire.rpg.entity.MOB;
 import com.empire.rpg.entity.player.PlayerCharacter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-public abstract class Mob {
+/**
+ * Classe abstraite représentant un Mob dans le jeu, étendant l'entité MOB et utilisant des composants.
+ */
+public abstract class Mob extends MOB {
     // Constantes
     private static final float AGGRO_RADIUS = 300f;
-    private static final int TILE_SIZE = 48;
     private static final float STOP_DISTANCE = 20f; // Distance d'arrêt en pixels
     private static final float MAX_BLOCKED_TIME = 0f; // Temps maximum en secondes avant une réorientation
     private static final float RETURN_TO_SPAWN_DISTANCE = 500f; // Distance max avant de revenir au spawn
+    private static final float SCALE = 1.0f;
 
     // Variables d'instance
-    protected Vector2 position;
-    protected Vector2 previousPosition;
-    private final Vector2 spawnPosition;
-    protected float speed;
     private Vector2 targetPosition;
     private List<Vector2> currentPath;
 
     private boolean isNearPlayer = false;
     private boolean isBlocked = false;
     private float blockedDuration = 0f;
-    private Vector2 previousTarget = null;
 
     // Stratégies de pathfinding
     protected PathfindingStrategy currentStrategy;
@@ -47,12 +50,6 @@ public abstract class Mob {
     protected TextureRegion face, dos, droite, gauche;
     protected TextureRegion currentTexture;
 
-    // Dimensions de la collision
-    protected final float marginLeft = 15f;
-    protected final float marginRight = 15f;
-    protected final float marginTop = 40f;
-    protected final float marginBottom = 5f;
-
     // Gestion des collisions
     protected CollisionManager collisionManager;
 
@@ -62,25 +59,48 @@ public abstract class Mob {
     // Indicateur pour le retour au spawn
     private boolean isReturningToSpawn = false;
 
+    // Vitesse du mob
+    protected float speed;
+
+    // Position précédente pour restauration et direction
+    private Vector2 previousPosition;
+
+    // Direction actuelle basée sur l'intention de mouvement
+    private Vector2 currentDirection = new Vector2(0, 0);
+
+    // Référence au CollisionComponent de la map de composants
+    protected CollisionComponent collisionComponent;
+
     // Constructeur
-    public Mob(Vector2 position, float speed, PathfindingStrategy aggressiveStrategy,
+    public Mob(String name, UUID id, Map<Class<? extends com.empire.rpg.component.Component>, com.empire.rpg.component.Component> components,
+               float speed, PathfindingStrategy aggressiveStrategy,
                PathfindingStrategy goToStrategy, CollisionManager collisionManager) {
-        this.position = position;
-        this.previousPosition = new Vector2(position);
-        this.spawnPosition = new Vector2(position); // Enregistre le point de spawn initial
-        this.speed = speed;
+        super(name, components, id);
+        this.collisionManager = collisionManager;
         this.aggressiveStrategy = aggressiveStrategy;
         this.goToStrategy = goToStrategy;
-        this.collisionManager = collisionManager;
-
         this.passiveStrategy = new RandomPathfindingStrategy(MobFactory.getPathfinding());
         this.currentStrategy = passiveStrategy;
 
-        currentPath = new ArrayList<>();
-        targetPosition = null;
+        this.speed = speed;
+        this.currentPath = new ArrayList<>();
+        this.targetPosition = null;
+        this.previousPosition = new Vector2();
+
+        // Récupérer la référence du CollisionComponent depuis la map de composants
+        this.collisionComponent = (CollisionComponent) getComponent(CollisionComponent.class);
+        if (this.collisionComponent == null) {
+            throw new IllegalArgumentException("CollisionComponent is required in components map");
+        }
 
         allMobs.add(this);
         initializeTextures();
+
+        // Initialiser previousPosition avec la position actuelle
+        PositionComponent posComponent = (PositionComponent) getComponent(PositionComponent.class);
+        if (posComponent != null) {
+            previousPosition.set(posComponent.getX(), posComponent.getY());
+        }
     }
 
     // Méthode pour initialiser les textures
@@ -88,11 +108,11 @@ public abstract class Mob {
 
     // Méthode pour obtenir les bordures de collision du mob
     public Rectangle getCollisionBounds() {
-        float collisionWidth = 64 - (marginLeft + marginRight);
-        float collisionHeight = 64 - (marginTop + marginBottom);
-        float collisionX = position.x + collisionWidth / 2;
-        float collisionY = position.y + collisionHeight / 2;
-        return new Rectangle(collisionX, collisionY, collisionWidth, collisionHeight);
+        CollisionComponent collision = (CollisionComponent) getComponent(CollisionComponent.class);
+        if (collision != null) {
+            return collision.getBoundingBox();
+        }
+        return new Rectangle();
     }
 
     // Méthode pour calculer la distance entre les bordures de collision du mob et du joueur
@@ -109,20 +129,24 @@ public abstract class Mob {
 
     // Mise à jour de la méthode update pour inclure l'arrêt basé sur la distance de collision
     public void update(float deltaTime, PlayerCharacter player, Camera camera) {
-        previousPosition.set(position);
+        PositionComponent posComponent = (PositionComponent) getComponent(PositionComponent.class);
+        if (posComponent == null) {
+            return;
+        }
+        Vector2 position = new Vector2(posComponent.getX(), posComponent.getY());
 
         if (!isVisible(camera)) {
             return;
         }
 
         // Vérifie la distance au spawn pour activer le retour
-        boolean isFarFromSpawn = position.dst(spawnPosition) > RETURN_TO_SPAWN_DISTANCE;
+        boolean isFarFromSpawn = position.dst(getSpawnPosition()) > RETURN_TO_SPAWN_DISTANCE;
 
         if (isFarFromSpawn) {
             if (!isReturningToSpawn) {
                 isReturningToSpawn = true; // Activer le retour au spawn
                 currentStrategy = goToStrategy;
-                currentStrategy.calculatePath(this, spawnPosition, deltaTime); // Calculer le chemin vers le spawn
+                currentStrategy.calculatePath(this, getSpawnPosition(), deltaTime); // Calculer le chemin vers le spawn
             }
         } else {
             isReturningToSpawn = false; // Désactiver le retour au spawn si proche
@@ -141,7 +165,8 @@ public abstract class Mob {
         if (isReturningToSpawn || !isNearPlayer) {
             // Mettre à jour le chemin ou suivre le joueur
             if (currentPath.isEmpty() || targetPosition == null || (isBlocked && blockedDuration > MAX_BLOCKED_TIME)) {
-                currentStrategy.calculatePath(this, isReturningToSpawn ? spawnPosition : player.getPosition(), deltaTime);
+                Vector2 target = isReturningToSpawn ? getSpawnPosition() : player.getPositionVector();
+                currentStrategy.calculatePath(this, target, deltaTime);
                 smoothPath();
             }
             moveInStaircasePattern(deltaTime);
@@ -151,16 +176,24 @@ public abstract class Mob {
         handleCollisions(player, deltaTime);
     }
 
+    private Vector2 getSpawnPosition() {
+        PositionComponent posComponent = (PositionComponent) getComponent(PositionComponent.class);
+        if (posComponent != null) {
+            return new Vector2(posComponent.getX(), posComponent.getY());
+        }
+        return new Vector2();
+    }
+
     private void handleCollisions(PlayerCharacter player, float deltaTime) {
         if (collisionManager.isColliding(this.getCollisionBounds(), player.getCollisionBounds())) {
-            position.set(previousPosition);
+            restorePreviousPosition();
             targetPosition = null;
         }
 
         boolean blockedByOtherMob = false;
         for (Mob otherMob : allMobs) {
             if (otherMob != this && collisionManager.isColliding(this.getCollisionBounds(), otherMob.getCollisionBounds())) {
-                position.set(previousPosition);
+                restorePreviousPosition();
                 blockedByOtherMob = true;
                 resolveMobBlocking(otherMob, deltaTime);
                 break;
@@ -171,11 +204,21 @@ public abstract class Mob {
 
     // Méthode pour vérifier si le joueur est dans la portée d'aggro
     private boolean isPlayerInAggroRange(PlayerCharacter player) {
-        return position.dst(player.getPosition()) <= AGGRO_RADIUS;
+        PositionComponent posComponent = (PositionComponent) getComponent(PositionComponent.class);
+        if (posComponent == null) {
+            return false;
+        }
+        Vector2 playerPos = player.getPositionVector();
+        Vector2 mobPos = new Vector2(posComponent.getX(), posComponent.getY());
+        return mobPos.dst(playerPos) <= AGGRO_RADIUS;
     }
 
     // Méthode pour vérifier si le mob est visible dans la caméra
     private boolean isVisible(Camera camera) {
+        PositionComponent posComponent = (PositionComponent) getComponent(PositionComponent.class);
+        if (posComponent == null) {
+            return false;
+        }
         float viewportHalfWidth = camera.viewportWidth / 2;
         float viewportHalfHeight = camera.viewportHeight / 2;
 
@@ -184,7 +227,8 @@ public abstract class Mob {
         float minY = camera.position.y - viewportHalfHeight;
         float maxY = camera.position.y + viewportHalfHeight;
 
-        return position.x >= minX && position.x <= maxX && position.y >= minY && position.y <= maxY;
+        return posComponent.getX() >= minX && posComponent.getX() <= maxX
+            && posComponent.getY() >= minY && posComponent.getY() <= maxY;
     }
 
     // Définir le chemin pour le mob
@@ -201,10 +245,19 @@ public abstract class Mob {
             return;
         }
 
+        PositionComponent posComponent = (PositionComponent) getComponent(PositionComponent.class);
+        if (posComponent == null) {
+            return;
+        }
+        Vector2 position = new Vector2(posComponent.getX(), posComponent.getY());
+
         float distanceToTarget = position.dst(targetPosition);
 
         if (distanceToTarget < speed * deltaTime) {
-            position.set(targetPosition);
+            // Sauvegarder la position actuelle avant de la modifier
+            previousPosition.set(posComponent.getX(), posComponent.getY());
+
+            posComponent.setPosition(targetPosition.x, targetPosition.y);
             targetPosition = !currentPath.isEmpty() ? currentPath.remove(0) : null;
 
             if (targetPosition == null) {
@@ -214,62 +267,85 @@ public abstract class Mob {
             float deltaX = targetPosition.x - position.x;
             float deltaY = targetPosition.y - position.y;
 
-            Vector2 newPosition = position.cpy();
+            Vector2 movement = new Vector2(deltaX, deltaY).nor().scl(speed * deltaTime);
+            Vector2 newPosition = position.add(movement);
 
-            if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                newPosition.x += Math.signum(deltaX) * speed * deltaTime;
-                if (Math.abs(newPosition.x - targetPosition.x) < speed * deltaTime) {
-                    newPosition.x = targetPosition.x;
-                }
-            } else {
-                newPosition.y += Math.signum(deltaY) * speed * deltaTime;
-                if (Math.abs(newPosition.y - targetPosition.y) < speed * deltaTime) {
-                    newPosition.y = targetPosition.y;
-                }
-            }
+            // Sauvegarder la position actuelle avant de la modifier
+            previousPosition.set(posComponent.getX(), posComponent.getY());
 
-            position.interpolate(newPosition, 0.5f, Interpolation.smooth);
+            posComponent.setPosition(newPosition.x, newPosition.y);
+            position.set(newPosition);
+
+            // Mettre à jour la bounding box après le déplacement en utilisant les données du CollisionComponent
+            updateCollisionBoundingBox(posComponent);
+
+            // Mettre à jour la direction actuelle
+            currentDirection.set(movement).nor();
         }
+    }
+
+    /**
+     * Met à jour la bounding box du CollisionComponent en fonction de la position actuelle du mob.
+     *
+     * @param posComponent Le PositionComponent du mob.
+     */
+    private void updateCollisionBoundingBox(PositionComponent posComponent) {
+        Rectangle collisionBox = collisionComponent.getBoundingBox();
+        // Calculer la nouvelle position de la bounding box en centrant sur la position actuelle du mob
+        float newX = posComponent.getX() + (collisionBox.width / 2);
+        float newY = posComponent.getY() + (collisionBox.height / 2);
+        collisionComponent.setBoundingBox(new Rectangle(newX, newY, collisionBox.width, collisionBox.height));
+
+        // Log pour vérifier les nouvelles positions
+        // System.out.println("Updated Collision Box for " + getName() + ": (" + newX + ", " + newY + ", " + collisionBox.width + ", " + collisionBox.height + ")");
     }
 
     // Mise à jour de la direction de la texture du mob
     private void updateTextureDirection() {
-        if (targetPosition == null) return;
+        PositionComponent posComponent = (PositionComponent) getComponent(PositionComponent.class);
+        if (posComponent == null || targetPosition == null) {
+            return;
+        }
 
-        float deltaX = targetPosition.x - position.x;
-        float deltaY = targetPosition.y - position.y;
+        float deltaX = targetPosition.x - posComponent.getX();
+        float deltaY = targetPosition.y - posComponent.getY();
 
-        if (Math.abs(deltaX) > 0 && Math.abs(deltaY) > 0) {
-            currentTexture = (deltaX > 0) ? droite : gauche;
-        } else if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        if (Math.abs(deltaX) > Math.abs(deltaY)) {
             currentTexture = (deltaX > 0) ? droite : gauche;
         } else {
             currentTexture = (deltaY > 0) ? dos : face;
         }
     }
 
-    // Méthode pour ajuster la direction du mob pour regarder le joueur
-    private void lookAtPlayer(PlayerCharacter player) {
-        float deltaX = player.getX() - position.x;
-        float deltaY = player.getY() - position.y;
-
-        if (Math.abs(deltaX) > Math.abs(deltaY)) {
-            currentTexture = (deltaX > 0) ? droite : gauche;
-        } else {
-            currentTexture = (deltaY > 0) ? face : dos;
-        }
-    }
-
     // Méthode pour réagir aux blocages par un autre mob
     private void resolveMobBlocking(Mob otherMob, float deltaTime) {
         if (blockedDuration > MAX_BLOCKED_TIME) {
-            Vector2 avoidanceDirection = new Vector2(position).sub(otherMob.getPosition()).rotateDeg(45).nor().scl(10f);
-            position.add(avoidanceDirection.scl(deltaTime));
-            targetPosition = null;
-            blockedDuration = 0;
+            PositionComponent posComponent = (PositionComponent) getComponent(PositionComponent.class);
+            PositionComponent otherPos = (PositionComponent) otherMob.getComponent(PositionComponent.class);
+            if (posComponent != null && otherPos != null) {
+                Vector2 avoidanceDirection = new Vector2(posComponent.getX(), posComponent.getY())
+                    .sub(otherPos.getX(), otherPos.getY()).nor().scl(10f);
+                posComponent.setPosition(posComponent.getX() + avoidanceDirection.x * deltaTime,
+                    posComponent.getY() + avoidanceDirection.y * deltaTime);
+
+                // Mettre à jour la bounding box après le déplacement
+                updateCollisionBoundingBox(posComponent);
+
+                targetPosition = null;
+                blockedDuration = 0;
+            }
         } else {
-            Vector2 separationForce = new Vector2(position).sub(otherMob.getPosition()).nor().scl(5f);
-            position.add(separationForce.scl(deltaTime));
+            PositionComponent posComponent = (PositionComponent) getComponent(PositionComponent.class);
+            PositionComponent otherPos = (PositionComponent) otherMob.getComponent(PositionComponent.class);
+            if (posComponent != null && otherPos != null) {
+                Vector2 separationForce = new Vector2(posComponent.getX(), posComponent.getY())
+                    .sub(otherPos.getX(), otherPos.getY()).nor().scl(5f);
+                posComponent.setPosition(posComponent.getX() + separationForce.x * deltaTime,
+                    posComponent.getY() + separationForce.y * deltaTime);
+
+                // Mettre à jour la bounding box après le déplacement
+                updateCollisionBoundingBox(posComponent);
+            }
         }
     }
 
@@ -308,20 +384,21 @@ public abstract class Mob {
 
     // Méthode pour vérifier si un chemin est bloqué
     private boolean isBlocked(Vector2 from, Vector2 to) {
+        // Implémenter la logique de vérification si nécessaire
         return false;
     }
 
     // Méthodes de récupération des données
     public Vector2 getPosition() {
-        return position;
+        PositionComponent posComponent = (PositionComponent) getComponent(PositionComponent.class);
+        if (posComponent != null) {
+            return new Vector2(posComponent.getX(), posComponent.getY());
+        }
+        return new Vector2();
     }
 
     public Vector2 getDirection() {
-        Vector2 direction = new Vector2(position).sub(previousPosition);
-        if (direction.len() != 0) {
-            direction.nor();
-        }
-        return direction;
+        return new Vector2(currentDirection);
     }
 
     public TextureRegion getCurrentTexture() {
@@ -334,11 +411,43 @@ public abstract class Mob {
 
     // Méthode de nettoyage de la texture
     public void dispose() {
-        texture.dispose();
+        if (texture != null) {
+            texture.dispose();
+        }
     }
 
     // Vérifie si le mob est bloqué
     public boolean isBlocked() {
         return isBlocked;
+    }
+
+    // Méthode pour restaurer la position précédente en cas de collision
+    public void restorePreviousPosition() {
+        PositionComponent posComponent = (PositionComponent) getComponent(PositionComponent.class);
+        if (posComponent != null) {
+            posComponent.setPosition(previousPosition.x, previousPosition.y);
+
+            // Mettre à jour la bounding box après la restauration
+            updateCollisionBoundingBox(posComponent);
+        }
+    }
+
+    // Méthode pour appliquer des dégâts au mob
+    public void takeDamage(float damage) {
+        HealthComponent health = (HealthComponent) getComponent(HealthComponent.class);
+        if (health != null) {
+            health.takeDamage((int) damage);
+            System.out.println(getName() + " a subi " + (int) damage + " dégâts. PV restants: " + health.getCurrentHealthPoints() + "/" + health.getMaxHealthPoints());
+            if (health.getCurrentHealthPoints() <= 0) {
+                onDeath();
+            }
+        }
+    }
+
+    // Méthode appelée lorsque le mob meurt
+    protected void onDeath() {
+        System.out.println(getName() + " est mort !");
+        // Optionnel : Ajouter des effets de mort, des animations, etc.
+        dispose(); // Libérer les ressources si nécessaire
     }
 }

@@ -3,56 +3,43 @@ package com.empire.rpg.entity;
 import java.util.UUID;
 
 /**
- * Classe abstraite EntityManager qui étend EntityFactory.
- * Gère les entités dans le jeu.
+ * Classe de gestion des entités dans le jeu.
+ * Elle contient le nom de l'entité et peut être étendue par d'autres classes.
  */
-
-public abstract class EntityManager extends EntityFactory {
+public abstract class EntityManager {
     protected String name;
 
     /**
-     * Constructeur pour injecter une instance de EntityFactory.
+     * Constructeur de EntityManager avec un nom.
      *
-     * @param name Le nom de l'EntityManager.
+     * @param name Le nom de l'entité.
      */
     public EntityManager(String name) {
         this.name = name;
     }
 
     /**
-     * Méthode abstraite pour créer une entité.
+     * Récupère le nom de l'entité.
      *
-     * @param id L'identifiant unique de l'entité.
-     */
-    public abstract void createEntity(UUID id);
-
-    /**
-     * Ajoute une nouvelle entité en générant un UUID aléatoire.
-     *
-     * @return L'entité ajoutée.
-     */
-    public Entity addEntity(Entity entity) {
-        createEntity(UUID.randomUUID()); // Création de l'entité via EntityFactory
-        return null;
-    }
-
-    /**
-     * Obtient le nom de l'EntityManager.
-     *
-     * @return Le nom de l'EntityManager.
+     * @return Le nom de l'entité.
      */
     public String getName() {
         return name;
     }
 
     /**
-     * Définit le nom de l'EntityManager.
+     * Définit un nouveau nom pour l'entité.
      *
-     * @param name Le nouveau nom de l'EntityManager.
+     * @param name Le nouveau nom de l'entité.
      */
     public void setName(String name) {
         this.name = name;
     }
 
-    public abstract Entity addEntity();
+    /**
+     * Crée une entité avec un identifiant donné.
+     *
+     * @param id L'identifiant de l'entité à créer.
+     */
+    public abstract void createEntity(UUID id);
 }
