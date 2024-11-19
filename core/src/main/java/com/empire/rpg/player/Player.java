@@ -48,6 +48,7 @@ public class Player {
     public Player(CollisionManager collisionManager) {
         this.collisionManager = collisionManager;
         this.position = new Vector2(51 * 48 + 24, 45 * 48 + 24); // Position Tableau des quêtes du joueur
+        // this.position = new Vector2(180 * 48 + 24, 55 * 48 + 24); // Position au port de la ville
         this.spriteSheet = new SpriteSheet();
         loadAnimations();
         currentAnimation = standFaceAnimation;
