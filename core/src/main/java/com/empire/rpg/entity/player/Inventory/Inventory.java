@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.empire.rpg.component.Component;
 import com.empire.rpg.entity.Item;
 
 
