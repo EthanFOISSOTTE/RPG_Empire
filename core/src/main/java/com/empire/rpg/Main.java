@@ -59,6 +59,7 @@ public class Main extends ApplicationAdapter {
         collisionManager = new CollisionManager(mapManager.getTiledMap());  // Initialisation du gestionnaire de collisions
         player = new Player(collisionManager);  // Initialisation du joueur avec le gestionnaire de collisions
 
+        //Region Initialisation des PNJ
 
         Map<Class<? extends Component>, Component> Component_Radagast = Map.of(
             PositionComponent.class, new PositionComponent(49 * 48 + 24, 44 * 48 + 24),
@@ -69,7 +70,7 @@ public class Main extends ApplicationAdapter {
         pnj_radagast = new PNJ("Radagast", Component_Radagast, UUID.randomUUID());
 
         Map<Class<? extends Component>, Component> Component_Duc = Map.of(
-            PositionComponent.class, new PositionComponent(49 * 48 + 24, 42 * 48 + 24),
+            PositionComponent.class, new PositionComponent(175 * 48 + 24, 70 * 48 + 24),
             MovementComponent.class, new MovementComponent(1.5f, "north"),
             CollisionComponent.class, new CollisionComponent(true),
             TextureComponent.class, new TextureComponent(new Texture("PNJ/Duc_Michel.png"), 48, 48, 0, 0, 2.0f)
@@ -83,6 +84,8 @@ public class Main extends ApplicationAdapter {
             TextureComponent.class, new TextureComponent(new Texture("PNJ/Archeologue.png"), 48, 48, 0, 0, 2.0f)
         );
         pnj_archeologue = new PNJ("Archéologue", Component_Duc, UUID.randomUUID());
+
+        //End Region
 
         // Initialisation des objets liés aux quêtes
         quest = new Quest(camera, batch);  // Création de l'objet Quest pour gérer les quêtes
