@@ -34,17 +34,21 @@ public class Main extends ApplicationAdapter {
     private static final float WORLD_WIDTH = 854f;  // Largeur du monde en pixels
     private static final float WORLD_HEIGHT = 480f;  // Hauteur du monde en pixels
     private static final Vector2 squarePosition = new Vector2(52 * 48, 45 * 49);  // Position du tableau de quête dans le monde
-    private static final float INTERACTION_DISTANCE = 50;  // Distance d'interaction avec un objet
+    private static final float INTERACTION_DISTANCE = 70;  // Distance d'interaction avec un objet
+    private static final float INTERACTION_DISTANCE_PNJ = 100;  // Distance d'interaction avec un PNJ
     private static final float DISPLAY_DISTANCE = 500;  // Distance de visibilité de l'icône du tableau de quête
     private static final float SQUARE_SIZE = 64;  // Taille de l'icône du tableau de quête
+
     private boolean showInteractionFrame = false;  // Booléen pour savoir si le cadre d'interaction est affiché
     private boolean showQuestPlayer = false;  // Booléen pour savoir si le cadre de quête est affiché
+    private boolean showDialogueFrame = false;  // Booléen pour savoir si le cadre de dialogue est affiché
+
     private Quest quest;  // Objet Quest qui gère les quêtes dans le jeu
     private QuestPlayer questPlayer;  // Objet qui gère l'interface de gestion des quêtes pour le joueur
+    private DialogueManager dialogue; // Objet qui gère les dialogues avec les PNJ
 
     private PNJ pnj_radagast;
     private PNJ pnj_duc;
-    private PNJ pnj_archeologue;
 
     @Override
     public void create() {
@@ -60,36 +64,27 @@ public class Main extends ApplicationAdapter {
         player = new Player(collisionManager);  // Initialisation du joueur avec le gestionnaire de collisions
 
         //Region Initialisation des PNJ
-
-        Map<Class<? extends Component>, Component> Component_Radagast = Map.of(
+        Map<Class<? extends Component>, Component> Radagast = Map.of(
             PositionComponent.class, new PositionComponent(49 * 48 + 24, 44 * 48 + 24),
             MovementComponent.class, new MovementComponent(1.5f, "north"),
             CollisionComponent.class, new CollisionComponent(true),
             TextureComponent.class, new TextureComponent(new Texture("PNJ/Radagast.png"), 48, 48, 0, 0, 2.0f)
         );
-        pnj_radagast = new PNJ("Radagast", Component_Radagast, UUID.randomUUID());
+        pnj_radagast = new PNJ("Radagast", Radagast, UUID.randomUUID());
 
-        Map<Class<? extends Component>, Component> Component_Duc = Map.of(
+        Map<Class<? extends Component>, Component> Duc_Michel = Map.of(
             PositionComponent.class, new PositionComponent(175 * 48 + 24, 70 * 48 + 24),
             MovementComponent.class, new MovementComponent(1.5f, "north"),
             CollisionComponent.class, new CollisionComponent(true),
             TextureComponent.class, new TextureComponent(new Texture("PNJ/Duc_Michel.png"), 48, 48, 0, 0, 2.0f)
         );
-        pnj_duc = new PNJ("Duc_Michel", Component_Duc, UUID.randomUUID()); // Animation de marche à droite : 65/66
-
-        Map<Class<? extends Component>, Component> Component_Archeologue = Map.of(
-            PositionComponent.class, new PositionComponent(49 * 48 + 24, 40 * 48 + 24),
-            MovementComponent.class, new MovementComponent(1.5f, "north"),
-            CollisionComponent.class, new CollisionComponent(true),
-            TextureComponent.class, new TextureComponent(new Texture("PNJ/Archeologue.png"), 48, 48, 0, 0, 2.0f)
-        );
-        pnj_archeologue = new PNJ("Archéologue", Component_Duc, UUID.randomUUID());
-
+        pnj_duc = new PNJ("Duc_Michel", Duc_Michel, UUID.randomUUID());
         //End Region
 
         // Initialisation des objets liés aux quêtes
         quest = new Quest(camera, batch);  // Création de l'objet Quest pour gérer les quêtes
         questPlayer = new QuestPlayer(camera, batch, quest.getQuestList());  // Création de l'objet QuestPlayer pour gérer l'affichage des quêtes
+        dialogue = new DialogueManager(camera, batch); // Initialisation du gestionnaire de dialogues
 
         // Chargement de la texture de l'icône du tableau de quête
         questBoardTexture = new Texture(Gdx.files.internal("exclamation.png"));  // Chemin vers l'image du tableau de quêtes
@@ -118,9 +113,10 @@ public class Main extends ApplicationAdapter {
         batch.begin();  // Démarre l'affichage des éléments 2D
         pnj_radagast.render(batch);
         pnj_duc.render(batch);
-        pnj_archeologue.render(batch);
         player.render(batch);  // Dessine le joueur
         batch.end();  // Fin de l'affichage des éléments 2D
+
+        dialogue.render(batch, player.getPosition());
 
         // Rendu des couches supérieures de la carte
         mapManager.renderUpperLayers(camera);
@@ -131,9 +127,28 @@ public class Main extends ApplicationAdapter {
             batch.end();
         }
 
-        // Bascule d'affichage du cadre d'interaction avec la touche F
-        if (isPlayerWithinInteractionDistance(player.getPosition(), squarePosition, INTERACTION_DISTANCE)
+        // Region
+        if (isPlayerWithinInteractionDistance(player.getPosition(), pnj_radagast.getPosition(), INTERACTION_DISTANCE)) {
+            batch.begin();
+            font.draw(batch, "F pour parler", pnj_radagast.getPosition().x + 27, pnj_radagast.getPosition().y + 85);  // Affiche le texte au-dessus du PNJ
+            batch.end();
+        }
+
+        if (isPlayerWithinInteractionDistance(player.getPosition(), pnj_radagast.getPosition(), INTERACTION_DISTANCE_PNJ)
             && Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+            showDialogueFrame = true;
+            dialogue.setShowDialogueFrame(showDialogueFrame);
+        }
+
+        // Cacher le cadre d'interaction avec la touche ESCAPE
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            showDialogueFrame = false;  // Désactive le cadre d'interaction
+            dialogue.setShowDialogueFrame(false);  // Désactive le cadre d'interaction dans Quest
+        }
+        //End Region
+
+        // Bascule d'affichage du cadre d'interaction avec la touche F
+        if (isPlayerWithinInteractionDistance(player.getPosition(), squarePosition, INTERACTION_DISTANCE) && Gdx.input.isKeyJustPressed(Input.Keys.F)) {
             showInteractionFrame = !showInteractionFrame;  // Inverse l'état d'affichage du cadre d'interaction
             quest.setShowInteractionFrame(showInteractionFrame);  // Applique l'état à l'objet Quest
         }
@@ -159,6 +174,13 @@ public class Main extends ApplicationAdapter {
         if (showInteractionFrame) {
             quest.render(batch, player.getPosition());  // Affiche l'interaction avec le tableau de quête
         }
+
+        //Region
+        if (showDialogueFrame) {
+            dialogue.render(batch, player.getPosition());  // Passe les bons arguments
+        }
+        //End Region
+
     }
 
     // Méthode pour déterminer si le joueur peut se déplacer
