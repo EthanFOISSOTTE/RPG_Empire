@@ -38,7 +38,7 @@ public class Ogre extends Mob {
 
     public Ogre(Vector2 position, CollisionManager collisionManager) {
         super(
-            "GobelinVert",
+            "Ogre",
             UUID.randomUUID(),
             initializeComponents(position),
             250f,
@@ -162,8 +162,8 @@ public class Ogre extends Mob {
     @Override
     protected Map<String, Object> getDeathInfo() {
         Map<String, Object> info = new HashMap<>();
-        info.put("Item-Name", "Peau de Gobelin Rouge");
-        info.put("Item-Description", "Peau de gobelin rouge, un ingrédient rare.");
+        info.put("Item-Name", "Peau d'Ogre");
+        info.put("Item-Description", "Peau d'ogre, un ingrédient précieux.");
         info.put("Item-Quantity", 1);
         info.put("Item-Type", "divers");
         return info;

@@ -38,7 +38,7 @@ public class Main extends ApplicationAdapter {
     private Pathfinding pathfinding;
 
     private DebugRenderer debugRenderer;
-    private boolean debugMode = false;
+    private boolean debugMode = true;
 
     // Taille de l'écran de jeu (16:9 | 480p)
     private static final float WORLD_WIDTH = 854f;
@@ -72,6 +72,8 @@ public class Main extends ApplicationAdapter {
         MobFactory.createMob("goblin", new Vector2(4700, 4900), collisionManager);
         MobFactory.createMob("ogre", new Vector2(4800, 4900), collisionManager);
         MobFactory.createMob("orc", new Vector2(4900, 4900), collisionManager);
+        MobFactory.createMob("rabbit", new Vector2(4700, 5000), collisionManager);
+        MobFactory.createMob("rabbit-horned", new Vector2(4800, 5000), collisionManager);
         // Créer un gestionnaire de collisions
         collisionHandler = new CollisionHandler(collisionManager);
 

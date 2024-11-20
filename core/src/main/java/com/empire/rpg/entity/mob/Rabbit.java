@@ -20,7 +20,7 @@ import java.util.UUID;
 /**
  * Classe représentant un Gobelin Vert avec des animations.
  */
-public class Goblin extends Mob {
+public class Rabbit extends Mob {
 
     // Animations pour idle
     private Animation<TextureRegion> idleUp, idleDown, idleLeft, idleRight;
@@ -36,13 +36,13 @@ public class Goblin extends Mob {
     // Textures chargées
     private Texture idleTexture, runTexture;
 
-    public Goblin(Vector2 position, CollisionManager collisionManager) {
+    public Rabbit(Vector2 position, CollisionManager collisionManager) {
         super(
-            "Goblin",
+            "Lapin",
             UUID.randomUUID(),
             initializeComponents(position),
-            150f,
-            new FollowPathfindingStrategy(MobFactory.getPathfinding()), // Stratégie de suivi du joueur
+            250f,
+            new RandomPathfindingStrategy(MobFactory.getPathfinding()), // Stratégie de suivi du joueur
             new GoToPathfindingStrategy(MobFactory.getPathfinding()), // Stratégie pour retourner au spawn
             collisionManager
         );
@@ -51,34 +51,30 @@ public class Goblin extends Mob {
     private static Map<Class<? extends com.empire.rpg.component.Component>, com.empire.rpg.component.Component> initializeComponents(Vector2 position) {
         Map<Class<? extends com.empire.rpg.component.Component>, com.empire.rpg.component.Component> components = new HashMap<>();
         components.put(PositionComponent.class, new PositionComponent(position.x, position.y));
-        components.put(HealthComponent.class, new HealthComponent(50, 50));
-        components.put(CollisionComponent.class, new CollisionComponent(true, new Rectangle(position.x, position.y, 32, 32)));
+        components.put(HealthComponent.class, new HealthComponent(40, 40));
+        components.put(CollisionComponent.class, new CollisionComponent(true, new Rectangle(position.x - 500, position.y, 32, 32)));
         return components;
     }
 
     @Override
     protected void initializeTextures() {
         // Charger et diviser les textures d'idle
-        idleTexture = new Texture("mobs/orc1/orc1_idle_full.png");
-        TextureRegion[][] idleSplit = TextureRegion.split(idleTexture, 64, 64);
+        idleTexture = new Texture("mobs/rabbit/Rabbit_Brown_Idle.png");
+        TextureRegion[][] idleSplit = TextureRegion.split(idleTexture, 128, 128);
 
-        idleUp = new Animation<>(0.1f, idleSplit[1][0], idleSplit[1][1], idleSplit[1][2], idleSplit[1][3]);
+        idleUp = new Animation<>(0.1f, idleSplit[3][0], idleSplit[3][1], idleSplit[3][2], idleSplit[3][3]);
         idleDown = new Animation<>(0.1f, idleSplit[0][0], idleSplit[0][1], idleSplit[0][2], idleSplit[0][3]);
-        idleLeft = new Animation<>(0.1f, idleSplit[2][0], idleSplit[2][1], idleSplit[2][2], idleSplit[2][3]);
-        idleRight = new Animation<>(0.1f, idleSplit[3][0], idleSplit[3][1], idleSplit[3][2], idleSplit[3][3]);
+        idleLeft = new Animation<>(0.1f, idleSplit[1][0], idleSplit[1][1], idleSplit[1][2], idleSplit[1][3]);
+        idleRight = new Animation<>(0.1f, idleSplit[2][0], idleSplit[2][1], idleSplit[2][2], idleSplit[2][3]);
 
         // Charger et diviser les textures de déplacement
-        runTexture = new Texture("mobs/orc1/orc1_run_full.png");
-        TextureRegion[][] runSplit = TextureRegion.split(runTexture, 64, 64);
+        runTexture = new Texture("mobs/rabbit/Rabbit_Brown_Move.png");
+        TextureRegion[][] runSplit = TextureRegion.split(runTexture, 128, 128);
 
-        runUp = new Animation<>(0.05f, runSplit[1][0], runSplit[1][1], runSplit[1][2], runSplit[1][3],
-            runSplit[1][4], runSplit[1][5], runSplit[1][6], runSplit[1][7]);
-        runDown = new Animation<>(0.05f, runSplit[0][0], runSplit[0][1], runSplit[0][2], runSplit[0][3],
-            runSplit[0][4], runSplit[0][5], runSplit[0][6], runSplit[0][7]);
-        runLeft = new Animation<>(0.05f, runSplit[2][0], runSplit[2][1], runSplit[2][2], runSplit[2][3],
-            runSplit[2][4], runSplit[2][5], runSplit[2][6], runSplit[2][7]);
-        runRight = new Animation<>(0.05f, runSplit[3][0], runSplit[3][1], runSplit[3][2], runSplit[3][3],
-            runSplit[3][4], runSplit[3][5], runSplit[3][6], runSplit[3][7]);
+        runUp = new Animation<>(0.05f, runSplit[3][0], runSplit[3][1], runSplit[3][2], runSplit[3][3], runSplit[3][4], runSplit[3][5]);
+        runDown = new Animation<>(0.05f, runSplit[0][0], runSplit[0][1], runSplit[0][2], runSplit[0][3], runSplit[0][4], runSplit[0][5]);
+        runLeft = new Animation<>(0.05f, runSplit[1][0], runSplit[1][1], runSplit[1][2], runSplit[1][3], runSplit[1][4], runSplit[1][5]);
+        runRight = new Animation<>(0.05f, runSplit[2][0], runSplit[2][1], runSplit[2][2], runSplit[2][3], runSplit[2][4], runSplit[2][5]);
 
         // Initialiser la texture courante
         currentTexture = idleDown.getKeyFrame(0, true);
@@ -162,8 +158,8 @@ public class Goblin extends Mob {
     @Override
     protected Map<String, Object> getDeathInfo() {
         Map<String, Object> info = new HashMap<>();
-        info.put("Item-Name", "Peau de Gobelin");
-        info.put("Item-Description", "Peau de gobelin, un ingrédient commun.");
+        info.put("Item-Name", "Peau de Lapin");
+        info.put("Item-Description", "Peau de lapin, un ingrédient bon marché.");
         info.put("Item-Quantity", 1);
         info.put("Item-Type", "divers");
         return info;

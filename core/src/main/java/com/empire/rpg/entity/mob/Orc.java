@@ -38,7 +38,7 @@ public class Orc extends Mob {
 
     public Orc(Vector2 position, CollisionManager collisionManager) {
         super(
-            "GobelinVert",
+            "Orc",
             UUID.randomUUID(),
             initializeComponents(position),
             350f,
@@ -162,8 +162,8 @@ public class Orc extends Mob {
     @Override
     protected Map<String, Object> getDeathInfo() {
         Map<String, Object> info = new HashMap<>();
-        info.put("Item-Name", "Peau de Gobelin Rouge");
-        info.put("Item-Description", "Peau de gobelin rouge, un ingrédient rare.");
+        info.put("Item-Name", "Peau d'Orc");
+        info.put("Item-Description", "Peau d'orc, un ingrédient rare.");
         info.put("Item-Quantity", 1);
         info.put("Item-Type", "divers");
         return info;

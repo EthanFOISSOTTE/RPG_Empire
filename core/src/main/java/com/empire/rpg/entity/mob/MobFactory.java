@@ -4,10 +4,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.empire.rpg.CollisionManager;
 import com.empire.rpg.component.pathfinding.Pathfinding;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
 /**
  * Factory pour créer des mobs en tant qu'entités avec des composants.
  */
@@ -34,11 +30,11 @@ public class MobFactory {
             case "orc":
                 mob = new Orc(position, collisionManager);
                 break;
-            case "chatgris":
-                mob = new ChatGris(position, collisionManager);
+            case "rabbit":
+                mob = new Rabbit(position, collisionManager);
                 break;
-            case "lapinblanc":
-                mob = new LapinBlanc(position, collisionManager);
+            case "rabbit-horned":
+                mob = new RabbitHorned(position, collisionManager);
                 break;
             default:
                 System.out.println("Type de mob inconnu: " + type);
