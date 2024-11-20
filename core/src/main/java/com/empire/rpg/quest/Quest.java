@@ -160,14 +160,13 @@ public class Quest {
     public void render(SpriteBatch batch, Vector2 playerPosition) {
         handleInput();  // Garder cette ligne pour traiter les entrées clavier
 
-        //Region
         // Affichage du tableau de quêtes si le joueur est à une distance définie
         if (isPlayerNearSquare(playerPosition)) {
             batch.begin();
             batch.draw(questBoardTexture, squarePosition.x + 19, squarePosition.y + SQUARE_SIZE);
             batch.end();
         }
-//End Region
+
         // Affichage de la fenêtre d'interaction si nécessaire
         if (showInteractionFrame) {
             drawInteractionFrame(playerPosition);

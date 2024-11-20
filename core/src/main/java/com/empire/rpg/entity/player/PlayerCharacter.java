@@ -117,7 +117,7 @@ public class PlayerCharacter extends Player {
         super(name, components, id); // Appel au constructeur de la superclasse
 
         // Vérifier la présence du PositionComponent
-        PositionComponent position = (PositionComponent) components.get(PositionComponent.class);
+        PositionComponent position = (PositionComponent) getComponent(PositionComponent.class);
         if (position == null) {
             throw new IllegalArgumentException("PositionComponent is required");
         }
@@ -167,7 +167,13 @@ public class PlayerCharacter extends Player {
         initializeToolSets();
     }
 
-
+    public Vector2 getPlayerPosition() {
+        PositionComponent positionComponent = (PositionComponent) components.get(PositionComponent.class);
+        if (positionComponent != null) {
+            return positionComponent.getPlayerPosition();  // Utilisation de la nouvelle méthode
+        }
+        return new Vector2();  // Retour par défaut si la position n'est pas définie
+    }
 
     // Méthode pour initialiser les ensembles d'outils
     private void initializeToolSets() {

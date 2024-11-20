@@ -94,6 +94,7 @@
 	title: Invasion de nuisibles
 	description: Les fermiers de la région sont envahis par des nuisibles qui dévorent leurs récoltes. Ils ont besoin de votre aide pour les éradiquer.
 	id: 7
+	status: 1
 	author: Fermiers
 	reward: {
 		xp: 100

@@ -50,19 +50,12 @@ public class PositionComponent implements Component {
     }
 
     /**
-     * Affiche la position actuelle.
-     */
-    public void getPosition() {
-        System.out.println("X: " + x + " Y: " + y);
-    }
-
-    /**
-     * Retourne la position actuelle sous forme d'un Vector2.
+     * Retourne la position sous forme d'un Vector2.
      *
-     * @return La position actuelle sous forme d'un Vector2.
+     * @return La position sous forme d'objet Vector2.
      */
-    public Vector2 getPlayerPosition() {
-        return new Vector2(x, y);  // Renvoie la position en tant que Vector2
+    public Vector2 getPosition() {
+        return new Vector2(x, y);
     }
 
     /**
@@ -76,31 +69,17 @@ public class PositionComponent implements Component {
         this.y += y;
     }
 
-    /**
-     * Obtient la réduction des dégâts.
-     *
-     * @return Toujours 0 pour ce composant.
-     */
+    // Implémentations inutilisées pour ce composant, à clarifier ou supprimer si possible
     @Override
     public int getDamageReduction() {
         return 0;
     }
 
-    /**
-     * Définit les points de vie actuels.
-     *
-     * @param i Les points de vie actuels.
-     */
     @Override
     public void setCurrentHealthPoints(int i) {
         // Implémentation vide
     }
 
-    /**
-     * Obtient les points de vie actuels.
-     *
-     * @return Toujours 0 pour ce composant.
-     */
     @Override
     public int getCurrentHealthPoints() {
         return 0;
