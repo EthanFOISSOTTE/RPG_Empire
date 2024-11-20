@@ -78,6 +78,7 @@ public class Main extends ApplicationAdapter {
             TextureComponent.class, new TextureComponent(new Texture("PNJ/Radagast.png"), 48, 48, 0, 0, 2.0f)
         );
         pnj_radagast = new PNJ("Radagast", Radagast, UUID.randomUUID());
+        pnj_radagast.setName("Radagast");
 
         Map<Class<? extends Component>, Component> Duc_Michel = Map.of(
             PositionComponent.class, new PositionComponent(177* 48 + 24, 68 * 48 + 24),
@@ -86,6 +87,7 @@ public class Main extends ApplicationAdapter {
             TextureComponent.class, new TextureComponent(new Texture("PNJ/Duc_Michel.png"), 48, 48, 0, 0, 2.0f)
         );
         pnj_duc = new PNJ("Duc_Michel", Duc_Michel, UUID.randomUUID());
+        pnj_duc.setName("Duc_Michel");
 
         // Initialisation des objets liés aux quêtes
         quest = new Quest(camera, batch);  // Création de l'objet Quest pour gérer les quêtes
@@ -155,16 +157,35 @@ public class Main extends ApplicationAdapter {
         }
 
 // Region
-        if (isPlayerWithinInteractionDistance(player.getPlayerPosition(), pnj_duc.getPosition(), INTERACTION_DISTANCE)) {
+        if (isPlayerWithinInteractionDistance(player.getPlayerPosition(), pnj_radagast.getPosition(), INTERACTION_DISTANCE)) {
             batch.begin();
-            font.draw(batch, "F pour parler", pnj_duc.getPosition().x + 27, pnj_duc.getPosition().y + 85);  // Affiche le texte au-dessus du PNJ
+            font.draw(batch, "F pour parler", pnj_radagast.getPosition().x + 27, pnj_radagast.getPosition().y + 85);
             batch.end();
+
+            if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+                dialogue.startDialogue("Radagast");
+            }
         }
 
-        if (isPlayerWithinInteractionDistance(player.getPlayerPosition(), pnj_duc.getPosition(), INTERACTION_DISTANCE_PNJ)
-            && Gdx.input.isKeyJustPressed(Input.Keys.F)) {
-            showDialogueFrame = true;
-            dialogue.setShowDialogueFrame(showDialogueFrame);
+        if (isPlayerWithinInteractionDistance(player.getPlayerPosition(), pnj_duc.getPosition(), INTERACTION_DISTANCE)) {
+            batch.begin();
+            font.draw(batch, "F pour parler", pnj_duc.getPosition().x + 27, pnj_duc.getPosition().y + 85);
+            batch.end();
+
+            if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+                dialogue.startDialogue("Duc_Michel");
+            }
+        }
+
+// Afficher le cadre de dialogue si activé
+        if (dialogue.isShowDialogueFrame()) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+                dialogue.nextDialogue(); // Avance au dialogue suivant
+            }
+            if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+                dialogue.closeDialogue(); // Ferme le cadre
+            }
+            dialogue.render(batch, player.getPlayerPosition());
         }
 
         // Cacher le cadre d'interaction avec la touche ESCAPE

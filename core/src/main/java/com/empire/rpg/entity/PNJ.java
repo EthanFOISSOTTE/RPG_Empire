@@ -60,6 +60,10 @@ public class PNJ extends Entity {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     /**
      * Crée une entité avec un identifiant donné.
      *
