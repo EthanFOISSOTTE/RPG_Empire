@@ -187,7 +187,7 @@ public class QuestPlayer {
         QuestItem selectedQuest = questList.get(selectedQuestIndex);
         Rewards reward = selectedQuest.getReward();
         if (reward != null) {
-            String rewardText = "Récompenses : XP: " + reward.getXp() + " | Astrales: " + reward.getGold();
+            String rewardText = "Astrales: " + reward.getGold();
             font.draw(batch, rewardText, descriptionX, currentY);
         }
 

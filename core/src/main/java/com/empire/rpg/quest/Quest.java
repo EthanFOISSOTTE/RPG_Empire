@@ -280,7 +280,7 @@ public class Quest {
             // Afficher les récompenses
             if (selectedQuest.getReward() != null) {
                 Rewards reward = selectedQuest.getReward();
-                String rewardText = "Récompenses : XP: " + reward.getXp() + " | Astrales: " + reward.getGold();
+                String rewardText = "Récompenses : Astrales: " + reward.getGold();
                 font.draw(batch, rewardText, descriptionX, currentY);
             }
             batch.end();
