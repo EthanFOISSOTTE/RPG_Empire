@@ -5,21 +5,21 @@
 	id: {}
 	components: {
 		class: java.util.ImmutableCollections$MapN
-		com.empire.rpg.component.CollisionComponent: {
-			class: com.empire.rpg.component.CollisionComponent
-			isCollidable: true
-		}
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent
 			x: 0
 			y: 0
+		}
+		com.empire.rpg.component.CollisionComponent: {
+			class: com.empire.rpg.component.CollisionComponent
+			isCollidable: true
 		}
 	}
 	type: Armes
 	quantity: 1
 	description: Blablabla
 	valeur: 30
-	states: false
+	states: true
 	style: lance
 }
 {
@@ -28,14 +28,14 @@
 	id: {}
 	components: {
 		class: java.util.ImmutableCollections$MapN
-		com.empire.rpg.component.CollisionComponent: {
-			class: com.empire.rpg.component.CollisionComponent
-			isCollidable: true
-		}
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent
 			x: 0
 			y: 0
+		}
+		com.empire.rpg.component.CollisionComponent: {
+			class: com.empire.rpg.component.CollisionComponent
+			isCollidable: true
 		}
 	}
 	type: Armes
@@ -51,14 +51,14 @@
 	id: {}
 	components: {
 		class: java.util.ImmutableCollections$MapN
-		com.empire.rpg.component.CollisionComponent: {
-			class: com.empire.rpg.component.CollisionComponent
-			isCollidable: true
-		}
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent
 			x: 0
 			y: 0
+		}
+		com.empire.rpg.component.CollisionComponent: {
+			class: com.empire.rpg.component.CollisionComponent
+			isCollidable: true
 		}
 	}
 	type: Armes
@@ -74,14 +74,14 @@
 	id: {}
 	components: {
 		class: java.util.ImmutableCollections$MapN
-		com.empire.rpg.component.CollisionComponent: {
-			class: com.empire.rpg.component.CollisionComponent
-			isCollidable: true
-		}
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent
 			x: 0
 			y: 0
+		}
+		com.empire.rpg.component.CollisionComponent: {
+			class: com.empire.rpg.component.CollisionComponent
+			isCollidable: true
 		}
 	}
 	type: Armes
@@ -97,14 +97,14 @@
 	id: {}
 	components: {
 		class: java.util.ImmutableCollections$MapN
-		com.empire.rpg.component.CollisionComponent: {
-			class: com.empire.rpg.component.CollisionComponent
-			isCollidable: true
-		}
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent
 			x: 0
 			y: 0
+		}
+		com.empire.rpg.component.CollisionComponent: {
+			class: com.empire.rpg.component.CollisionComponent
+			isCollidable: true
 		}
 	}
 	type: Armes
@@ -120,14 +120,14 @@
 	id: {}
 	components: {
 		class: java.util.ImmutableCollections$MapN
-		com.empire.rpg.component.CollisionComponent: {
-			class: com.empire.rpg.component.CollisionComponent
-			isCollidable: true
-		}
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent
 			x: 0
 			y: 0
+		}
+		com.empire.rpg.component.CollisionComponent: {
+			class: com.empire.rpg.component.CollisionComponent
+			isCollidable: true
 		}
 	}
 	type: Armes
@@ -143,14 +143,14 @@
 	id: {}
 	components: {
 		class: java.util.ImmutableCollections$MapN
-		com.empire.rpg.component.CollisionComponent: {
-			class: com.empire.rpg.component.CollisionComponent
-			isCollidable: true
-		}
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent
 			x: 0
 			y: 0
+		}
+		com.empire.rpg.component.CollisionComponent: {
+			class: com.empire.rpg.component.CollisionComponent
+			isCollidable: true
 		}
 	}
 	type: Armes
@@ -166,14 +166,14 @@
 	id: {}
 	components: {
 		class: java.util.ImmutableCollections$MapN
-		com.empire.rpg.component.CollisionComponent: {
-			class: com.empire.rpg.component.CollisionComponent
-			isCollidable: true
-		}
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent
 			x: 0
 			y: 0
+		}
+		com.empire.rpg.component.CollisionComponent: {
+			class: com.empire.rpg.component.CollisionComponent
+			isCollidable: true
 		}
 	}
 	type: Armes
@@ -189,14 +189,14 @@
 	id: {}
 	components: {
 		class: java.util.ImmutableCollections$MapN
-		com.empire.rpg.component.CollisionComponent: {
-			class: com.empire.rpg.component.CollisionComponent
-			isCollidable: true
-		}
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent
 			x: 0
 			y: 0
+		}
+		com.empire.rpg.component.CollisionComponent: {
+			class: com.empire.rpg.component.CollisionComponent
+			isCollidable: true
 		}
 	}
 	type: Armes
@@ -212,14 +212,14 @@
 	id: {}
 	components: {
 		class: java.util.ImmutableCollections$MapN
-		com.empire.rpg.component.CollisionComponent: {
-			class: com.empire.rpg.component.CollisionComponent
-			isCollidable: true
-		}
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent
 			x: 0
 			y: 0
+		}
+		com.empire.rpg.component.CollisionComponent: {
+			class: com.empire.rpg.component.CollisionComponent
+			isCollidable: true
 		}
 	}
 	type: Armes
@@ -235,14 +235,14 @@
 	id: {}
 	components: {
 		class: java.util.ImmutableCollections$MapN
-		com.empire.rpg.component.CollisionComponent: {
-			class: com.empire.rpg.component.CollisionComponent
-			isCollidable: true
-		}
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent
 			x: 0
 			y: 0
+		}
+		com.empire.rpg.component.CollisionComponent: {
+			class: com.empire.rpg.component.CollisionComponent
+			isCollidable: true
 		}
 	}
 	type: Armes
@@ -258,14 +258,14 @@
 	id: {}
 	components: {
 		class: java.util.ImmutableCollections$MapN
-		com.empire.rpg.component.CollisionComponent: {
-			class: com.empire.rpg.component.CollisionComponent
-			isCollidable: true
-		}
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent
 			x: 0
 			y: 0
+		}
+		com.empire.rpg.component.CollisionComponent: {
+			class: com.empire.rpg.component.CollisionComponent
+			isCollidable: true
 		}
 	}
 	type: Armes
@@ -281,14 +281,14 @@
 	id: {}
 	components: {
 		class: java.util.ImmutableCollections$MapN
-		com.empire.rpg.component.CollisionComponent: {
-			class: com.empire.rpg.component.CollisionComponent
-			isCollidable: true
-		}
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent
 			x: 0
 			y: 0
+		}
+		com.empire.rpg.component.CollisionComponent: {
+			class: com.empire.rpg.component.CollisionComponent
+			isCollidable: true
 		}
 	}
 	type: Armes
@@ -304,14 +304,14 @@
 	id: {}
 	components: {
 		class: java.util.ImmutableCollections$MapN
-		com.empire.rpg.component.CollisionComponent: {
-			class: com.empire.rpg.component.CollisionComponent
-			isCollidable: true
-		}
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent
 			x: 0
 			y: 0
+		}
+		com.empire.rpg.component.CollisionComponent: {
+			class: com.empire.rpg.component.CollisionComponent
+			isCollidable: true
 		}
 	}
 	type: Armes
@@ -327,14 +327,14 @@
 	id: {}
 	components: {
 		class: java.util.ImmutableCollections$MapN
-		com.empire.rpg.component.CollisionComponent: {
-			class: com.empire.rpg.component.CollisionComponent
-			isCollidable: true
-		}
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent
 			x: 0
 			y: 0
+		}
+		com.empire.rpg.component.CollisionComponent: {
+			class: com.empire.rpg.component.CollisionComponent
+			isCollidable: true
 		}
 	}
 	type: Armes
@@ -350,21 +350,21 @@
 	id: {}
 	components: {
 		class: java.util.ImmutableCollections$MapN
-		com.empire.rpg.component.CollisionComponent: {
-			class: com.empire.rpg.component.CollisionComponent
-			isCollidable: true
-		}
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent
 			x: 0
 			y: 0
+		}
+		com.empire.rpg.component.CollisionComponent: {
+			class: com.empire.rpg.component.CollisionComponent
+			isCollidable: true
 		}
 	}
 	type: Tenue
 	quantity: 1
 	description: Blablabla
 	valeur: 30
-	states: false
+	states: true
 	style: "null"
 }
 {
@@ -373,14 +373,14 @@
 	id: {}
 	components: {
 		class: java.util.ImmutableCollections$MapN
-		com.empire.rpg.component.CollisionComponent: {
-			class: com.empire.rpg.component.CollisionComponent
-			isCollidable: true
-		}
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent
 			x: 0
 			y: 0
+		}
+		com.empire.rpg.component.CollisionComponent: {
+			class: com.empire.rpg.component.CollisionComponent
+			isCollidable: true
 		}
 	}
 	type: Tenue
@@ -396,14 +396,14 @@
 	id: {}
 	components: {
 		class: java.util.ImmutableCollections$MapN
-		com.empire.rpg.component.CollisionComponent: {
-			class: com.empire.rpg.component.CollisionComponent
-			isCollidable: true
-		}
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent
 			x: 0
 			y: 0
+		}
+		com.empire.rpg.component.CollisionComponent: {
+			class: com.empire.rpg.component.CollisionComponent
+			isCollidable: true
 		}
 	}
 	type: Tenue
@@ -419,14 +419,14 @@
 	id: {}
 	components: {
 		class: java.util.ImmutableCollections$MapN
-		com.empire.rpg.component.CollisionComponent: {
-			class: com.empire.rpg.component.CollisionComponent
-			isCollidable: true
-		}
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent
 			x: 0
 			y: 0
+		}
+		com.empire.rpg.component.CollisionComponent: {
+			class: com.empire.rpg.component.CollisionComponent
+			isCollidable: true
 		}
 	}
 	type: Outil
@@ -442,14 +442,14 @@
 	id: {}
 	components: {
 		class: java.util.ImmutableCollections$MapN
-		com.empire.rpg.component.CollisionComponent: {
-			class: com.empire.rpg.component.CollisionComponent
-			isCollidable: true
-		}
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent
 			x: 0
 			y: 0
+		}
+		com.empire.rpg.component.CollisionComponent: {
+			class: com.empire.rpg.component.CollisionComponent
+			isCollidable: true
 		}
 	}
 	type: Outil
@@ -465,14 +465,14 @@
 	id: {}
 	components: {
 		class: java.util.ImmutableCollections$MapN
-		com.empire.rpg.component.CollisionComponent: {
-			class: com.empire.rpg.component.CollisionComponent
-			isCollidable: true
-		}
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent
 			x: 0
 			y: 0
+		}
+		com.empire.rpg.component.CollisionComponent: {
+			class: com.empire.rpg.component.CollisionComponent
+			isCollidable: true
 		}
 	}
 	type: Consommable
@@ -488,14 +488,14 @@
 	id: {}
 	components: {
 		class: java.util.ImmutableCollections$MapN
-		com.empire.rpg.component.CollisionComponent: {
-			class: com.empire.rpg.component.CollisionComponent
-			isCollidable: true
-		}
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent
 			x: 0
 			y: 0
+		}
+		com.empire.rpg.component.CollisionComponent: {
+			class: com.empire.rpg.component.CollisionComponent
+			isCollidable: true
 		}
 	}
 	type: Consommable
@@ -511,14 +511,14 @@
 	id: {}
 	components: {
 		class: java.util.ImmutableCollections$MapN
-		com.empire.rpg.component.CollisionComponent: {
-			class: com.empire.rpg.component.CollisionComponent
-			isCollidable: true
-		}
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent
 			x: 0
 			y: 0
+		}
+		com.empire.rpg.component.CollisionComponent: {
+			class: com.empire.rpg.component.CollisionComponent
+			isCollidable: true
 		}
 	}
 	type: Consommable
@@ -534,14 +534,14 @@
 	id: {}
 	components: {
 		class: java.util.ImmutableCollections$MapN
-		com.empire.rpg.component.CollisionComponent: {
-			class: com.empire.rpg.component.CollisionComponent
-			isCollidable: true
-		}
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent
 			x: 0
 			y: 0
+		}
+		com.empire.rpg.component.CollisionComponent: {
+			class: com.empire.rpg.component.CollisionComponent
+			isCollidable: true
 		}
 	}
 	type: Consommable
@@ -557,14 +557,14 @@
 	id: {}
 	components: {
 		class: java.util.ImmutableCollections$MapN
-		com.empire.rpg.component.CollisionComponent: {
-			class: com.empire.rpg.component.CollisionComponent
-			isCollidable: true
-		}
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent
 			x: 0
 			y: 0
+		}
+		com.empire.rpg.component.CollisionComponent: {
+			class: com.empire.rpg.component.CollisionComponent
+			isCollidable: true
 		}
 	}
 	type: Objet de quête
@@ -580,14 +580,14 @@
 	id: {}
 	components: {
 		class: java.util.ImmutableCollections$MapN
-		com.empire.rpg.component.CollisionComponent: {
-			class: com.empire.rpg.component.CollisionComponent
-			isCollidable: true
-		}
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent
 			x: 0
 			y: 0
+		}
+		com.empire.rpg.component.CollisionComponent: {
+			class: com.empire.rpg.component.CollisionComponent
+			isCollidable: true
 		}
 	}
 	type: Objet de quête
@@ -603,14 +603,14 @@
 	id: {}
 	components: {
 		class: java.util.ImmutableCollections$MapN
-		com.empire.rpg.component.CollisionComponent: {
-			class: com.empire.rpg.component.CollisionComponent
-			isCollidable: true
-		}
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent
 			x: 0
 			y: 0
+		}
+		com.empire.rpg.component.CollisionComponent: {
+			class: com.empire.rpg.component.CollisionComponent
+			isCollidable: true
 		}
 	}
 	type: Divers
@@ -626,14 +626,14 @@
 	id: {}
 	components: {
 		class: java.util.ImmutableCollections$MapN
-		com.empire.rpg.component.CollisionComponent: {
-			class: com.empire.rpg.component.CollisionComponent
-			isCollidable: true
-		}
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent
 			x: 0
 			y: 0
+		}
+		com.empire.rpg.component.CollisionComponent: {
+			class: com.empire.rpg.component.CollisionComponent
+			isCollidable: true
 		}
 	}
 	type: Divers

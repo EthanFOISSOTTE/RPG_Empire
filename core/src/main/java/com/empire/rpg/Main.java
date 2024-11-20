@@ -2,23 +2,20 @@ package com.empire.rpg;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.empire.rpg.component.*;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.Input;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import com.empire.rpg.component.HealthComponent;
-import com.empire.rpg.component.PositionComponent;
-import com.empire.rpg.component.WeaponComponent;
 import com.empire.rpg.entity.player.PlayerCharacter;
-import com.empire.rpg.component.Component;
 import com.empire.rpg.entity.player.audio.SoundManager;
 import com.empire.rpg.debug.DebugRenderer;
 import com.empire.rpg.ui.PlayerUI;
