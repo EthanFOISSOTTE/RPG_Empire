@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public abstract class Entity extends EntityManager {
     private final UUID id;  // Identifiant unique de l'entité
-    protected final Map<Class<? extends Component>, Component> components; // Map des composants
+    private final Map<Class<? extends Component>, Component> components; // Map des composants
 
     /**
      * Constructeur de l'entité.
@@ -58,6 +58,15 @@ public abstract class Entity extends EntityManager {
      */
     public UUID getId() {
         return id;
+    }
+
+    /**
+     * Retourne le nom de l'entité.
+     *
+     * @return Le nom de l'entité.
+     */
+    public String getName() {
+        return super.getName();
     }
 
     /**

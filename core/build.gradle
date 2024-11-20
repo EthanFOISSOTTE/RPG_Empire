@@ -9,11 +9,11 @@ dependencies {
   api "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
   api "com.crashinvaders.lml:gdx-kiwi:$lmlVersion"
   api "io.github.libktx:ktx-tiled:$ktxVersion"
+  implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.5'
+  implementation 'com.fasterxml.jackson.core:jackson-core:2.13.5'
+  implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.5'
 
-  implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.3' // Déplacé en dehors de la condition
-
-  if (enableGraalNative == 'true') {
+  if(enableGraalNative == 'true') {
     implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
   }
 }
-

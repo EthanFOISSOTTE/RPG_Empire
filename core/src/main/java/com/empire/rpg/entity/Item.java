@@ -13,6 +13,11 @@ public class Item extends Entity {
     private String name;
     private String type;
     private int quantity;
+    private String description;
+    private int valeur;
+    private boolean states;
+    private String style;
+
 
     /**
      * Constructeur d'un item avec un nom, une quantité et des types.
@@ -21,7 +26,7 @@ public class Item extends Entity {
      * @param quantity La quantité de l'item
      * @param type    La categorie d'item
      */
-    public Item(String name, int quantity, String type) {
+    public Item(String name, int quantity, String type, String description, int valeur,boolean states, String style) {
         super(name, Map.of(
             PositionComponent.class, new PositionComponent(0, 0),
             CollisionComponent.class, new CollisionComponent(true)
@@ -32,6 +37,11 @@ public class Item extends Entity {
         this.name = name;
         this.type= type;
         this.quantity = quantity;
+        this.description = description;
+        this.valeur = valeur;
+        this.states = states;
+        this.style = style;
+
     }
 
     /**
@@ -60,6 +70,25 @@ public class Item extends Entity {
      */
     public String getType() {
         return type;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+    public int getValeur() {
+        return valeur;
+    }
+    public boolean getStates(){
+        return states;
+    }
+
+    public String getStyle() {
+        return style;
+    }
+
+    // Setters pour chaque attribut
+    public void setStates(boolean states) {
+        this.states = states;
     }
 
     /**

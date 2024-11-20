@@ -71,8 +71,19 @@ public class HealthComponent implements Component {
      * @return Points de santé restants après application des dégâts.
      */
     public int takeDamage(int damage){
-        return this.currentHealthPoints - damage;
+        this.currentHealthPoints = Math.max(this.currentHealthPoints - damage, 0);
+        return this.currentHealthPoints;
+    }
+
+    /**
+     * Applique des points de guérison aux points de santé actuels.
+     *
+     * @param heal Quantité de points de guérison à appliquer.
+     * @return Points de santé après guérison.
+     */
+    public int heal(int heal){
+        this.currentHealthPoints = Math.min(this.currentHealthPoints + heal, this.maxHealthPoints);
+        return this.currentHealthPoints;
     }
 
 }
-

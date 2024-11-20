@@ -9,17 +9,27 @@ import java.util.UUID;
  * Elle étend la classe Entity et inclut des fonctionnalités supplémentaires
  * spécifiques aux joueurs.
  */
+public class Player extends Entity {
 
-public class Player extends Entity  {
+    /**
+     * Constructeur de l'entité joueur.
+     *
+     * @param name       le nom du joueur.
+     * @param components une map de composants associés au joueur.
+     * @param id         l'identifiant unique du joueur.
+     */
+    public Player(String name, Map<Class<? extends Component>, Component> components, UUID id) {
+        super(name, components, id);
+    }
 
     /**
      * Ajoute une entité.
      *
      * @return L'entité ajoutée.
      */
-
     @Override
     public Entity addEntity() {
+        // Implémentation spécifique
         return null;
     }
 
@@ -29,22 +39,9 @@ public class Player extends Entity  {
      * @param name Le nom de l'entité joueur à supprimer.
      * @return L'entité supprimée, actuellement renvoie null.
      */
-
     @Override
     public Entity removeEntity(String name) {
+        // Implémentation spécifique
         return null;
     }
-
-    /**
-     * Constructeur de l'entité joueur.
-     *
-     * @param name le nom du joueur.
-     * @param components une map de composants associés au joueur.
-     * @param id l'identifiant unique du joueur.
-     */
-
-    public Player(String name, Map<Class<? extends Component>, Component> components, UUID id) {
-        super(name, components, id);
-    }
-
 }
