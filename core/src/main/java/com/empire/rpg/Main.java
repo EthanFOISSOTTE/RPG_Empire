@@ -69,10 +69,9 @@ public class Main extends ApplicationAdapter {
         // Définit le pathfinding global pour tous les mobs
         MobFactory.setPathfinding(pathfinding);
         // Créer des mobs avec des comportements spécifiques
-        MobFactory.createMob("gobelinrouge", new Vector2(4800, 4900), collisionManager);
-        MobFactory.createMob("gobelinvert", new Vector2(4900, 4800), collisionManager);
-        MobFactory.createMob("chatgris", new Vector2(5000, 5000), collisionManager);
-        MobFactory.createMob("lapinblanc", new Vector2(5100, 5100), collisionManager);
+        MobFactory.createMob("goblin", new Vector2(4700, 4900), collisionManager);
+        MobFactory.createMob("ogre", new Vector2(4800, 4900), collisionManager);
+        MobFactory.createMob("orc", new Vector2(4900, 4900), collisionManager);
         // Créer un gestionnaire de collisions
         collisionHandler = new CollisionHandler(collisionManager);
 
@@ -105,10 +104,17 @@ public class Main extends ApplicationAdapter {
         // Démarrer le batch pour dessiner le joueur
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-        player.render(batch);
         for (Mob mob : Mob.allMobs) {
-            batch.draw(mob.getCurrentTexture(), mob.getPosition().x, mob.getPosition().y);
+            // Appliquer le facteur de zoom lors du rendu
+            batch.draw(
+                mob.getCurrentTexture(),
+                mob.getPosition().x - 30,
+                mob.getPosition().y - 30,
+                mob.getCurrentTexture().getRegionWidth() * mob.getScale(),
+                mob.getCurrentTexture().getRegionHeight() * mob.getScale()
+            );
         }
+        player.render(batch);
         batch.end();
 
         // Rendre les couches supérieures (au-dessus du joueur)

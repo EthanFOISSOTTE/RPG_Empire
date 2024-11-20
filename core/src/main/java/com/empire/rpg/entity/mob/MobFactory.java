@@ -25,11 +25,14 @@ public class MobFactory {
     public static void createMob(String type, Vector2 position, CollisionManager collisionManager) {
         Mob mob = null;
         switch (type.toLowerCase()) {
-            case "gobelinrouge":
-                mob = new GobelinRouge(position, collisionManager);
+            case "goblin":
+                mob = new Goblin(position, collisionManager);
                 break;
-            case "gobelinvert":
-                mob = new GobelinVert(position, collisionManager);
+            case "ogre":
+                mob = new Ogre(position, collisionManager);
+                break;
+            case "orc":
+                mob = new Orc(position, collisionManager);
                 break;
             case "chatgris":
                 mob = new ChatGris(position, collisionManager);

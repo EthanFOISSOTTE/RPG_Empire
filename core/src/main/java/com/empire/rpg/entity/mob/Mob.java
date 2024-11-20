@@ -29,7 +29,7 @@ public abstract class Mob extends MOB {
     private static final float STOP_DISTANCE = 20f; // Distance d'arrêt en pixels
     private static final float MAX_BLOCKED_TIME = 0f; // Temps maximum en secondes avant une réorientation
     private static final float RETURN_TO_SPAWN_DISTANCE = 500f; // Distance max avant de revenir au spawn
-    private static final float SCALE = 1.0f;
+    private static final float SCALE = 2.0f;
 
     // Variables d'instance
     protected Vector2 targetPosition;
@@ -105,6 +105,15 @@ public abstract class Mob extends MOB {
 
     // Méthode pour initialiser les textures
     protected abstract void initializeTextures();
+
+    /**
+     * Getter pour le facteur de zoom.
+     *
+     * @return Le facteur de zoom.
+     */
+    public float getScale() {
+        return SCALE;
+    }
 
     // Méthode pour obtenir les bordures de collision du mob
     public Rectangle getCollisionBounds() {
