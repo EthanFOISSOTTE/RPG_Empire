@@ -7,7 +7,6 @@
 	unique: true
 	author: Duc Michel
 	reward: {
-		xp: 500
 		gold: 180
 	}
 	steps: [
@@ -15,7 +14,6 @@
 			stepNumber: 1
 			name: Trouver le repaire des gobelins
 			reward: {
-				xp: 50
 				gold: 20
 			}
 		}
@@ -23,7 +21,6 @@
 			stepNumber: 2
 			name: Éliminer les gobelins
 			reward: {
-				xp: 100
 				gold: 50
 			}
 		}
@@ -37,7 +34,6 @@
 	status: 1
 	author: Maître Théon
 	reward: {
-		xp: 200
 		gold: 100
 	}
 	type: 2
@@ -50,7 +46,6 @@
 	status: 1
 	author: Boucher
 	reward: {
-		xp: 150
 		gold: 150
 	}
 }
@@ -62,7 +57,6 @@
 	status: 1
 	author: Boucher
 	reward: {
-		xp: 250
 		gold: 250
 	}
 }
@@ -73,7 +67,6 @@
 	id: 5
 	author: Alchimiste
 	reward: {
-		xp: 400
 		gold: 380
 	}
 }
@@ -85,7 +78,6 @@
 	status: 1
 	author: Capitaine Jean-Claude
 	reward: {
-		xp: 1000
 		gold: 850
 	}
 }
@@ -97,8 +89,17 @@
 	status: 1
 	author: Fermiers
 	reward: {
-		xp: 100
 		gold: 50
 	}
 }
+  {
+    class: com.empire.rpg.quest.QuestItem
+    title: Des pioches pour les mineurs
+    description: "Les mineurs de la région ont besoin de nouvelles pioches pour continuer leur travail. Rapportez leur 5 pioches."
+    id: 8
+    author: Archéologue
+    reward: {
+      gold: 50
+    }
+  }
 ]

@@ -45,16 +45,19 @@ public class Main extends ApplicationAdapter {
     private static final Vector2 squarePosition = new Vector2(52 * 48, 45 * 49);  // Position du tableau de quête dans le monde
     private boolean showInteractionFrame = false;  // Booléen pour savoir si le cadre d'interaction est affiché
     private boolean showQuestPlayer = false;
+    private boolean showDialogueFrame = false;
     private Inventory inventaire; // Instance de l'inventaire
     private ShapeRenderer shapeRenderer; // Déclaration de ShapeRenderer
     private BitmapFont font;
     private Quest quest;  // Objet Quest qui gère les quêtes dans le jeu
     private QuestPlayer questPlayer;
+    private DialogueManager dialogue; // Objet qui gère les dialogues avec les PNJ
     private PNJ pnj_radagast;
     private PNJ pnj_duc;
     private static final float INTERACTION_DISTANCE = 70;  // Distance d'interaction avec un objet
     private static final float DISPLAY_DISTANCE = 500;
     private static final float SQUARE_SIZE = 64;
+    private static final float INTERACTION_DISTANCE_PNJ = 70;
 
     @Override
     public void create() {
@@ -87,7 +90,7 @@ public class Main extends ApplicationAdapter {
         // Initialisation des objets liés aux quêtes
         quest = new Quest(camera, batch);  // Création de l'objet Quest pour gérer les quêtes
         questPlayer = new QuestPlayer(camera, batch, quest.getQuestList());  // Création de l'objet QuestPlayer pour gérer l'affichage des quêtes
-
+        dialogue = new DialogueManager(camera, batch); // Initialisation du gestionnaire de dialogues
         // Chargement de la texture de l'icône du tableau de quête
         questBoardTexture = new Texture(Gdx.files.internal("exclamation.png"));  // Chemin vers l'image du tableau de quêtes
 
@@ -135,6 +138,8 @@ public class Main extends ApplicationAdapter {
         // Rendre les couches supérieures (au-dessus du joueur)
         mapManager.renderUpperLayers(camera);
 
+        dialogue.render(batch, player.getPlayerPosition());
+
 
         // Mettre à jour l'inventaire pour gérer les entrées
         if (!showInteractionFrame) {
@@ -149,11 +154,32 @@ public class Main extends ApplicationAdapter {
             batch.end();
         }
 
+// Region
+        if (isPlayerWithinInteractionDistance(player.getPlayerPosition(), pnj_duc.getPosition(), INTERACTION_DISTANCE)) {
+            batch.begin();
+            font.draw(batch, "F pour parler", pnj_duc.getPosition().x + 27, pnj_duc.getPosition().y + 85);  // Affiche le texte au-dessus du PNJ
+            batch.end();
+        }
+
+        if (isPlayerWithinInteractionDistance(player.getPlayerPosition(), pnj_duc.getPosition(), INTERACTION_DISTANCE_PNJ)
+            && Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+            showDialogueFrame = true;
+            dialogue.setShowDialogueFrame(showDialogueFrame);
+        }
+
+        // Cacher le cadre d'interaction avec la touche ESCAPE
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            showDialogueFrame = false;  // Désactive le cadre d'interaction
+            dialogue.setShowDialogueFrame(false);  // Désactive le cadre d'interaction dans Quest
+        }
+        //End Region
+
         // Bascule d'affichage du cadre d'interaction avec la touche F
         if (isPlayerWithinInteractionDistance(player.getPlayerPosition(), squarePosition, INTERACTION_DISTANCE) && Gdx.input.isKeyJustPressed(Input.Keys.F)) {
             showInteractionFrame = !showInteractionFrame;  // Inverse l'état d'affichage du cadre d'interaction
             quest.setShowInteractionFrame(showInteractionFrame);  // Applique l'état à l'objet Quest
         }
+
 
         // Afficher/masquer le cadre de quête avec la touche G
         if (Gdx.input.isKeyJustPressed(Input.Keys.G)) {
@@ -195,7 +221,7 @@ public class Main extends ApplicationAdapter {
 
     // Méthode pour déterminer si le joueur peut se déplacer
     private boolean canMove() {
-        return !showQuestPlayer && !showInteractionFrame;  // Le joueur ne peut se déplacer que si les cadres de quête et d'interaction sont fermés
+        return !showQuestPlayer && !showInteractionFrame && !showDialogueFrame;  // Le joueur ne peut se déplacer que si les cadres de quête et d'interaction sont fermés
     }
 
     // Méthode pour vérifier si le joueur est proche du tableau d'interaction (50 unités)
