@@ -49,4 +49,21 @@ public class GobelinRouge extends Mob {
         gauche = split[1][1];
         currentTexture = face;
     }
+
+    @Override
+    protected Map<String, Object> getDeathInfo() {
+        Map<String, Object> info = new HashMap<>();
+        info.put("Item-Name", "Peau de Gobelin Rouge");
+        info.put("Item-Description", "Peau de gobelin rouge, un ingrédient rare.");
+        info.put("Item-Quantity", 1);
+        info.put("Item-Type", "divers");
+        return info;
+    }
+
+    @Override
+    public void dispose() {
+        if (texture != null) {
+            texture.dispose();
+        }
+    }
 }

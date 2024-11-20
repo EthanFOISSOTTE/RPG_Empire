@@ -1,17 +1,17 @@
 package com.empire.rpg.entity.mob;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-
+import com.badlogic.gdx.graphics.Camera;
 import com.empire.rpg.component.CollisionComponent;
 import com.empire.rpg.component.HealthComponent;
 import com.empire.rpg.component.PositionComponent;
-import com.empire.rpg.component.pathfinding.*;
 import com.empire.rpg.CollisionManager;
+import com.empire.rpg.component.pathfinding.*;
+
 import com.empire.rpg.entity.MOB;
 import com.empire.rpg.entity.player.PlayerCharacter;
 
@@ -32,8 +32,8 @@ public abstract class Mob extends MOB {
     private static final float SCALE = 1.0f;
 
     // Variables d'instance
-    private Vector2 targetPosition;
-    private List<Vector2> currentPath;
+    protected Vector2 targetPosition;
+    protected List<Vector2> currentPath; // Changé de private à protected
 
     private boolean isNearPlayer = false;
     private boolean isBlocked = false;
@@ -63,10 +63,10 @@ public abstract class Mob extends MOB {
     protected float speed;
 
     // Position précédente pour restauration et direction
-    private Vector2 previousPosition;
+    protected Vector2 previousPosition;
 
     // Direction actuelle basée sur l'intention de mouvement
-    private Vector2 currentDirection = new Vector2(0, 0);
+    protected Vector2 currentDirection = new Vector2(0, 0);
 
     // Référence au CollisionComponent de la map de composants
     protected CollisionComponent collisionComponent;
@@ -127,7 +127,14 @@ public abstract class Mob extends MOB {
         return (float) Math.sqrt(dx * dx + dy * dy);
     }
 
-    // Mise à jour de la méthode update pour inclure l'arrêt basé sur la distance de collision
+    /**
+     * Méthode concrète pour mettre à jour le mob.
+     * Les sous-classes peuvent appeler super.update() pour exécuter la logique de base.
+     *
+     * @param deltaTime Le temps écoulé depuis la dernière mise à jour.
+     * @param player    Le joueur à proximité.
+     * @param camera    La caméra du jeu.
+     */
     public void update(float deltaTime, PlayerCharacter player, Camera camera) {
         PositionComponent posComponent = (PositionComponent) getComponent(PositionComponent.class);
         if (posComponent == null) {
@@ -289,7 +296,7 @@ public abstract class Mob extends MOB {
      *
      * @param posComponent Le PositionComponent du mob.
      */
-    private void updateCollisionBoundingBox(PositionComponent posComponent) {
+    protected void updateCollisionBoundingBox(PositionComponent posComponent) {
         Rectangle collisionBox = collisionComponent.getBoundingBox();
         // Calculer la nouvelle position de la bounding box en centrant sur la position actuelle du mob
         float newX = posComponent.getX() + (collisionBox.width / 2);
@@ -301,7 +308,7 @@ public abstract class Mob extends MOB {
     }
 
     // Mise à jour de la direction de la texture du mob
-    private void updateTextureDirection() {
+    protected void updateTextureDirection() {
         PositionComponent posComponent = (PositionComponent) getComponent(PositionComponent.class);
         if (posComponent == null || targetPosition == null) {
             return;
@@ -318,7 +325,7 @@ public abstract class Mob extends MOB {
     }
 
     // Méthode pour réagir aux blocages par un autre mob
-    private void resolveMobBlocking(Mob otherMob, float deltaTime) {
+    protected void resolveMobBlocking(Mob otherMob, float deltaTime) {
         if (blockedDuration > MAX_BLOCKED_TIME) {
             PositionComponent posComponent = (PositionComponent) getComponent(PositionComponent.class);
             PositionComponent otherPos = (PositionComponent) otherMob.getComponent(PositionComponent.class);
@@ -360,7 +367,7 @@ public abstract class Mob extends MOB {
     }
 
     // Méthode pour lisser le chemin calculé
-    private void smoothPath() {
+    protected void smoothPath() {
         List<Vector2> smoothedPath = new ArrayList<>();
         if (currentPath.size() < 2) {
             return;
@@ -382,10 +389,89 @@ public abstract class Mob extends MOB {
         currentPath = smoothedPath;
     }
 
-    // Méthode pour vérifier si un chemin est bloqué
-    private boolean isBlocked(Vector2 from, Vector2 to) {
+    /**
+     * Méthode pour vérifier si un chemin est bloqué.
+     *
+     * @param from Le point de départ.
+     * @param to   Le point d'arrivée.
+     * @return True si le chemin est bloqué, sinon false.
+     */
+    protected boolean isBlocked(Vector2 from, Vector2 to) {
         // Implémenter la logique de vérification si nécessaire
         return false;
+    }
+
+    /**
+     * Méthode pour restaurer la position précédente en cas de collision.
+     */
+    public void restorePreviousPosition() {
+        PositionComponent posComponent = (PositionComponent) getComponent(PositionComponent.class);
+        if (posComponent != null) {
+            posComponent.setPosition(previousPosition.x, previousPosition.y);
+
+            // Mettre à jour la bounding box après la restauration
+            updateCollisionBoundingBox(posComponent);
+        }
+    }
+
+    /**
+     * Méthode pour obtenir la position actuelle du mob.
+     *
+     * @return La position actuelle sous forme de Vector2.
+     */
+    public Vector2 getPositionVector() {
+        PositionComponent posComponent = (PositionComponent) getComponent(PositionComponent.class);
+        if (posComponent != null) {
+            return new Vector2(posComponent.getX(), posComponent.getY());
+        }
+        return new Vector2();
+    }
+
+    /**
+     * Méthode abstraite pour fournir les informations de mort spécifiques au mob.
+     *
+     * @return Une map avec les paramètres de mort.
+     */
+    protected abstract Map<String, Object> getDeathInfo();
+
+    /**
+     * Méthode pour afficher les informations de mort sous forme de tableau dans la console.
+     */
+    public void printDeathInfo() {
+        Map<String, Object> deathInfo = getDeathInfo();
+        System.out.println("----- Informations de Mort -----");
+        System.out.printf("| %-20s | %-15s |\n", "Paramètre", "Valeur");
+        System.out.println("--------------------------------");
+        for (Map.Entry<String, Object> entry : deathInfo.entrySet()) {
+            System.out.printf("| %-20s | %-15s |\n", entry.getKey(), entry.getValue());
+        }
+        System.out.println("--------------------------------");
+    }
+
+    /**
+     * Gère la logique de mort du mob.
+     */
+    protected void onDeath() {
+        System.out.println(getName() + " est mort !");
+        printDeathInfo(); // Afficher les informations de mort
+        dispose(); // Libérer les ressources si nécessaire
+        // La suppression de la liste est gérée ailleurs
+    }
+
+    /**
+     * Méthode pour appliquer des dégâts au mob.
+     *
+     * @param damage Les dégâts à appliquer.
+     */
+    public void takeDamage(float damage) {
+        HealthComponent health = (HealthComponent) getComponent(HealthComponent.class);
+        if (health != null) {
+            health.takeDamage((int) damage);
+            System.out.println(getName() + " a subi " + (int) damage + " dégâts. PV restants: " + health.getCurrentHealthPoints() + "/" + health.getMaxHealthPoints());
+            if (health.getCurrentHealthPoints() <= 0) {
+                onDeath();
+            }
+        }
     }
 
     // Méthodes de récupération des données
@@ -405,49 +491,12 @@ public abstract class Mob extends MOB {
         return currentTexture;
     }
 
-    public List<Vector2> getPathPoints() {
-        return currentPath;
-    }
-
-    // Méthode de nettoyage de la texture
+    /**
+     * Méthode de nettoyage des ressources du mob.
+     */
     public void dispose() {
         if (texture != null) {
             texture.dispose();
         }
-    }
-
-    // Vérifie si le mob est bloqué
-    public boolean isBlocked() {
-        return isBlocked;
-    }
-
-    // Méthode pour restaurer la position précédente en cas de collision
-    public void restorePreviousPosition() {
-        PositionComponent posComponent = (PositionComponent) getComponent(PositionComponent.class);
-        if (posComponent != null) {
-            posComponent.setPosition(previousPosition.x, previousPosition.y);
-
-            // Mettre à jour la bounding box après la restauration
-            updateCollisionBoundingBox(posComponent);
-        }
-    }
-
-    // Méthode pour appliquer des dégâts au mob
-    public void takeDamage(float damage) {
-        HealthComponent health = (HealthComponent) getComponent(HealthComponent.class);
-        if (health != null) {
-            health.takeDamage((int) damage);
-            System.out.println(getName() + " a subi " + (int) damage + " dégâts. PV restants: " + health.getCurrentHealthPoints() + "/" + health.getMaxHealthPoints());
-            if (health.getCurrentHealthPoints() <= 0) {
-                onDeath();
-            }
-        }
-    }
-
-    // Méthode appelée lorsque le mob meurt
-    protected void onDeath() {
-        System.out.println(getName() + " est mort !");
-        // Optionnel : Ajouter des effets de mort, des animations, etc.
-        dispose(); // Libérer les ressources si nécessaire
     }
 }

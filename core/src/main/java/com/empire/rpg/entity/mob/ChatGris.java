@@ -35,7 +35,6 @@ public class ChatGris extends Mob {
         Map<Class<? extends com.empire.rpg.component.Component>, com.empire.rpg.component.Component> components = new HashMap<>();
         components.put(PositionComponent.class, new PositionComponent(position.x, position.y));
         components.put(HealthComponent.class, new HealthComponent(30, 30));
-        // Initialiser le CollisionComponent avec des positions absolues centrées
         components.put(CollisionComponent.class, new CollisionComponent(true, new Rectangle(position.x - 16, position.y - 16, 32, 32)));
         return components;
     }
@@ -49,5 +48,22 @@ public class ChatGris extends Mob {
         droite = split[1][0];
         gauche = split[1][1];
         currentTexture = face;
+    }
+
+    @Override
+    protected Map<String, Object> getDeathInfo() {
+        Map<String, Object> info = new HashMap<>();
+        info.put("Item-Name", "Peau de Chat Gris");
+        info.put("Item-Description", "Peau de chat gris, c'est doux.");
+        info.put("Item-Quantity", 1);
+        info.put("Item-Type", "divers");
+        return info;
+    }
+
+    @Override
+    public void dispose() {
+        if (texture != null) {
+            texture.dispose();
+        }
     }
 }

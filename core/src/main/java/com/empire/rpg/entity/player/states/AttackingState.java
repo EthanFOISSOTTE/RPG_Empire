@@ -206,10 +206,11 @@ public class AttackingState extends State {
      */
     private void removeDeadMobs() {
         for (Mob mob : mobsToRemove) {
+            // L'appel à printDeathInfo() est déjà fait dans onDeath(), donc pas besoin de le rappeler ici
             Mob.allMobs.remove(mob);
             // Optionnel : Ajouter des effets de mort, des animations, etc.
             mob.dispose();
-            System.out.println(mob.getName() + " a été supprimé du jeu.");
+            // System.out.println(mob.getName() + " a été supprimé du jeu.");
         }
         mobsToRemove.clear();
     }
