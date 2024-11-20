@@ -17,9 +17,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * Classe représentant un Gobelin Vert avec des animations.
- */
 public class Orc extends Mob {
 
     // Animations pour idle
@@ -46,6 +43,9 @@ public class Orc extends Mob {
             new GoToPathfindingStrategy(MobFactory.getPathfinding()), // Stratégie pour retourner au spawn
             collisionManager
         );
+        this.scale = 2.0f;      // Zoom factor (2x)
+        this.offsetX = -30f;    // Décalage X
+        this.offsetY = -30f;    // Décalage Y
     }
 
     private static Map<Class<? extends com.empire.rpg.component.Component>, com.empire.rpg.component.Component> initializeComponents(Vector2 position) {

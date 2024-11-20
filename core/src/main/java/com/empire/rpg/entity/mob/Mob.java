@@ -29,7 +29,6 @@ public abstract class Mob extends MOB {
     private static final float STOP_DISTANCE = 20f; // Distance d'arrêt en pixels
     private static final float MAX_BLOCKED_TIME = 0f; // Temps maximum en secondes avant une réorientation
     private static final float RETURN_TO_SPAWN_DISTANCE = 500f; // Distance max avant de revenir au spawn
-    private static final float SCALE = 2.0f;
 
     // Variables d'instance
     protected Vector2 targetPosition;
@@ -71,6 +70,40 @@ public abstract class Mob extends MOB {
     // Référence au CollisionComponent de la map de composants
     protected CollisionComponent collisionComponent;
 
+    // Facteur de zoom (scale)
+    protected float scale = 1.0f; // Par défaut, aucun zoom
+
+    // Offsets pour le rendu
+    protected float offsetX = 0f;
+    protected float offsetY = 0f;
+
+    /**
+     * Getter pour le facteur de zoom.
+     *
+     * @return Le facteur de zoom.
+     */
+    public float getScale() {
+        return scale;
+    }
+
+    /**
+     * Getter pour l'offset X.
+     *
+     * @return L'offset X.
+     */
+    public float getOffsetX() {
+        return offsetX;
+    }
+
+    /**
+     * Getter pour l'offset Y.
+     *
+     * @return L'offset Y.
+     */
+    public float getOffsetY() {
+        return offsetY;
+    }
+
     // Constructeur
     public Mob(String name, UUID id, Map<Class<? extends com.empire.rpg.component.Component>, com.empire.rpg.component.Component> components,
                float speed, PathfindingStrategy aggressiveStrategy,
@@ -105,15 +138,6 @@ public abstract class Mob extends MOB {
 
     // Méthode pour initialiser les textures
     protected abstract void initializeTextures();
-
-    /**
-     * Getter pour le facteur de zoom.
-     *
-     * @return Le facteur de zoom.
-     */
-    public float getScale() {
-        return SCALE;
-    }
 
     // Méthode pour obtenir les bordures de collision du mob
     public Rectangle getCollisionBounds() {

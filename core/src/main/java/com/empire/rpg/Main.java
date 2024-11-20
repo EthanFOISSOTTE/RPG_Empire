@@ -38,7 +38,7 @@ public class Main extends ApplicationAdapter {
     private Pathfinding pathfinding;
 
     private DebugRenderer debugRenderer;
-    private boolean debugMode = true;
+    private boolean debugMode = false;
 
     // Taille de l'écran de jeu (16:9 | 480p)
     private static final float WORLD_WIDTH = 854f;
@@ -110,8 +110,8 @@ public class Main extends ApplicationAdapter {
             // Appliquer le facteur de zoom lors du rendu
             batch.draw(
                 mob.getCurrentTexture(),
-                mob.getPosition().x - 30,
-                mob.getPosition().y - 30,
+                mob.getPosition().x + mob.getOffsetX(),
+                mob.getPosition().y + mob.getOffsetY(),
                 mob.getCurrentTexture().getRegionWidth() * mob.getScale(),
                 mob.getCurrentTexture().getRegionHeight() * mob.getScale()
             );
