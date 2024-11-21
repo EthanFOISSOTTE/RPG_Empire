@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.empire.rpg.component.HealthComponent;
 import com.empire.rpg.entity.player.PlayerCharacter;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 
 import com.empire.rpg.entity.player.equipment.Tool;
 
@@ -41,9 +40,6 @@ public class PlayerUI {
 
     // Référence au joueur
     private final PlayerCharacter player;
-
-    // Caméra dédiée pour l'UI
-    private OrthographicCamera uiCamera;
 
     // Cache pour les textures des icônes d'armes
     private Map<String, Texture> toolIcons;
@@ -91,10 +87,6 @@ public class PlayerUI {
             this.playerHealthBarTexture = null;
         }
 
-        // Initialiser la caméra de l'UI
-        this.uiCamera = new OrthographicCamera();
-        this.uiCamera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
         // Initialiser le cache des icônes d'armes
         this.toolIcons = new HashMap<>();
     }
@@ -105,18 +97,10 @@ public class PlayerUI {
      * @param batch SpriteBatch utilisé pour le rendu.
      */
     public void render(SpriteBatch batch) {
-        // Mettre à jour la caméra de l'UI
-        uiCamera.update();
-        batch.setProjectionMatrix(uiCamera.combined);
-
-        // Commencer le SpriteBatch pour l'UI
-        batch.begin();
-
         // Obtenir la santé actuelle et maximale du joueur
         HealthComponent health = (HealthComponent) player.getComponent(HealthComponent.class);
         if (health == null) {
             System.out.println("HealthComponent missing");
-            batch.end();
             return;
         }
         int currentHealth = health.getCurrentHealthPoints();
@@ -129,7 +113,6 @@ public class PlayerUI {
         float currentHealthBarWidth = healthBarFullWidth * healthPercentage;
 
         // Dessiner la barre de santé
-        // La barre disparaît de droite à gauche en ajustant la largeur
         if (playerHealthBarTexture != null) {
             batch.draw(playerHealthBarTexture, healthBarX, healthBarY, currentHealthBarWidth, healthBarHeight);
         }
@@ -172,9 +155,6 @@ public class PlayerUI {
                 batch.draw(weaponTexture, weaponIconX, weaponIconY, weaponIconWidth, weaponIconHeight);
             }
         }
-
-        // Terminer le SpriteBatch pour l'UI
-        batch.end();
     }
 
     /**

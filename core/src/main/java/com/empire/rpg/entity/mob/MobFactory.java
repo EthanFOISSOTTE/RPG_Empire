@@ -1,7 +1,7 @@
 package com.empire.rpg.entity.mob;
 
 import com.badlogic.gdx.math.Vector2;
-import com.empire.rpg.CollisionManager;
+import com.empire.rpg.map.CollisionManager;
 import com.empire.rpg.component.pathfinding.Pathfinding;
 
 /**

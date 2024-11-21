@@ -12,7 +12,7 @@ import com.badlogic.gdx.math.Intersector;
 import com.empire.rpg.component.CollisionComponent;
 import com.empire.rpg.component.HealthComponent;
 import com.empire.rpg.component.PositionComponent;
-import com.empire.rpg.CollisionManager;
+import com.empire.rpg.map.CollisionManager;
 import com.empire.rpg.component.pathfinding.*;
 
 import com.empire.rpg.entity.MOB;

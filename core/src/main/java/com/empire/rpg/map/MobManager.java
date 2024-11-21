@@ -1,4 +1,4 @@
-package com.empire.rpg;
+package com.empire.rpg.map;
 
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;

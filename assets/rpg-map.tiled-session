@@ -3,9 +3,8 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "",
+    "activeFile": "rpg-map.tmx",
     "expandedProjectPaths": [
-        "Spritesheets",
         "."
     ],
     "fileStates": {
@@ -84,7 +83,7 @@
             "scaleInEditor": 2
         },
         "Spritesheets/A3_Walls_And_Floors.tsx": {
-            "scaleInDock": 1
+            "scaleInDock": 0.75
         },
         "Spritesheets/A4_Walls.tsx": {
             "scaleInDock": 1,
@@ -216,14 +215,14 @@
         },
         "rpg-map.tmx": {
             "expandedGroupLayers": [
-                13,
-                14
+                14,
+                13
             ],
-            "scale": 1,
-            "selectedLayer": 13,
+            "scale": 0.0625,
+            "selectedLayer": 14,
             "viewCenter": {
-                "x": 6240.5,
-                "y": 2256.5
+                "x": 4616,
+                "y": 4872
             }
         }
     },
@@ -237,6 +236,7 @@
     "map.tileWidth": 48,
     "map.width": 200,
     "openFiles": [
+        "rpg-map.tmx"
     ],
     "project": "rpg-map.tiled-project",
     "recentFiles": [

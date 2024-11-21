@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import com.empire.rpg.component.Component;
 import com.empire.rpg.entity.Entity;
-import com.empire.rpg.CollisionManager;
+import com.empire.rpg.map.CollisionManager;
 import com.empire.rpg.component.HealthComponent;
 import com.empire.rpg.component.CollisionComponent;
 import com.empire.rpg.component.PositionComponent;

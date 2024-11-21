@@ -3,7 +3,7 @@ package com.empire.rpg.entity.player.states;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
-import com.empire.rpg.CollisionManager;
+import com.empire.rpg.map.CollisionManager;
 import com.empire.rpg.entity.mob.Mob;
 import com.empire.rpg.entity.player.PlayerCharacter;
 import com.empire.rpg.entity.player.attacks.Attack;

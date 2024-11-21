@@ -1,6 +1,6 @@
 package com.empire.rpg.entity.player.states;
 
-import com.empire.rpg.CollisionManager;
+import com.empire.rpg.map.CollisionManager;
 import com.empire.rpg.entity.player.PlayerCharacter;
 
 // Classe abstraite de base pour les différents états du joueur

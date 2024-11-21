@@ -11,7 +11,7 @@ import com.badlogic.gdx.math.Ellipse;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.empire.rpg.CollisionManager;
+import com.empire.rpg.map.CollisionManager;
 import com.empire.rpg.component.HealthComponent;
 import com.empire.rpg.entity.mob.Mob;
 import com.empire.rpg.entity.player.PlayerCharacter;
