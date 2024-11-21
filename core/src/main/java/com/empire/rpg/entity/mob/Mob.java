@@ -4,8 +4,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.math.Intersector;
+
 import com.empire.rpg.component.CollisionComponent;
 import com.empire.rpg.component.HealthComponent;
 import com.empire.rpg.component.PositionComponent;
@@ -14,11 +17,14 @@ import com.empire.rpg.component.pathfinding.*;
 
 import com.empire.rpg.entity.MOB;
 import com.empire.rpg.entity.player.PlayerCharacter;
+import com.empire.rpg.entity.mob.attacks.MobAttack;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Classe abstraite représentant un Mob dans le jeu, étendant l'entité MOB et utilisant des composants.
@@ -32,7 +38,7 @@ public abstract class Mob extends MOB {
 
     // Variables d'instance
     protected Vector2 targetPosition;
-    protected List<Vector2> currentPath; // Changé de private à protected
+    protected List<Vector2> currentPath;
 
     private boolean isNearPlayer = false;
     private boolean isBlocked = false;
@@ -76,6 +82,28 @@ public abstract class Mob extends MOB {
     // Offsets pour le rendu
     protected float offsetX = 0f;
     protected float offsetY = 0f;
+
+    // Indicateur si les dégâts ont été appliqués pendant l'attaque en cours
+    protected boolean hasAppliedDamage = false;
+
+    // Liste des attaques disponibles pour le mob
+    protected List<MobAttack> availableAttacks = new ArrayList<>();
+
+    // Map pour gérer les cooldowns des attaques
+    protected Map<String, Float> attackCooldowns = new HashMap<>();
+
+    // Indicateur si le mob est en train d'attaquer
+    protected boolean isAttacking = false;
+
+    // Timer pour la durée de l'attaque en cours
+    protected float attackTimer = 0f;
+
+    // L'attaque en cours
+    protected MobAttack currentAttack = null;
+
+    // Position de spawn initiale
+    protected float initialSpawnX;
+    protected float initialSpawnY;
 
     /**
      * Getter pour le facteur de zoom.
@@ -133,6 +161,10 @@ public abstract class Mob extends MOB {
         PositionComponent posComponent = (PositionComponent) getComponent(PositionComponent.class);
         if (posComponent != null) {
             previousPosition.set(posComponent.getX(), posComponent.getY());
+
+            // Initialiser la position de spawn
+            this.initialSpawnX = posComponent.getX();
+            this.initialSpawnY = posComponent.getY();
         }
     }
 
@@ -179,6 +211,12 @@ public abstract class Mob extends MOB {
             return;
         }
 
+        // Vérifier si le mob est mort
+        HealthComponent health = (HealthComponent) getComponent(HealthComponent.class);
+        if (health != null && health.getCurrentHealthPoints() <= 0) {
+            return; // Ne rien faire si le mob est mort
+        }
+
         // Vérifie la distance au spawn pour activer le retour
         boolean isFarFromSpawn = position.dst(getSpawnPosition()) > RETURN_TO_SPAWN_DISTANCE;
 
@@ -197,31 +235,59 @@ public abstract class Mob extends MOB {
         float collisionDistance = calculateCollisionDistance(player);
         if (collisionDistance < STOP_DISTANCE) {
             isNearPlayer = true;
-            return; // Arrêter le mouvement si proche du joueur en fonction des collisions
         } else {
             isNearPlayer = false;
         }
 
-        if (isReturningToSpawn || !isNearPlayer) {
-            // Mettre à jour le chemin ou suivre le joueur
+        // Gestion des attaques
+        updateAttackCooldowns(deltaTime);
+        if (isNearPlayer) {
+            if (!isAttacking) {
+                attemptAttack(player);
+            }
+        } else {
+            // Si le mob n'est pas en train d'attaquer, mettre à jour le chemin
             if (currentPath.isEmpty() || targetPosition == null || (isBlocked && blockedDuration > MAX_BLOCKED_TIME)) {
                 Vector2 target = isReturningToSpawn ? getSpawnPosition() : player.getPositionVector();
                 currentStrategy.calculatePath(this, target, deltaTime);
                 smoothPath();
             }
             moveInStaircasePattern(deltaTime);
-            updateTextureDirection();
+        }
+
+        // Gestion des attaques
+        updateAttackCooldowns(deltaTime);
+        if (isNearPlayer && !isAttacking && !isAttackOnCooldown()) {
+            attemptAttack(player);
+        }
+
+        // Mettre à jour l'attaque en cours
+        if (isAttacking) {
+            handleAttack(deltaTime, player);
         }
 
         handleCollisions(player, deltaTime);
+
+        // Mettre à jour la direction de la texture
+        updateTextureDirection();
+    }
+
+    /**
+     * Vérifie si une attaque est en cooldown.
+     *
+     * @return True si une attaque est en cooldown, sinon false.
+     */
+    private boolean isAttackOnCooldown() {
+        for (MobAttack attack : availableAttacks) {
+            if (attackCooldowns.containsKey(attack.getId())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private Vector2 getSpawnPosition() {
-        PositionComponent posComponent = (PositionComponent) getComponent(PositionComponent.class);
-        if (posComponent != null) {
-            return new Vector2(posComponent.getX(), posComponent.getY());
-        }
-        return new Vector2();
+        return new Vector2(initialSpawnX, initialSpawnY);
     }
 
     private void handleCollisions(PlayerCharacter player, float deltaTime) {
@@ -335,25 +401,18 @@ public abstract class Mob extends MOB {
         float newX = posComponent.getX() + (collisionBox.width / 2);
         float newY = posComponent.getY() + (collisionBox.height / 2);
         collisionComponent.setBoundingBox(new Rectangle(newX, newY, collisionBox.width, collisionBox.height));
-
-        // Log pour vérifier les nouvelles positions
-        // System.out.println("Updated Collision Box for " + getName() + ": (" + newX + ", " + newY + ", " + collisionBox.width + ", " + collisionBox.height + ")");
     }
 
     // Mise à jour de la direction de la texture du mob
     protected void updateTextureDirection() {
-        PositionComponent posComponent = (PositionComponent) getComponent(PositionComponent.class);
-        if (posComponent == null || targetPosition == null) {
+        if (currentDirection.isZero()) {
             return;
         }
 
-        float deltaX = targetPosition.x - posComponent.getX();
-        float deltaY = targetPosition.y - posComponent.getY();
-
-        if (Math.abs(deltaX) > Math.abs(deltaY)) {
-            currentTexture = (deltaX > 0) ? droite : gauche;
+        if (Math.abs(currentDirection.x) > Math.abs(currentDirection.y)) {
+            currentTexture = (currentDirection.x > 0) ? droite : gauche;
         } else {
-            currentTexture = (deltaY > 0) ? dos : face;
+            currentTexture = (currentDirection.y > 0) ? dos : face;
         }
     }
 
@@ -504,6 +563,208 @@ public abstract class Mob extends MOB {
             if (health.getCurrentHealthPoints() <= 0) {
                 onDeath();
             }
+        }
+    }
+
+    // Méthodes pour gérer les attaques
+
+    /**
+     * Met à jour les cooldowns des attaques.
+     *
+     * @param deltaTime Le temps écoulé depuis la dernière mise à jour.
+     */
+    protected void updateAttackCooldowns(float deltaTime) {
+        Iterator<Map.Entry<String, Float>> iterator = attackCooldowns.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, Float> entry = iterator.next();
+            float remainingTime = entry.getValue() - deltaTime;
+            if (remainingTime <= 0) {
+                iterator.remove(); // Cooldown terminé
+            } else {
+                entry.setValue(remainingTime);
+            }
+        }
+    }
+
+    /**
+     * Tente de lancer une attaque sur le joueur.
+     *
+     * @param player Le joueur cible.
+     */
+    protected void attemptAttack(PlayerCharacter player) {
+        for (MobAttack attack : availableAttacks) {
+            if (!attackCooldowns.containsKey(attack.getId())) {
+                // Vérifier si le joueur est à portée
+                if (isPlayerInRange(player, attack.getRange())) {
+                    startAttack(attack, player);
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Vérifie si le joueur est dans la portée d'une attaque.
+     *
+     * @param player Le joueur cible.
+     * @param range  La portée de l'attaque.
+     * @return True si le joueur est à portée, sinon false.
+     */
+    protected boolean isPlayerInRange(PlayerCharacter player, float range) {
+        float distance = getPositionVector().dst(player.getPositionVector());
+        return distance <= range;
+    }
+
+    /**
+     * Démarre une attaque.
+     *
+     * @param attack L'attaque à exécuter.
+     * @param player Le joueur cible.
+     */
+    protected void startAttack(MobAttack attack, PlayerCharacter player) {
+        isAttacking = true;
+        hasAppliedDamage = false; // Réinitialiser le drapeau
+        attackTimer = 0f;
+        currentAttack = attack;
+        attackCooldowns.put(attack.getId(), attack.getCooldown());
+
+        // Déterminer la direction vers le joueur
+        setDirectionTowardsPlayer(player);
+    }
+
+    /**
+     * Met à jour l'attaque en cours.
+     *
+     * @param deltaTime Le temps écoulé depuis la dernière mise à jour.
+     * @param player    Le joueur cible.
+     */
+    protected void handleAttack(float deltaTime, PlayerCharacter player) {
+        attackTimer += deltaTime;
+        if (attackTimer >= currentAttack.getDuration()) {
+            isAttacking = false;
+            attackTimer = 0f;
+            currentAttack = null;
+        } else if (!hasAppliedDamage) {
+            // Appliquer les dégâts une seule fois
+            if (detectCollisionWithPlayer(player)) {
+                player.takeDamage(currentAttack.getDamage());
+                hasAppliedDamage = true; // Marquer que les dégâts ont été appliqués
+            }
+        }
+    }
+
+    /**
+     * Détecte si l'attaque en cours touche le joueur.
+     *
+     * @param player Le joueur cible.
+     * @return True si le joueur est touché, sinon false.
+     */
+    protected boolean detectCollisionWithPlayer(PlayerCharacter player) {
+        Polygon attackHitbox = getAttackHitbox();
+        Rectangle playerBounds = player.getCollisionBounds();
+
+        // Convertir la bounding box du joueur en polygone
+        float[] playerVertices = new float[] {
+            playerBounds.x, playerBounds.y,
+            playerBounds.x + playerBounds.width, playerBounds.y,
+            playerBounds.x + playerBounds.width, playerBounds.y + playerBounds.height,
+            playerBounds.x, playerBounds.y + playerBounds.height
+        };
+        Polygon playerPolygon = new Polygon(playerVertices);
+
+        // Vérifier l'intersection entre les deux polygones
+        return Intersector.overlapConvexPolygons(attackHitbox, playerPolygon);
+    }
+
+    /**
+     * Calcule la hitbox de l'attaque en cours.
+     *
+     * @return La hitbox de l'attaque sous forme de Rectangle.
+     */
+    public Polygon getAttackHitbox() {
+        if (currentAttack == null) {
+            return null; // Aucun polygone à retourner
+        }
+        float width = currentAttack.getHitboxWidth();
+        float height = currentAttack.getHitboxHeight();
+
+        // Obtenir la position du monstre
+        Vector2 mobPos = getPositionVector();
+
+        // Définir les sommets du polygone (un rectangle de base)
+        float[] vertices = new float[] {
+            0, 0,           // Point inférieur gauche
+            width, 0,       // Point inférieur droit
+            width, height,  // Point supérieur droit
+            0, height       // Point supérieur gauche
+        };
+
+        // Créer le polygone
+        Polygon attackPolygon = new Polygon(vertices);
+
+        // Positionner le polygone à la position du monstre
+        attackPolygon.setPosition(mobPos.x, mobPos.y);
+
+        // Calculer l'angle de rotation en fonction de la direction
+        float rotationAngle = 0f;
+        switch (getFacingDirection()) {
+            case "UP":
+                rotationAngle = 0f;
+                attackPolygon.setPosition(mobPos.x - width / 2, mobPos.y + collisionComponent.getBoundingBox().height);
+                break;
+            case "DOWN":
+                rotationAngle = 180f;
+                attackPolygon.setPosition(mobPos.x + width / 2, mobPos.y);
+                break;
+            case "LEFT":
+                rotationAngle = 90f;
+                attackPolygon.setPosition(mobPos.x, mobPos.y + height / 2);
+                break;
+            case "RIGHT":
+                rotationAngle = -90f;
+                attackPolygon.setPosition(mobPos.x + collisionComponent.getBoundingBox().width, mobPos.y + height / 2);
+                break;
+        }
+
+        // Définir le point d'origine pour la rotation (centre du polygone)
+        attackPolygon.setOrigin(width / 2, height / 2);
+
+        // Appliquer la rotation
+        attackPolygon.rotate(rotationAngle);
+
+        return attackPolygon;
+    }
+
+    /**
+     * Définit la direction du mob vers le joueur.
+     *
+     * @param player Le joueur cible.
+     */
+    protected void setDirectionTowardsPlayer(PlayerCharacter player) {
+        Vector2 toPlayer = player.getPositionVector().cpy().sub(getPositionVector());
+        if (Math.abs(toPlayer.x) > Math.abs(toPlayer.y)) {
+            currentDirection.set((toPlayer.x > 0) ? 1 : -1, 0);
+        } else {
+            currentDirection.set(0, (toPlayer.y > 0) ? 1 : -1);
+        }
+    }
+
+    /**
+     * Obtient la direction actuelle sous forme de chaîne.
+     *
+     * @return "UP", "DOWN", "LEFT" ou "RIGHT".
+     */
+    protected String getFacingDirection() {
+        if (currentDirection.x > 0) {
+            return "RIGHT";
+        } else if (currentDirection.x < 0) {
+            return "LEFT";
+        } else if (currentDirection.y > 0) {
+            return "UP";
+        } else if (currentDirection.y < 0) {
+            return "DOWN";
+        } else {
+            return "DOWN"; // Par défaut si le monstre est immobile
         }
     }
 

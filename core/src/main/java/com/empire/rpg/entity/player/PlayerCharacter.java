@@ -81,6 +81,12 @@ public class PlayerCharacter extends Player {
     private Vector2 position;
     private Vector2 previousPosition;
 
+    private boolean isDead = false;
+
+    public boolean isDead() {
+        return isDead;
+    }
+
     // Classe interne pour stocker les données d'une attaque en attente
     private class AttackData {
         public Attack attack; // Attaque à exécuter
@@ -747,5 +753,30 @@ public class PlayerCharacter extends Player {
             return this;
         }
         return null;
+    }
+
+    /**
+     * Applique des dégâts au joueur.
+     *
+     * @param damage La quantité de dégâts à appliquer.
+     */
+    public void takeDamage(float damage) {
+        HealthComponent health = (HealthComponent) getComponent(HealthComponent.class);
+        if (health != null) {
+            health.takeDamage((int) damage);
+            System.out.println(getName() + " a subi " + (int) damage + " dégâts. PV restants : "
+                + health.getCurrentHealthPoints() + "/" + health.getMaxHealthPoints());
+            if (health.getCurrentHealthPoints() <= 0) {
+                onDeath();
+            }
+        }
+    }
+
+    /**
+     * Gère la logique de mort du joueur.
+     */
+    private void onDeath() {
+        System.out.println(getName() + " est mort !");
+        isDead = true;
     }
 }

@@ -97,6 +97,12 @@ public class Main extends ApplicationAdapter {
         float deltaTime = Gdx.graphics.getDeltaTime();
         player.update(deltaTime, collisionManager);
 
+        // Vérifier si le joueur est mort
+        if (player.isDead()) {
+            resetGame();
+            return; // Arrêter le rendu pour cette frame
+        }
+
         // Mettre à jour les mobs
         for (Mob mob : Mob.allMobs) {
             mob.update(Gdx.graphics.getDeltaTime(), player, camera);
@@ -141,6 +147,39 @@ public class Main extends ApplicationAdapter {
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
+    }
+
+    private void resetGame() {
+        System.out.println("Redémarrage du jeu...");
+
+        // Dispose des ressources existantes
+        player.dispose();
+        playerUI.dispose();
+        for (Mob mob : Mob.allMobs) {
+            mob.dispose();
+        }
+        Mob.allMobs.clear();
+
+        // Recréer le joueur
+        Map<Class<? extends Component>, Component> components = new HashMap<>();
+        components.put(HealthComponent.class, new HealthComponent(90, 100));
+        components.put(PositionComponent.class, new PositionComponent(4800f, 4800f));
+
+        player = new PlayerCharacter(2.0f, UUID.randomUUID(), "Hero", components);
+
+        // Recréer l'UI du joueur
+        playerUI = new PlayerUI(player);
+
+        // Recréer les mobs
+        MobFactory.createMob("goblin", new Vector2(4700, 4900), collisionManager);
+        MobFactory.createMob("ogre", new Vector2(4800, 4900), collisionManager);
+        MobFactory.createMob("orc", new Vector2(4900, 4900), collisionManager);
+        MobFactory.createMob("rabbit", new Vector2(4700, 5000), collisionManager);
+        MobFactory.createMob("rabbit-horned", new Vector2(4800, 5000), collisionManager);
+
+        // Réinitialiser la caméra
+        camera.position.set(player.getX(), player.getY(), 0);
+        camera.update();
     }
 
     @Override

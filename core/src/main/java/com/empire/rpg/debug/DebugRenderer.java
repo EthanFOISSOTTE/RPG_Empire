@@ -78,6 +78,11 @@ public class DebugRenderer {
 
         // Dessiner les textes d'informations
         drawInfoTexts(camera, player);
+
+        // Dessiner les attaques des mobs
+        for (Mob mob : Mob.allMobs) {
+            renderAttackHitbox(mob, camera);
+        }
     }
 
     /**
@@ -289,6 +294,20 @@ public class DebugRenderer {
             int damagedHealth = health.takeDamage(5);
             System.out.println("Health decreased to " + damagedHealth + "/" + health.getMaxHealthPoints());
         }
+    }
+
+    public void renderAttackHitbox(Mob mob, Camera camera) {
+        Polygon attackHitbox = mob.getAttackHitbox();
+        if (attackHitbox == null) {
+            return; // Aucun polygone à dessiner
+        }
+        ShapeRenderer shapeRenderer = new ShapeRenderer();
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.ORANGE);
+        shapeRenderer.polygon(attackHitbox.getTransformedVertices());
+        shapeRenderer.end();
+        shapeRenderer.dispose();
     }
 
     /**
