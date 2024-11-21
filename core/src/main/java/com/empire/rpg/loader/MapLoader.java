@@ -8,7 +8,6 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
-import static com.empire.rpg.GameEngine.MAP_PATH;
 
 /**
  * Classe MapLoader pour charger et gérer les entités et objets d'une carte Tiled.
@@ -24,7 +23,7 @@ public class MapLoader implements Screen {
      */
     public MapLoader() {
         // Charger la carte depuis le chemin spécifié
-        this.tiledMap = new TmxMapLoader().load(MAP_PATH);
+        this.tiledMap = new TmxMapLoader().load("rpg-map.tmx");
         this.mapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
         // Configurer la caméra

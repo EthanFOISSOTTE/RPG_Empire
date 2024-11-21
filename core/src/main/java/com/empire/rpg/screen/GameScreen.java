@@ -1,4 +1,4 @@
-package com.empire.rpg;
+package com.empire.rpg.screen;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import com.empire.rpg.CollisionManager;
+import com.empire.rpg.MapManager;
 import com.empire.rpg.component.HealthComponent;
 import com.empire.rpg.component.PositionComponent;
 import com.empire.rpg.component.WeaponComponent;
@@ -19,13 +21,12 @@ import com.empire.rpg.entity.player.PlayerCharacter;
 import com.empire.rpg.component.Component;
 import com.empire.rpg.entity.player.audio.SoundManager;
 import com.empire.rpg.debug.DebugRenderer;
-import com.empire.rpg.screen.GameScreen;
 import com.empire.rpg.screen.IntroScreen;
 import com.empire.rpg.screen.MainMenuScreen;
 import com.empire.rpg.screen.Screen;
 import com.empire.rpg.ui.PlayerUI;
 
-public class Main extends ApplicationAdapter {
+public class GameScreen extends ApplicationAdapter implements Screen{
     private SpriteBatch batch;
     private OrthographicCamera camera;
     private FitViewport viewport;
@@ -41,22 +42,11 @@ public class Main extends ApplicationAdapter {
 
     private static final float WORLD_WIDTH = 854f;
     private static final float WORLD_HEIGHT = 480f;
-    private static Main instance;
 
-    public Main() {
-        instance = this;
-    }
 
-    public static Main getInstance() {
-        return instance;
-    }
 
     @Override
     public void create() {
-        // Charger l'écran d'introduction avec un Runnable pour afficher le menu principal
-        IntroScreen introScreen = new IntroScreen(() -> setScreen(new MainMenuScreen()));
-        setScreen(introScreen);
-
 
         // Charger les ressources
         batch = new SpriteBatch();
@@ -87,7 +77,7 @@ public class Main extends ApplicationAdapter {
         camera.update();
     }
 
-    public void setScreen(Screen screen) {
+    private void setScreen(Screen screen) {
         currentScreen = screen;
         if (!(currentScreen instanceof IntroScreen)) {
             return;
@@ -137,6 +127,16 @@ public class Main extends ApplicationAdapter {
     }
 
     @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void render(float delta) {
+
+    }
+
+    @Override
     public void resize ( int width, int height){
         viewport.update(width, height);
         if (currentScreen != null) {
@@ -146,19 +146,19 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void dispose () {
-            batch.dispose();
-            mapManager.dispose();
-            player.dispose();
-            if (soundManager != null) {
-                soundManager.dispose();
-            }
-            debugRenderer.dispose();
-            playerUI.dispose();
+        batch.dispose();
+        mapManager.dispose();
+        player.dispose();
+        if (soundManager != null) {
+            soundManager.dispose();
+        }
+        debugRenderer.dispose();
+        playerUI.dispose();
 
-            if (currentScreen != null) {
-                currentScreen.dispose();
-            }
+        if (currentScreen != null) {
+            currentScreen.dispose();
         }
     }
+}
 
 
