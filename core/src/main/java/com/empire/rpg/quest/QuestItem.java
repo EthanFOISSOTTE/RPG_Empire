@@ -1,6 +1,8 @@
 package com.empire.rpg.quest;
 
 import java.util.List;
+import com.empire.rpg.quest.Rewards;
+
 
 public class QuestItem {
     private String title;
