@@ -4,58 +4,139 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.empire.rpg.Main;
-import com.empire.rpg.system.FightSystem;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+
+import com.empire.rpg.utils.FontUtils;
 
 public class MainMenuScreen implements Screen {
     private SpriteBatch batch;
-    private BitmapFont font;
     private int selectedOption = 0;
-    private String[] options = new String[] { "Nouvelle Partie", "Quitter le jeu" };
+    private final String[] options = new String[]{"Nouvelle Partie", "Quitter le jeu"};
+    private TextField playerNameField = null;
+    private Stage stage;
+    private Skin skin;
+    private BitmapFont customFont;
+    private BitmapFont customFontTitle;
+    private boolean isEnteringName = false; // Indique si le joueur est en train d'entrer son nom
+
     private static final float WORLD_WIDTH = 854f;
     private static final float WORLD_HEIGHT = 480f;
 
-
     @Override
     public void show() {
+        batch = new SpriteBatch();
+
+        // Charger une police personnalisée
+        try {
+            customFont = FontUtils.createCustomFont("SinisterRegular.ttf", 42, Color.WHITE);
+        } catch (Exception e) {
+            customFont = new BitmapFont();
+            customFont.setColor(Color.WHITE);
+        }
+
+        // Charger le skin
+        skin = new Skin(Gdx.files.internal("uiskin.json"));
+
+        // Initialisation du Stage
+        stage = new Stage(new ScreenViewport());
+        Gdx.input.setInputProcessor(stage);
+
+        // Création d'un style personnalisé pour le TextField
+        playerNameField.setVisible(false); // Le champ est masqué par défaut
+        stage.addActor(playerNameField);
+
+        // Activer le clavier virtuel
+        Gdx.input.setInputProcessor(stage);
+
     }
 
     @Override
     public void render(float delta) {
+        // Effacer l'écran
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        batch = new SpriteBatch();
-        font = new BitmapFont();
-        font.setColor(Color.WHITE);
-        font.getData().setScale(2);
+        // Initialisation des ressources
+        if (batch == null) {
+            batch = new SpriteBatch();
+        }
+        if (stage == null) {
+            stage = new Stage(new ScreenViewport());
+        }
+        if (customFont == null) {
+            customFont = FontUtils.createCustomFont("SinisterRegular.ttf", 32, Color.WHITE);
+        }
+        if (skin == null) {
+            skin = new Skin(Gdx.files.internal("uiskin.json"));
+        }
+        if (playerNameField == null) {
+            TextField.TextFieldStyle customStyle = new TextField.TextFieldStyle();
+            customStyle.font = customFont;
+            customStyle.fontColor = Color.WHITE;
+            customStyle.cursor = skin.getDrawable("cursor");
+            customStyle.selection = skin.getDrawable("selection");
+            customStyle.background = skin.getDrawable("textfield");
 
-        // Démarrer le batch pour dessiner les éléments
-        batch.begin();
-
-        // Dessiner le menu principal
-        float menuX = WORLD_WIDTH / 2f - 100;
-        float menuY = WORLD_HEIGHT - 50;
-
-        font.draw(batch, "Main Menu", menuX, menuY);
-        // Affiche les options du menu
-        for (int i = 0; i < options.length; i++) {
-            if (i == selectedOption) {
-                font.setColor(1, 1, 0, 1); // Jaune pour l'option sélectionnée
-            } else {
-                font.setColor(1, 1, 1, 1); // Blanc pour les autres options
-            }
-            font.draw(batch, options[i], (float) Gdx.graphics.getWidth() / 2 - 50, Gdx.graphics.getHeight() - 150 - i * 40);
+            // Création du champ de texte
+            playerNameField = new TextField("", customStyle);
+            playerNameField.setMessageText("Entrez votre nom...");
+            playerNameField.setAlignment(Align.center);
+            playerNameField.setSize(400, 60);
+            playerNameField.setPosition(WORLD_WIDTH / 2f - 150, WORLD_HEIGHT / 2f - 70);
+            playerNameField.setVisible(false); // Le champ est masqué par défaut
+            stage.addActor(playerNameField);
         }
 
-        // Fin du batch
+        // Démarrer le batch pour dessiner le menu
+        batch.begin();
+        customFont.setColor(Color.WHITE);
+        if (customFontTitle == null) {
+            customFontTitle = FontUtils.createCustomFont("SinisterRegular.ttf", 54, Color.RED);
+        }
+        customFontTitle.draw(batch, "Menu principal", WORLD_WIDTH / 2f - 100, WORLD_HEIGHT - 50);
+
+        // Dessiner les options du menu
+        for (int i = 0; i < options.length; i++) {
+            if (i == selectedOption) {
+                customFont.setColor(Color.YELLOW); // Jaune pour l'option sélectionnée
+            } else {
+                customFont.setColor(Color.WHITE); // Blanc pour les autres
+            }
+            customFont.draw(batch, options[i], WORLD_WIDTH / 2f - 50, WORLD_HEIGHT - 150 - i * 40);
+        }
         batch.end();
 
-        // Gérer les entrées utilisateur pour naviguer dans le menu
+        // Gérer la navigation dans le menu
+        handleMenuNavigation();
+
+        // Gérer la sélection du menu
+        handleMenuSelection();
+
+        // Dessiner la scène (TextField inclus)
+        stage.act(delta);
+        stage.draw();
+    }
+
+
+    @Override
+    public void resize(int width, int height) {
+        stage.getViewport().update(width, height, true);
+    }
+
+    @Override
+    public void dispose() {
+        batch.dispose();
+        customFont.dispose();
+        stage.dispose();
+    }
+
+    private void handleMenuNavigation() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
             selectedOption = (selectedOption + options.length - 1) % options.length;
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
@@ -63,32 +144,23 @@ public class MainMenuScreen implements Screen {
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
             handleMenuSelection();
         }
-
-    }
-
-    @Override
-    public void resize(int width, int height) {
-
-    }
-
-    @Override
-    public void dispose() {
-        batch.dispose();
-        font.dispose();
     }
 
     private void handleMenuSelection() {
-        switch (selectedOption) {
-            case 0:
-                // Démarrer une nouvelle partie
-                GameScreen gameScreen = new GameScreen();
-                Main.getInstance().setScreen(gameScreen);
-                break;
-            case 1:
-                // Quitter le jeu
-                Gdx.app.exit();
-
-                break;
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+            switch (selectedOption) {
+                case 0:
+                    // Nouvelle Partie
+                    playerNameField.setVisible(true);
+                    stage.setKeyboardFocus(playerNameField); // Donner le focus
+                    isEnteringName = true;
+                    break;
+                case 1:
+                    // Quitter le jeu
+                    Gdx.app.exit();
+                    break;
+            }
         }
     }
 }
+
