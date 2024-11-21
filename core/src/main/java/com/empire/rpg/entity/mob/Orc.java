@@ -71,14 +71,10 @@ public class Orc extends Mob {
         runTexture = new Texture("mobs/orc3/orc3_run_full.png");
         TextureRegion[][] runSplit = TextureRegion.split(runTexture, 64, 64);
 
-        runUp = new Animation<>(0.05f, runSplit[1][0], runSplit[1][1], runSplit[1][2], runSplit[1][3],
-            runSplit[1][4], runSplit[1][5], runSplit[1][6], runSplit[1][7]);
-        runDown = new Animation<>(0.05f, runSplit[0][0], runSplit[0][1], runSplit[0][2], runSplit[0][3],
-            runSplit[0][4], runSplit[0][5], runSplit[0][6], runSplit[0][7]);
-        runLeft = new Animation<>(0.05f, runSplit[2][0], runSplit[2][1], runSplit[2][2], runSplit[2][3],
-            runSplit[2][4], runSplit[2][5], runSplit[2][6], runSplit[2][7]);
-        runRight = new Animation<>(0.05f, runSplit[3][0], runSplit[3][1], runSplit[3][2], runSplit[3][3],
-            runSplit[3][4], runSplit[3][5], runSplit[3][6], runSplit[3][7]);
+        runUp = new Animation<>(0.05f, runSplit[1][0], runSplit[1][1], runSplit[1][2], runSplit[1][3], runSplit[1][4], runSplit[1][5], runSplit[1][6], runSplit[1][7]);
+        runDown = new Animation<>(0.05f, runSplit[0][0], runSplit[0][1], runSplit[0][2], runSplit[0][3], runSplit[0][4], runSplit[0][5], runSplit[0][6], runSplit[0][7]);
+        runLeft = new Animation<>(0.05f, runSplit[2][0], runSplit[2][1], runSplit[2][2], runSplit[2][3], runSplit[2][4], runSplit[2][5], runSplit[2][6], runSplit[2][7]);
+        runRight = new Animation<>(0.05f, runSplit[3][0], runSplit[3][1], runSplit[3][2], runSplit[3][3], runSplit[3][4], runSplit[3][5], runSplit[3][6], runSplit[3][7]);
 
         // Initialiser la texture courante
         currentTexture = idleDown.getKeyFrame(0, true);
