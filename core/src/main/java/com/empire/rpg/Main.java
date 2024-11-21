@@ -105,6 +105,7 @@ public class Main extends ApplicationAdapter {
         Map<Class<? extends Component>, Component> components = new HashMap<>();
         components.put(HealthComponent.class, new HealthComponent(90, 100));
         components.put(PositionComponent.class, new PositionComponent(180 * 48 + 24, 55 * 48 + 24)); // Spawn au port de la ville
+        //components.put(PositionComponent.class, new PositionComponent(51 * 48 + 24, 42 * 48 + 24)); // Spawn au tableau des guêtes
 
         this.player = new PlayerCharacter(2.0f, UUID.randomUUID(), "Hero", components);
         // Initialiser le débogueur
