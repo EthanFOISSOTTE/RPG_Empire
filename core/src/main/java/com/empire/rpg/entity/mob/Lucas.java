@@ -71,7 +71,7 @@ public class Lucas extends Mob {
     private static Map<Class<? extends com.empire.rpg.component.Component>, com.empire.rpg.component.Component> initializeComponents(Vector2 position) {
         Map<Class<? extends com.empire.rpg.component.Component>, com.empire.rpg.component.Component> components = new HashMap<>();
         components.put(PositionComponent.class, new PositionComponent(position.x, position.y));
-        components.put(HealthComponent.class, new HealthComponent(50, 50));
+        components.put(HealthComponent.class, new HealthComponent(200, 200));
         components.put(CollisionComponent.class, new CollisionComponent(true, new Rectangle(position.x, position.y, 32, 48)));
         return components;
     }

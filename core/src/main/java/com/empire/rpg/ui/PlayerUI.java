@@ -112,11 +112,6 @@ public class PlayerUI {
         // Commencer le SpriteBatch pour l'UI
         batch.begin();
 
-        // Dessiner le cadre de la barre de santé
-        if (playerStatusTexture != null) {
-            batch.draw(playerStatusTexture, statusX, statusY, statusWidth, statusHeight);
-        }
-
         // Obtenir la santé actuelle et maximale du joueur
         HealthComponent health = (HealthComponent) player.getComponent(HealthComponent.class);
         if (health == null) {
@@ -137,6 +132,11 @@ public class PlayerUI {
         // La barre disparaît de droite à gauche en ajustant la largeur
         if (playerHealthBarTexture != null) {
             batch.draw(playerHealthBarTexture, healthBarX, healthBarY, currentHealthBarWidth, healthBarHeight);
+        }
+
+        // Dessiner le cadre de la barre de santé
+        if (playerStatusTexture != null) {
+            batch.draw(playerStatusTexture, statusX, statusY, statusWidth, statusHeight);
         }
 
         // Déterminer quelle icône d'arme afficher

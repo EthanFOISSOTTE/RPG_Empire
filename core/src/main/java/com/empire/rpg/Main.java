@@ -20,6 +20,7 @@ import com.empire.rpg.component.Component;
 import com.empire.rpg.entity.player.audio.SoundManager;
 import com.empire.rpg.debug.DebugRenderer;
 import com.empire.rpg.ui.PlayerUI;
+import com.empire.rpg.ui.MobUI;
 import com.empire.rpg.entity.mob.MobFactory;
 import com.empire.rpg.component.pathfinding.Pathfinding;
 import com.empire.rpg.entity.mob.Mob;
@@ -37,6 +38,7 @@ public class Main extends ApplicationAdapter {
     private SoundManager soundManager;
     private Pathfinding pathfinding;
     private MobManager mobManager;
+    private MobUI mobUI;
 
     private DebugRenderer debugRenderer;
     private boolean debugMode = false;
@@ -75,6 +77,7 @@ public class Main extends ApplicationAdapter {
         mobManager.loadMobsFromMap(mapManager.getTiledMap());
         // Créer un gestionnaire de collisions
         collisionHandler = new CollisionHandler(collisionManager);
+        mobUI = new MobUI();
 
         // Initialiser le débogueur
         debugRenderer = new DebugRenderer();
@@ -122,10 +125,15 @@ public class Main extends ApplicationAdapter {
             );
         }
         player.render(batch);
-        batch.end();
 
         // Rendre les couches supérieures (au-dessus du joueur)
         mapManager.renderUpperLayers(camera);
+
+        for (Mob mob : Mob.allMobs) {
+            // Rendu de la barre de vie du mob
+            mobUI.render(batch, mob);
+        }
+        batch.end();
 
         // Activer/Désactiver le mode de débogage
         if (Gdx.input.isKeyJustPressed(Input.Keys.F1)) {
