@@ -29,6 +29,16 @@ public class QuestPlayer {
         this.questList = questList;
     }
 
+    // Méthode pour obtenir la liste des quêtes
+    public ArrayList<QuestItem> getQuestList() {
+        return questList;
+    }
+
+    // Méthode pour mettre à jour la liste des quêtes avec une nouvelle liste
+    public void updateQuestList(ArrayList<QuestItem> newQuestList) {
+        this.questList = newQuestList;  // Remplacer la liste actuelle par la nouvelle
+    }
+
     // Méthode principale de rendu
     public void render() {
         if (showQuestPlayerFrame) {
@@ -128,7 +138,7 @@ public class QuestPlayer {
         float questStartY = frameY + frameHeight - 50;
         for (int i = 0; i < questList.size(); i++) {
             QuestItem quest = questList.get(i);
-            if (quest.getStatus() > 0 && quest.isUnique() == false) {  // Afficher uniquement les quêtes acceptées et non uniques
+            if (quest.getStatus() > 0) {  // Afficher uniquement les quêtes acceptées
                 font.setColor(1, 1, 1, 1);
                 if (i == selectedQuestIndex) {
                     font.draw(batch, "-> " + quest.getTitle(), frameX + 15, questStartY - (displayIndex * 25));  // Décalage à droite
