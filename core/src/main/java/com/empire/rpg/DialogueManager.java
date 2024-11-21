@@ -11,24 +11,27 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.IOException;
 import java.io.File;
+import java.util.ArrayList;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
 public class DialogueManager {
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private boolean showDialogueFrame = false;
     private ShapeRenderer shapeRenderer;
-    private BitmapFont font;  // Declare a BitmapFont
-    private Map<String, List<String>> dialogues;  // Store dialogues for each PNJ
-    private String currentPNJ;  // Store the current PNJ name
+    private BitmapFont font;
+    private Map<String, List<String>> dialogues;
+    private String currentPNJ;
     private int dialogueIndex = 0; // Index actuel du dialogue affiché
     private String currentSpeaker = ""; // Nom du PNJ en train de parler
+    private GlyphLayout glyphLayout = new GlyphLayout();
 
     public DialogueManager(OrthographicCamera camera, SpriteBatch batch) {
         this.camera = camera;
         this.batch = batch;
         this.shapeRenderer = new ShapeRenderer();
 
-        font = new BitmapFont();  // Initialize the BitmapFont
+        font = new BitmapFont();
 
         loadDialogues("dialogues.json");
     }
@@ -67,7 +70,6 @@ public class DialogueManager {
         if (showDialogueFrame && currentSpeaker != null && dialogues.containsKey(currentSpeaker)) {
             // Affiche le dialogue actuel
             batch.begin();
-            // Exemples de style : remplacer par une méthode de dessin plus avancée si nécessaire
             BitmapFont font = new BitmapFont();
             font.draw(batch, currentSpeaker + " : " + dialogues.get(currentSpeaker).get(dialogueIndex),
                 playerPosition.x - 215, playerPosition.y - 110);
@@ -119,20 +121,56 @@ public class DialogueManager {
     }
 
 
-    // Draw the dialogue text from the current PNJ
-    private void drawDialogue(float frameX, float frameY, float frameWidth){
+    private void drawDialogue(float frameX, float frameY, float maxTextWidth) {
         if (currentPNJ != null && dialogues.containsKey(currentPNJ)) {
             List<String> pnjDialogues = dialogues.get(currentPNJ);
             float textY = frameY + 10;
+
+            // Boucle à travers chaque ligne du dialogue
             for (String line : pnjDialogues) {
-                // Use the BitmapFont to draw the dialogue
-                batch.begin();
-                font.draw(batch, line, frameX + 10, textY);  // Draw each line of dialogue
-                batch.end();
-                textY += 20;  // Move the text down for the next line
+                // Diviser la ligne de texte pour qu'elle ne dépasse pas la largeur définie
+                String[] wrappedLines = wrapText(line, maxTextWidth);  // Utiliser la largeur manuelle
+                for (String wrappedLine : wrappedLines) {
+                    batch.begin();
+                    font.draw(batch, wrappedLine, frameX + 10, textY);  // Dessiner chaque ligne
+                    batch.end();
+                    textY += 20;  // Déplacer le texte vers le bas pour la prochaine ligne
+                }
             }
         }
     }
+
+    // Méthode pour diviser le texte en plusieurs lignes en fonction de la largeur personnalisée
+    private String[] wrapText(String text, float maxTextWidth) {
+        List<String> wrappedLines = new ArrayList<>();
+        StringBuilder currentLine = new StringBuilder();
+
+        // Diviser le texte en mots
+        String[] words = text.split(" ");
+
+        for (String word : words) {
+            // Ajouter le mot actuel à la ligne en cours
+            String testLine = currentLine + word + " ";
+
+            // Utiliser GlyphLayout pour calculer la largeur du texte avec la largeur personnalisée
+            glyphLayout.setText(font, testLine);  // Mesurer la largeur du texte
+            if (glyphLayout.width <= maxTextWidth) {
+                currentLine.append(word).append(" ");  // Si la ligne ne dépasse pas, on ajoute le mot
+            } else {
+                // Si la ligne dépasse, ajouter la ligne en cours aux wrappedLines et commencer une nouvelle ligne
+                wrappedLines.add(currentLine.toString().trim());
+                currentLine = new StringBuilder(word + " ");  // Commencer une nouvelle ligne avec le mot courant
+            }
+        }
+
+        // Ajouter la dernière ligne après la boucle
+        if (currentLine.length() > 0) {
+            wrappedLines.add(currentLine.toString().trim());
+        }
+
+        return wrappedLines.toArray(new String[0]);  // Retourner toutes les lignes
+    }
+
 
     // Désactive le cadre de dialogue
     public void closeDialogue() {
