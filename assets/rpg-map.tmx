@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="200" height="200" tilewidth="48" tileheight="48" infinite="0" nextlayerid="25" nextobjectid="2300">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="200" height="200" tilewidth="48" tileheight="48" infinite="0" nextlayerid="25" nextobjectid="2301">
  <tileset firstgid="1" source="Spritesheets/A3_Walls_And_Floors.tsx"/>
  <tileset firstgid="513" source="Spritesheets/A2_Terrain_And_Misc.tsx"/>
  <tileset firstgid="2593" source="Spritesheets/Fantasy_Door1.tsx"/>
@@ -5104,6 +5104,9 @@
    <point/>
   </object>
   <object id="2299" name="rabbit-horned" x="2208" y="5232">
+   <point/>
+  </object>
+  <object id="2300" name="lucas" x="6240" y="2256">
    <point/>
   </object>
  </objectgroup>

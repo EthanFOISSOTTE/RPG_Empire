@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "rpg-map.tmx",
+    "activeFile": "",
     "expandedProjectPaths": [
         "Spritesheets",
         "."
@@ -219,11 +219,11 @@
                 13,
                 14
             ],
-            "scale": 0.0625,
-            "selectedLayer": 0,
+            "scale": 1,
+            "selectedLayer": 13,
             "viewCenter": {
-                "x": 3240,
-                "y": 4296
+                "x": 6240.5,
+                "y": 2256.5
             }
         }
     },
@@ -237,7 +237,6 @@
     "map.tileWidth": 48,
     "map.width": 200,
     "openFiles": [
-        "rpg-map.tmx"
     ],
     "project": "rpg-map.tiled-project",
     "recentFiles": [
