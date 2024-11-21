@@ -25,6 +25,7 @@ import com.empire.rpg.entity.player.utils.Constants;
 import java.util.*;
 
 import com.empire.rpg.entity.player.Inventory.Inventory;
+import com.empire.rpg.InteractionImageManager;
 
 
 /**
@@ -456,6 +457,10 @@ public class PlayerCharacter extends Player {
         if (Inventory.getShowInteractionFrame()){
             return;
         }
+        if (InteractionImageManager.getIsImageVisible()){
+            return;
+        }
+
 
         Vector2 direction = new Vector2(0, 0);
 

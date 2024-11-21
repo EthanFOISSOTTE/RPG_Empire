@@ -27,6 +27,9 @@ import com.empire.rpg.entity.player.Inventory.Inventory;
 
 
 
+
+
+
 public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
     private OrthographicCamera camera;
@@ -48,6 +51,10 @@ public class Main extends ApplicationAdapter {
     private ShapeRenderer shapeRenderer; // Déclaration de ShapeRenderer
     private BitmapFont font;
 
+
+    private InteractionImageManager interactionImageManager;
+
+
     @Override
     public void create() {
         batch = new SpriteBatch();
@@ -56,6 +63,8 @@ public class Main extends ApplicationAdapter {
         shapeRenderer = new ShapeRenderer(); // Initialisation de ShapeRenderer
         font = new BitmapFont();
 
+
+
         // Charger la carte et les collisions
         mapManager = new MapManager("rpg-map.tmx", camera);
         collisionManager = new CollisionManager(mapManager.getTiledMap());
@@ -63,7 +72,7 @@ public class Main extends ApplicationAdapter {
         // Création d'une map de composants avec PositionComponent et HealthComponent
         Map<Class<? extends Component>, Component> components = Map.of(
             HealthComponent.class, new HealthComponent(90, 100),
-            PositionComponent.class, new PositionComponent(4800f, 4800f)
+            PositionComponent.class, new PositionComponent(180 * 48 + 24,55 * 48 + 24)
         );
 
         // Création et initialisation de l'instance de PlayerCharacter
@@ -80,6 +89,22 @@ public class Main extends ApplicationAdapter {
         camera.update();
 
         inventaire = new Inventory(camera, batch);  // Initialisation de l'inventaire
+
+        // Initialiser l'InteractionImageManager
+        interactionImageManager = new InteractionImageManager(
+            8424, 2530, 48, 48, // Coordonnées et taille du carré
+            // Chemins des images
+            new String[]{
+                "PPT/image1.png",
+                "PPT/image2.png",
+                "PPT/image3.png",
+                "PPT/image4.png",
+                "PPT/image5.png",
+                "PPT/image6.png",
+                "PPT/image7.png"
+            }
+        );
+
     }
 
     @Override
@@ -100,6 +125,8 @@ public class Main extends ApplicationAdapter {
         player.render(batch);
         batch.end();
 
+
+
         // Rendre les couches supérieures (au-dessus du joueur)
         mapManager.renderUpperLayers(camera);
 
@@ -109,6 +136,7 @@ public class Main extends ApplicationAdapter {
             inventaire.update();  // Appel de update() pour gérer la navigation dans l'inventaire
             inventaire.render(new Vector2(player.getX(),player.getY()));
         }
+
 
         // Rendre l'UI du joueur (après le rendu des éléments du jeu)
         playerUI.render(batch);
@@ -124,6 +152,11 @@ public class Main extends ApplicationAdapter {
         // Mettre à jour la caméra pour suivre le joueur
         camera.position.set(player.getX(), player.getY(), 0);
         camera.update();
+
+        // Mise à jour et rendu de l'interaction avec les images
+        interactionImageManager.update(new Vector2(player.getX(), player.getY()));
+        interactionImageManager.render(batch);
+
     }
 
     @Override
@@ -145,6 +178,9 @@ public class Main extends ApplicationAdapter {
         shapeRenderer.dispose(); // Libère ShapeRenderer
         font.dispose();
         inventaire.dispose();  // Libère les ressources utilisées dans inventaire
+
+        // Autres libérations de ressources...
+        interactionImageManager.dispose();
 
     }
 }

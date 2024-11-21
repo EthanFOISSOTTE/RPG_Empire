@@ -479,7 +479,7 @@
 	quantity: 99
 	description: Blablabla
 	valeur: 25
-	states: false
+	states: true
 	style: "null"
 }
 {
