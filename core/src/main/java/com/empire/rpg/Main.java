@@ -95,7 +95,7 @@ public class Main extends ApplicationAdapter {
         // Initialisation des objets liés aux quêtes
         quest = new Quest(camera, batch);  // Création de l'objet Quest pour gérer les quêtes
         questPlayer = new QuestPlayer(camera, batch, quest.getQuestList());  // Création de l'objet QuestPlayer pour gérer l'affichage des quêtes
-        dialogue = new DialogueManager(camera, batch); // Initialisation du gestionnaire de dialogues
+        dialogue = new DialogueManager(camera, batch, questPlayer); // Initialisation du gestionnaire de dialogues
         // Chargement de la texture de l'icône du tableau de quête
         questBoardTexture = new Texture(Gdx.files.internal("exclamation.png"));  // Chemin vers l'image du tableau de quêtes
         F_Key_Texture = new Texture(Gdx.files.internal("Images/F_Key.png"));  // Chemin vers l'image de la touche F
