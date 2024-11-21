@@ -1,5 +1,8 @@
 package com.empire.rpg;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -8,6 +11,11 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
+import com.empire.rpg.quest.QuestPlayer;
+
+import com.badlogic.gdx.utils.Json;
+import com.empire.rpg.quest.QuestItem;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.IOException;
@@ -25,17 +33,103 @@ public class DialogueManager {
     private int dialogueIndex = 0; // Index actuel du dialogue affiché
     private String currentSpeaker = ""; // Nom du PNJ qui parle actuellement
     private GlyphLayout glyphLayout = new GlyphLayout();  // Initialiser un GlyphLayout
-
+    private ArrayList<QuestItem> questList;    // Liste des quêtes disponibles
     // Définir les dimensions du cadre
     private static final float DIALOGUE_WIDTH = 450f;
     private static final float DIALOGUE_HEIGHT = 125f;
+    private int selectedQuestIndex = -1;
+    private QuestPlayer questPlayer;  // Instance de QuestPlayer
+    private ArrayList<QuestItem> currentQuestList;  // Liste des quêtes actuelles
 
-    public DialogueManager(OrthographicCamera camera, SpriteBatch batch) {
+    public DialogueManager(OrthographicCamera camera, SpriteBatch batch, QuestPlayer questPlayer) {
+        if (questPlayer == null) {
+            throw new IllegalArgumentException("QuestPlayer cannot be null");
+        }
         this.camera = camera;
         this.batch = batch;
         this.shapeRenderer = new ShapeRenderer();
+        this.questPlayer = questPlayer;  // Assignation de questPlayer passé en argument
+        this.questList = questPlayer.getQuestList();  // Initialisation avec la liste des quêtes du joueur
+        this.currentQuestList = new ArrayList<>(questList);  // Initialisation de currentQuestList
         font = new BitmapFont();  // Initialiser la BitmapFont
         loadDialogues("dialogues.json");
+
+        // Vérifier si le fichier existe dans le répertoire local, sinon le copier depuis le répertoire interne
+        FileHandle localFile = Gdx.files.local("quests.json");
+        if (!localFile.exists()) {
+            FileHandle internalFile = Gdx.files.internal("quests.json");
+            localFile.writeString(internalFile.readString(), false);
+        }
+
+        loadQuestsFromFile("quests.json"); // Chargement des quêtes depuis le fichier JSON
+    }
+
+
+    // Chargement des quêtes depuis un fichier JSON
+    public void loadQuestsFromFile(String filePath) {
+        Json json = new Json();
+        FileHandle file = Gdx.files.local(filePath);
+        if (file.exists()) {
+            QuestItem[] quests = json.fromJson(QuestItem[].class, file);
+            for (QuestItem quest : quests) {
+                questList.add(quest);
+            }
+        }
+    }
+
+    // Méthode pour mettre à jour la liste des quêtes du joueur
+    public void updateQuestList(ArrayList<QuestItem> newQuestList) {
+        // Mettre à jour la liste des quêtes dans QuestPlayer
+        if (questPlayer != null) {
+            questPlayer.updateQuestList(newQuestList);
+        }
+    }
+
+    // Exemple d'utilisation de la mise à jour de la liste des quêtes
+    public void addNewQuest(QuestItem newQuest) {
+        // Ajouter un nouveau QuestItem à la liste des quêtes
+        currentQuestList.add(newQuest);
+
+        // Mettre à jour la liste des quêtes dans QuestPlayer
+        updateQuestList(currentQuestList);
+    }
+
+    private void saveQuestsToFile(String filePath) {
+        System.out.println("Appel de saveQuestsToFile avec fichier " + filePath);
+        Json json = new Json();
+        FileHandle file = Gdx.files.local(filePath);
+        String jsonData = json.prettyPrint(questList);  // Sérialisation des quêtes dans un format lisible
+        file.writeString(jsonData, false);
+    }
+
+    private void saveQuestStatus(int questId, int newStatus) {
+        System.out.println("Appel de saveQuestStatus pour questId " + questId + " avec statut " + newStatus);
+        // Modification directe de l'objet QuestItem dans questList au lieu de manipuler directement le JSON
+        for (QuestItem quest : questList) {
+            if (quest.getId() == questId) {
+                quest.setStatus(newStatus);
+                break;
+            }
+        }
+        // Sauvegarder après la modification
+        saveQuestsToFile("quests.json");
+    }
+
+    public void handleInput() {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.O)) {
+            saveQuestStatus(1, 1);  // Par exemple, changer le statut de la quête avec l'ID 1
+            saveQuestsToFile("quests.json");
+            // Rafraîchir la liste des quêtes dans QuestPlayer après modification
+            questPlayer.updateQuestList(questList);
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.N)) {
+            closeDialogue();
+        }
+    }
+
+
+
+    public ArrayList<QuestItem> getQuestList() {
+        return this.questList;
     }
 
     // Charger les dialogues depuis un fichier JSON
@@ -150,6 +244,7 @@ public class DialogueManager {
         if (showDialogueFrame) {
             drawDialogueFrame(playerPosition);  // Dessiner le cadre de dialogue
             drawDialogueText(playerPosition.x - DIALOGUE_WIDTH / 2, playerPosition.y - 200);  // Dessiner le texte du dialogue
+            handleInput();  // Gérer les entrées utilisateur
         }
     }
 
