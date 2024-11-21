@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import java.util.List;
 import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,31 +13,32 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.IOException;
 import java.io.File;
 import java.util.ArrayList;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
 public class DialogueManager {
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private boolean showDialogueFrame = false;
     private ShapeRenderer shapeRenderer;
-    private BitmapFont font;
-    private Map<String, List<String>> dialogues;
-    private String currentPNJ;
+    private BitmapFont font;  // Déclare une BitmapFont
+    private Map<String, List<String>> dialogues;  // Stocke les dialogues pour chaque PNJ
+    private String currentPNJ;  // Stocke le nom du PNJ actuel
     private int dialogueIndex = 0; // Index actuel du dialogue affiché
-    private String currentSpeaker = ""; // Nom du PNJ en train de parler
-    private GlyphLayout glyphLayout = new GlyphLayout();
+    private String currentSpeaker = ""; // Nom du PNJ qui parle actuellement
+    private GlyphLayout glyphLayout = new GlyphLayout();  // Initialiser un GlyphLayout
+
+    // Définir les dimensions du cadre
+    private static final float DIALOGUE_WIDTH = 450f;
+    private static final float DIALOGUE_HEIGHT = 125f;
 
     public DialogueManager(OrthographicCamera camera, SpriteBatch batch) {
         this.camera = camera;
         this.batch = batch;
         this.shapeRenderer = new ShapeRenderer();
-
-        font = new BitmapFont();
-
+        font = new BitmapFont();  // Initialiser la BitmapFont
         loadDialogues("dialogues.json");
     }
 
-    // Charger les dialogues depuis le fichier JSON
+    // Charger les dialogues depuis un fichier JSON
     private void loadDialogues(String filename) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -47,141 +49,122 @@ public class DialogueManager {
         }
     }
 
-    // Méthode pour obtenir les dialogues
-    public Map<String, List<String>> getDialogues() {
-        return dialogues;
-    }
-
-    // Méthode pour obtenir un dialogue spécifique
-    public List<String> getDialogue(String key) {
-        return dialogues.get(key);
-    }
-
-    // Set the current PNJ the player is interacting with
-    public void setCurrentPNJ(String pnjName) {
-        this.currentPNJ = pnjName;
-    }
-
-    public void render(SpriteBatch batch, Vector2 playerPosition){
-        if(showDialogueFrame){
-            drawDialogueFrame(playerPosition);
-        }
-
-        if (showDialogueFrame && currentSpeaker != null && dialogues.containsKey(currentSpeaker)) {
-            // Affiche le dialogue actuel
-            batch.begin();
-            BitmapFont font = new BitmapFont();
-            font.draw(batch, currentSpeaker + " : " + dialogues.get(currentSpeaker).get(dialogueIndex),
-                playerPosition.x - 215, playerPosition.y - 110);
-            batch.end();
-        }
-
-    }
-
-    private void drawDialogueFrame(Vector2 playerPosition){
-        float frameWidth = 450;
-        float frameHeight = 100;
-        float frameX = playerPosition.x - frameWidth / 2;
+    // Affiche le cadre du dialogue
+    private void drawDialogueFrame(Vector2 playerPosition) {
+        float frameX = playerPosition.x - DIALOGUE_WIDTH / 2;
         float frameY = playerPosition.y - 200;
 
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(0, 0, 0, 1);
-        shapeRenderer.rect(frameX, frameY, frameWidth, frameHeight);
+        shapeRenderer.setColor(0, 0, 0, 1); // Couleur noire pour le fond
+        shapeRenderer.rect(frameX, frameY, DIALOGUE_WIDTH, DIALOGUE_HEIGHT);
         shapeRenderer.end();
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(1, 1, 1, 1);
-        shapeRenderer.rect(frameX, frameY, frameWidth, frameHeight);
+        shapeRenderer.setColor(1, 1, 1, 1); // Couleur blanche pour les bordures
+        shapeRenderer.rect(frameX, frameY, DIALOGUE_WIDTH, DIALOGUE_HEIGHT);
         shapeRenderer.end();
-
-        if(showDialogueFrame){
-            drawDialogue(frameX, frameY, frameWidth);
-        }
     }
 
-    // Active le cadre de dialogue pour un PNJ donné
+    // Démarrer le dialogue avec un PNJ
     public void startDialogue(String speaker) {
         this.currentSpeaker = speaker;
-        this.dialogueIndex = 0;
+        this.dialogueIndex = 0;  // Réinitialiser l'index
         this.showDialogueFrame = true;
     }
 
-    // Avance au dialogue suivant ou ferme le cadre
+    // Avancer au dialogue suivant ou fermer le cadre si fini
     public void nextDialogue() {
         if (currentSpeaker != null && dialogues.containsKey(currentSpeaker)) {
             if (dialogueIndex < dialogues.get(currentSpeaker).size() - 1) {
                 dialogueIndex++;
             } else {
-                // Tous les dialogues ont été affichés
-                this.showDialogueFrame = false;
+                this.showDialogueFrame = false; // Ferme le dialogue lorsque tous les dialogues sont montrés
                 this.currentSpeaker = null;
             }
         }
     }
 
-
-    private void drawDialogue(float frameX, float frameY, float maxTextWidth) {
-        if (currentPNJ != null && dialogues.containsKey(currentPNJ)) {
-            List<String> pnjDialogues = dialogues.get(currentPNJ);
-            float textY = frameY + 10;
-
-            // Boucle à travers chaque ligne du dialogue
-            for (String line : pnjDialogues) {
-                // Diviser la ligne de texte pour qu'elle ne dépasse pas la largeur définie
-                String[] wrappedLines = wrapText(line, maxTextWidth);  // Utiliser la largeur manuelle
-                for (String wrappedLine : wrappedLines) {
-                    batch.begin();
-                    font.draw(batch, wrappedLine, frameX + 10, textY);  // Dessiner chaque ligne
-                    batch.end();
-                    textY += 20;  // Déplacer le texte vers le bas pour la prochaine ligne
-                }
-            }
-        }
-    }
-
-    // Méthode pour diviser le texte en plusieurs lignes en fonction de la largeur personnalisée
-    private String[] wrapText(String text, float maxTextWidth) {
-        List<String> wrappedLines = new ArrayList<>();
+    // Découpe le texte pour qu'il s'adapte à la largeur du cadre
+    private List<String> wrapText(String text, float maxWidth) {
+        List<String> lines = new ArrayList<>();
         StringBuilder currentLine = new StringBuilder();
-
-        // Diviser le texte en mots
-        String[] words = text.split(" ");
+        String[] words = text.split(" ");  // Diviser le texte en mots
 
         for (String word : words) {
-            // Ajouter le mot actuel à la ligne en cours
-            String testLine = currentLine + word + " ";
+            // Tester si ajouter ce mot dépasse la largeur du cadre
+            String testLine = currentLine.toString() + (currentLine.length() > 0 ? " " : "") + word;
+            glyphLayout.setText(font, testLine);
 
-            // Utiliser GlyphLayout pour calculer la largeur du texte avec la largeur personnalisée
-            glyphLayout.setText(font, testLine);  // Mesurer la largeur du texte
-            if (glyphLayout.width <= maxTextWidth) {
-                currentLine.append(word).append(" ");  // Si la ligne ne dépasse pas, on ajoute le mot
+            // Si la ligne dépasse la largeur maximale, ajouter la ligne actuelle à la liste et commencer une nouvelle ligne
+            if (glyphLayout.width > maxWidth) {
+                if (currentLine.length() > 0) {
+                    lines.add(currentLine.toString());  // Ajouter la ligne complète
+                    currentLine = new StringBuilder(word);  // Commencer une nouvelle ligne avec le mot actuel
+                }
             } else {
-                // Si la ligne dépasse, ajouter la ligne en cours aux wrappedLines et commencer une nouvelle ligne
-                wrappedLines.add(currentLine.toString().trim());
-                currentLine = new StringBuilder(word + " ");  // Commencer une nouvelle ligne avec le mot courant
+                // Si la ligne ne dépasse pas la largeur, ajouter le mot à la ligne
+                if (currentLine.length() > 0) {
+                    currentLine.append(" ");
+                }
+                currentLine.append(word);
             }
         }
 
-        // Ajouter la dernière ligne après la boucle
+        // Ajouter la dernière ligne si elle existe
         if (currentLine.length() > 0) {
-            wrappedLines.add(currentLine.toString().trim());
+            lines.add(currentLine.toString());
         }
 
-        return wrappedLines.toArray(new String[0]);  // Retourner toutes les lignes
+        return lines;
     }
 
+    // Dessiner le texte du dialogue
+    private void drawDialogueText(float frameX, float frameY) {
+        if (currentSpeaker != null && dialogues.containsKey(currentSpeaker)) {
+            List<String> pnjDialogues = dialogues.get(currentSpeaker);
+            String currentDialogue = pnjDialogues.get(dialogueIndex);
 
-    // Désactive le cadre de dialogue
+            // Découper le texte en lignes qui s'adaptent à la largeur du cadre
+            List<String> wrappedLines = wrapText(currentDialogue, DIALOGUE_WIDTH - 20); // 20px de marge
+
+            // Dessiner le nom du PNJ en haut à gauche
+            batch.begin();
+            font.setColor(1, 1, 1, 1); // Couleur blanche pour le texte
+            font.draw(batch, currentSpeaker + " :", frameX + 10, frameY + DIALOGUE_HEIGHT - 10); // Affiche le nom du PNJ
+            batch.end();
+
+            // Dessiner chaque ligne de dialogue dans l'ordre
+            float yOffset = frameY + DIALOGUE_HEIGHT - 40;  // Décalage initial du texte (ajuster la position sous le nom du PNJ)
+            batch.begin();
+            for (String line : wrappedLines) {
+                font.draw(batch, line, frameX + 10, yOffset);  // Dessiner chaque ligne
+                yOffset -= 20;  // Espacer les lignes verticalement
+            }
+            batch.end();
+        }
+    }
+
+    // Méthode de rendu pour afficher le dialogue
+    public void render(SpriteBatch batch, Vector2 playerPosition) {
+        if (showDialogueFrame) {
+            drawDialogueFrame(playerPosition);  // Dessiner le cadre de dialogue
+            drawDialogueText(playerPosition.x - DIALOGUE_WIDTH / 2, playerPosition.y - 200);  // Dessiner le texte du dialogue
+        }
+    }
+
+    // Fermer le dialogue
     public void closeDialogue() {
         this.showDialogueFrame = false;
         this.currentSpeaker = null;
     }
 
+    // Vérifie si le cadre de dialogue doit être affiché
     public boolean isShowDialogueFrame() {
         return showDialogueFrame;
     }
 
+    // Permet de définir si le cadre de dialogue doit être affiché
     public void setShowDialogueFrame(boolean showDialogueFrame) {
         this.showDialogueFrame = showDialogueFrame;
     }
