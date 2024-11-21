@@ -11,7 +11,7 @@ public class HealthComponent implements Component {
      * Constructeur pour initialiser les points de santé actuels et maximum.
      *
      * @param currentHealthPoints Points de santé actuels.
-     * @param maxHealthPoints Points de santé maximum.
+     * @param maxHealthPoints     Points de santé maximum.
      */
     public HealthComponent(int currentHealthPoints, int maxHealthPoints) {
         this.currentHealthPoints = currentHealthPoints;
@@ -85,5 +85,4 @@ public class HealthComponent implements Component {
         this.currentHealthPoints = Math.min(this.currentHealthPoints + heal, this.maxHealthPoints);
         return this.currentHealthPoints;
     }
-
 }

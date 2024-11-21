@@ -8,7 +8,6 @@ import java.util.UUID;
  * Classe abstraite représentant une entité dans le jeu.
  * Une entité est identifiée de manière unique par un UUID et contient une collection de composants.
  */
-
 public abstract class Entity extends EntityManager {
     private final UUID id;  // Identifiant unique de l'entité
     protected final Map<Class<? extends Component>, Component> components; // Map des composants
@@ -27,14 +26,14 @@ public abstract class Entity extends EntityManager {
     }
 
     /**
-     * Ajoute une entité.
+     * Ajouter une entité.
      *
      * @return L'entité ajoutée.
      */
     public abstract Entity addEntity();
 
     /**
-     * Supprime une entité par son nom.
+     * Supprimer une entité par son nom.
      *
      * @param name Le nom de l'entité à supprimer.
      * @return L'entité supprimée.
@@ -61,15 +60,6 @@ public abstract class Entity extends EntityManager {
     }
 
     /**
-     * Retourne le nom de l'entité.
-     *
-     * @return Le nom de l'entité.
-     */
-    public String getName() {
-        return super.getName();
-    }
-
-    /**
      * Retourne la map des composants de l'entité.
      *
      * @return La map des composants de l'entité.
@@ -84,8 +74,7 @@ public abstract class Entity extends EntityManager {
      * @param value Le composant à ajouter.
      */
     public void addComponent(Component value) {
-        Class<? extends Component> component = null;
-        components.put(component, value);
+        components.put(value.getClass(), value);
     }
 
     /**
@@ -147,5 +136,25 @@ public abstract class Entity extends EntityManager {
      */
     public void removeEntity() {
         components.clear();
+    }
+
+    /**
+     * Retourne le nom de l'entité.
+     *
+     * @return Le nom de l'entité.
+     */
+    @Override
+    public String getName() {
+        return super.getName();
+    }
+
+    /**
+     * Définit un nouveau nom pour l'entité.
+     *
+     * @param name Le nouveau nom de l'entité.
+     */
+    @Override
+    public void setName(String name) {
+        super.setName(name);
     }
 }

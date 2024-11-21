@@ -1,24 +1,20 @@
 package com.empire.rpg.entity;
 
-import com.empire.rpg.component.*;
-
+import com.empire.rpg.component.Component;
 import java.util.Map;
 import java.util.UUID;
 
 /**
- * La classe MOB représente une entité mobile dans le jeu RPG.
- * Elle étend la classe Entity et fournit des implémentations
- * pour ajouter et supprimer des entités.
+ * Classe abstraite représentant une entité dans le jeu.
+ * Une entité est identifiée de manière unique par un UUID et contient une collection de composants.
  */
-
-public class MOB extends Entity {
-
+public abstract class MOB extends Entity {
     /**
-     * Crée une nouvelle instance de MOB.
+     * Constructeur de l'entité.
      *
-     * @param name       Le nom du MOB
-     * @param components Les composants associés au MOB
-     * @param id         L'identifiant unique du MOB
+     * @param name       Le nom de l'entité.
+     * @param components La map des composants de l'entité.
+     * @param id         L'identifiant unique de l'entité.
      */
     public MOB(String name, Map<Class<? extends Component>, Component> components, UUID id) {
         super(name, components, id);
@@ -27,22 +23,25 @@ public class MOB extends Entity {
     /**
      * Ajouter une entité.
      *
-     * @return l'entity ajoutée
+     * @return L'entité ajoutée.
      */
     @Override
     public Entity addEntity() {
-        return null;
+        return this;
     }
 
     /**
      * Supprimer une entité par son nom.
      *
-     * @param name le nom de l'entité à supprimer
-     * @return l'entité supprimée
+     * @param name Le nom de l'entité à supprimer.
+     * @return L'entité supprimée.
      */
     @Override
     public Entity removeEntity(String name) {
+        if (this.getName().equals(name)) {
+            this.removeComponents();
+            return this;
+        }
         return null;
     }
-
 }

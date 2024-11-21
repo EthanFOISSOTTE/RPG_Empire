@@ -70,6 +70,10 @@ public class CollisionManager {
         return false;
     }
 
+    public boolean isColliding(Rectangle rect1, Rectangle rect2) {
+        return rect1.overlaps(rect2);
+    }
+
     // Fonction pour vérifier la collision entre un cercle et un rectangle
     private boolean overlapsCircleRectangle(float circleX, float circleY, float radius, Rectangle rectangle) {
         float closestX = Math.max(rectangle.x, Math.min(circleX, rectangle.x + rectangle.width));

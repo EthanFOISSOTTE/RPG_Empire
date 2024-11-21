@@ -7,9 +7,11 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import com.empire.rpg.component.Component;
+import com.empire.rpg.entity.Entity;
 import com.empire.rpg.entity.Player;
 import com.empire.rpg.CollisionManager;
 import com.empire.rpg.component.HealthComponent;
+import com.empire.rpg.component.CollisionComponent;
 import com.empire.rpg.component.PositionComponent;
 import com.empire.rpg.entity.player.animations.AnimationController;
 import com.empire.rpg.entity.player.animations.AnimationState;
@@ -78,6 +80,10 @@ public class PlayerCharacter extends Player {
     // File d'attaque des attaques à exécuter
     private Queue<AttackData> attackQueue;
 
+    // Position
+    private Vector2 position;
+    private Vector2 previousPosition;
+
     // Classe interne pour stocker les données d'une attaque en attente
     private class AttackData {
         public Attack attack; // Attaque à exécuter
@@ -117,8 +123,8 @@ public class PlayerCharacter extends Player {
         super(name, components, id); // Appel au constructeur de la superclasse
 
         // Vérifier la présence du PositionComponent
-        PositionComponent position = (PositionComponent) getComponent(PositionComponent.class);
-        if (position == null) {
+        PositionComponent posComponent = (PositionComponent) components.get(PositionComponent.class);
+        if (posComponent == null) {
             throw new IllegalArgumentException("PositionComponent is required");
         }
 
@@ -142,12 +148,18 @@ public class PlayerCharacter extends Player {
         this.renderer = new Renderer();
 
         // Initialisation du composant de collision en utilisant la position du PositionComponent
-        float collisionWidth = Constants.PLAYER_COLLISION_WIDTH * scale;
-        float collisionHeight = Constants.PLAYER_COLLISION_HEIGHT * scale;
-        float offsetX = Constants.PLAYER_COLLISION_OFFSET_X * scale;
-        float offsetY = Constants.PLAYER_COLLISION_OFFSET_Y * scale;
+        Rectangle boundingBox = new Rectangle(
+            posComponent.getX() + Constants.PLAYER_COLLISION_OFFSET_X * scale,
+            posComponent.getY() + Constants.PLAYER_COLLISION_OFFSET_Y * scale,
+            Constants.PLAYER_COLLISION_WIDTH * scale,
+            Constants.PLAYER_COLLISION_HEIGHT * scale
+        );
 
-        collisionComponent = new CollisionComponent(position.getX(), position.getY(), collisionWidth, collisionHeight, offsetX, offsetY);
+        collisionComponent = new CollisionComponent(true, boundingBox);
+
+        // Position précédente
+        this.position = new Vector2(posComponent.getX(), posComponent.getY());
+        this.previousPosition = new Vector2(this.position);
 
         // État initial du joueur (debout)
         this.currentState = new StandingState(this);
@@ -209,6 +221,15 @@ public class PlayerCharacter extends Player {
 
     // Méthode de mise à jour appelée à chaque frame
     public void update(float deltaTime, CollisionManager collisionManager) {
+        // Synchroniser la position locale avec le PositionComponent
+        PositionComponent posComponent = (PositionComponent) getComponent(PositionComponent.class);
+        if (posComponent != null) {
+            position.set(posComponent.getX(), posComponent.getY());
+        }
+
+        // Sauvegarder la position précédente avant de la mettre à jour
+        previousPosition.set(position);
+
         handleInput(); // Gérer les entrées utilisateur
         currentState.update(deltaTime, collisionManager); // Mettre à jour l'état actuel
         updateCooldowns(deltaTime); // Mettre à jour les temps de recharge des attaques
@@ -459,9 +480,6 @@ public class PlayerCharacter extends Player {
         if (currentState instanceof AttackingState) {
             return;
         }
-        if (Inventory.getShowInteractionFrame()){
-            return;
-        }
 
         Vector2 direction = new Vector2(0, 0);
 
@@ -488,31 +506,51 @@ public class PlayerCharacter extends Player {
         float deltaY = direction.y * speed * deltaTime;
 
         // Récupérer PositionComponent
-        PositionComponent position = (PositionComponent) getComponent(PositionComponent.class);
-        if (position == null) {
+        PositionComponent posComponent = (PositionComponent) getComponent(PositionComponent.class);
+        if (posComponent == null) {
             System.out.println("PositionComponent missing");
             return;
         }
 
-        float oldX = position.getX();
-        float oldY = position.getY();
+        float oldX = posComponent.getX();
+        float oldY = posComponent.getY();
 
         // Tentative de déplacement en X
-        position.setPosition(oldX + deltaX, oldY);
-        collisionComponent.setPosition(position.getX(), position.getY());
+        posComponent.setPosition(oldX + deltaX, oldY);
+        collisionComponent.setBoundingBox(new Rectangle(
+            posComponent.getX() + Constants.PLAYER_COLLISION_OFFSET_X * scale,
+            posComponent.getY() + Constants.PLAYER_COLLISION_OFFSET_Y * scale,
+            Constants.PLAYER_COLLISION_WIDTH * scale,
+            Constants.PLAYER_COLLISION_HEIGHT * scale
+        ));
         if (collisionManager.isColliding(collisionComponent.getBoundingBox())) {
             // Collision détectée, annuler le déplacement en X
-            position.setPosition(oldX, oldY);
-            collisionComponent.setPosition(position.getX(), position.getY());
+            posComponent.setPosition(oldX, oldY);
+            collisionComponent.setBoundingBox(new Rectangle(
+                oldX + Constants.PLAYER_COLLISION_OFFSET_X * scale,
+                oldY + Constants.PLAYER_COLLISION_OFFSET_Y * scale,
+                Constants.PLAYER_COLLISION_WIDTH * scale,
+                Constants.PLAYER_COLLISION_HEIGHT * scale
+            ));
         }
 
         // Tentative de déplacement en Y
-        position.setPosition(position.getX(), position.getY() + deltaY);
-        collisionComponent.setPosition(position.getX(), position.getY());
+        posComponent.setPosition(posComponent.getX(), posComponent.getY() + deltaY);
+        collisionComponent.setBoundingBox(new Rectangle(
+            posComponent.getX() + Constants.PLAYER_COLLISION_OFFSET_X * scale,
+            posComponent.getY() + Constants.PLAYER_COLLISION_OFFSET_Y * scale,
+            Constants.PLAYER_COLLISION_WIDTH * scale,
+            Constants.PLAYER_COLLISION_HEIGHT * scale
+        ));
         if (collisionManager.isColliding(collisionComponent.getBoundingBox())) {
             // Collision détectée, annuler le déplacement en Y
-            position.setPosition(position.getX(), oldY);
-            collisionComponent.setPosition(position.getX(), position.getY());
+            posComponent.setPosition(posComponent.getX(), oldY);
+            collisionComponent.setBoundingBox(new Rectangle(
+                posComponent.getX() + Constants.PLAYER_COLLISION_OFFSET_X * scale,
+                oldY + Constants.PLAYER_COLLISION_OFFSET_Y * scale,
+                Constants.PLAYER_COLLISION_WIDTH * scale,
+                Constants.PLAYER_COLLISION_HEIGHT * scale
+            ));
         }
     }
 
@@ -599,6 +637,25 @@ public class PlayerCharacter extends Player {
     public float getY() {
         PositionComponent position = (PositionComponent) getComponent(PositionComponent.class);
         return position != null ? position.getY() : 0f;
+    }
+
+    // Méthode pour restaurer la position précédente en cas de collision
+    public void restorePreviousPosition() {
+        PositionComponent posComponent = (PositionComponent) getComponent(PositionComponent.class);
+        if (posComponent != null) {
+            posComponent.setPosition(previousPosition.x, previousPosition.y);
+            collisionComponent.setBoundingBox(new Rectangle(
+                previousPosition.x + Constants.PLAYER_COLLISION_OFFSET_X * scale,
+                previousPosition.y + Constants.PLAYER_COLLISION_OFFSET_Y * scale,
+                Constants.PLAYER_COLLISION_WIDTH * scale,
+                Constants.PLAYER_COLLISION_HEIGHT * scale
+            ));
+        }
+    }
+
+    public Vector2 getPositionVector() {
+        PositionComponent posComponent = (PositionComponent) getComponent(PositionComponent.class);
+        return posComponent != null ? new Vector2(posComponent.getX(), posComponent.getY()) : new Vector2();
     }
 
     // Getter pour le composant de collision
@@ -697,5 +754,20 @@ public class PlayerCharacter extends Player {
     public int getMaxHealth() {
         HealthComponent health = (HealthComponent) getComponent(HealthComponent.class);
         return health != null ? health.getMaxHealthPoints() : 0;
+    }
+
+    // Implémentation des méthodes abstraites de Player
+    @Override
+    public Entity addEntity() {
+        return this;
+    }
+
+    @Override
+    public Entity removeEntity(String name) {
+        if (this.getName().equals(name)) {
+            this.removeComponents();
+            return this;
+        }
+        return null;
     }
 }

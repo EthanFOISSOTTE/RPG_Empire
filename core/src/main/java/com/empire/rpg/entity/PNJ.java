@@ -7,6 +7,7 @@ import com.empire.rpg.component.Component;
 import com.empire.rpg.component.MovementComponent;
 import com.empire.rpg.component.PositionComponent;
 import java.util.Map;
+import com.badlogic.gdx.math.Rectangle;
 import java.util.UUID;
 import com.badlogic.gdx.math.Vector2;
 
@@ -30,7 +31,7 @@ public class PNJ extends Entity {
         return new PNJ(name, Map.of(
             PositionComponent.class, new PositionComponent(0, 0),
             MovementComponent.class, new MovementComponent(1.5f, "north"),
-            CollisionComponent.class, new CollisionComponent(true)
+            CollisionComponent.class, new CollisionComponent(true, new Rectangle(0, 0, 32, 32))
         ), UUID.randomUUID());
     }
 

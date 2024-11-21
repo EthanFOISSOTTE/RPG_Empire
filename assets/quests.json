@@ -65,6 +65,7 @@
 	title: Une ouïe Gobeline
 	description: Un alchimiste recherche des oreilles de gobelin pour une expérience. Trouvez 5 oreilles de gobelin et rapportez-les lui.
 	id: 5
+	status: 1
 	author: Alchimiste
 	reward: {
 		gold: 380

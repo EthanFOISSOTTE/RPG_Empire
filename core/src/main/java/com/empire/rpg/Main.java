@@ -22,6 +22,10 @@ import com.empire.rpg.entity.player.PlayerCharacter;
 import com.empire.rpg.entity.player.audio.SoundManager;
 import com.empire.rpg.debug.DebugRenderer;
 import com.empire.rpg.ui.PlayerUI;
+import com.empire.rpg.entity.mob.MobFactory;
+import com.empire.rpg.component.pathfinding.Pathfinding;
+import com.empire.rpg.CollisionHandler;
+import com.empire.rpg.entity.mob.Mob;
 
 import com.empire.rpg.entity.player.Inventory.Inventory;
 
@@ -31,6 +35,7 @@ public class Main extends ApplicationAdapter {
     private FitViewport viewport;
     private MapManager mapManager;
     private CollisionManager collisionManager;
+    private CollisionHandler collisionHandler;
     private PlayerCharacter player;
     private PositionComponent positionComponent;
     private SoundManager soundManager;
@@ -57,6 +62,7 @@ public class Main extends ApplicationAdapter {
     private static final float DISPLAY_DISTANCE = 500;
     private static final float SQUARE_SIZE = 64;
     private static final float INTERACTION_DISTANCE_PNJ = 70;
+    private Pathfinding pathfinding;
 
     @Override
     public void create() {
@@ -73,7 +79,6 @@ public class Main extends ApplicationAdapter {
         Map<Class<? extends Component>, Component> Radagast = Map.of(
             PositionComponent.class, new PositionComponent(49 * 48 + 24, 44 * 48 + 24),
             MovementComponent.class, new MovementComponent(1.5f, "north"),
-            CollisionComponent.class, new CollisionComponent(true),
             TextureComponent.class, new TextureComponent(new Texture("PNJ/Radagast.png"), 48, 48, 0, 0, 2.0f)
         );
         pnj_radagast = new PNJ("Radagast", Radagast, UUID.randomUUID());
@@ -82,7 +87,6 @@ public class Main extends ApplicationAdapter {
         Map<Class<? extends Component>, Component> Duc_Michel = Map.of(
             PositionComponent.class, new PositionComponent(177* 48 + 24, 68 * 48 + 24),
             MovementComponent.class, new MovementComponent(1.5f, "north"),
-            CollisionComponent.class, new CollisionComponent(true),
             TextureComponent.class, new TextureComponent(new Texture("PNJ/Duc_Michel.png"), 48, 48, 0, 0, 2.0f)
         );
         pnj_duc = new PNJ("Duc_Michel", Duc_Michel, UUID.randomUUID());
@@ -109,6 +113,22 @@ public class Main extends ApplicationAdapter {
         // Initialiser l'UI du joueur
         playerUI = new PlayerUI(player);
 
+        // Initialiser le pathfinding
+        pathfinding = new Pathfinding(collisionManager);
+        // Définit le pathfinding global pour tous les mobs
+        MobFactory.setPathfinding(pathfinding);
+        // Créer des mobs avec des comportements spécifiques
+        MobFactory.createMob("goblin", new Vector2(4700, 4900), collisionManager);
+        MobFactory.createMob("ogre", new Vector2(4800, 4900), collisionManager);
+        MobFactory.createMob("orc", new Vector2(4900, 4900), collisionManager);
+        MobFactory.createMob("rabbit", new Vector2(4700, 5000), collisionManager);
+        MobFactory.createMob("rabbit-horned", new Vector2(4800, 5000), collisionManager);
+        // Créer un gestionnaire de collisions
+        collisionHandler = new CollisionHandler(collisionManager);
+
+        // Initialiser le débogueur
+        debugRenderer = new DebugRenderer();
+
         // Mettre à jour la caméra sur le joueur
         camera.position.set(player.getX(), player.getY(), 0);
         camera.update();
@@ -128,10 +148,23 @@ public class Main extends ApplicationAdapter {
             float deltaTime = Gdx.graphics.getDeltaTime();
             player.update(deltaTime, collisionManager);
         }
-
+        // Mettre à jour les mobs
+        for (Mob mob : Mob.allMobs) {
+            mob.update(Gdx.graphics.getDeltaTime(), player, camera);
+        }
         // Démarrer le batch pour dessiner le joueur
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
+        for (Mob mob : Mob.allMobs) {
+            // Appliquer le facteur de zoom lors du rendu
+            batch.draw(
+                mob.getCurrentTexture(),
+                mob.getPosition().x + mob.getOffsetX(),
+                mob.getPosition().y + mob.getOffsetY(),
+                mob.getCurrentTexture().getRegionWidth() * mob.getScale(),
+                mob.getCurrentTexture().getRegionHeight() * mob.getScale()
+            );
+        }
         pnj_radagast.render(batch);
         pnj_duc.render(batch);
         player.render(batch);
@@ -141,6 +174,14 @@ public class Main extends ApplicationAdapter {
         mapManager.renderUpperLayers(camera);
 
         dialogue.render(batch, player.getPlayerPosition());
+
+        // Activer/Désactiver le mode de débogage
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F1)) {
+            debugMode = !debugMode;
+        }
+        if (debugMode) {
+            debugRenderer.renderDebugBounds(camera, player, collisionManager);
+        }
 
 
         // Mettre à jour l'inventaire pour gérer les entrées
@@ -291,5 +332,7 @@ public class Main extends ApplicationAdapter {
         inventaire.dispose();  // Libère les ressources utilisées dans inventaire
         quest.dispose();
         questBoardTexture.dispose();
+        pathfinding.dispose();
+        debugRenderer.dispose();
     }
 }
