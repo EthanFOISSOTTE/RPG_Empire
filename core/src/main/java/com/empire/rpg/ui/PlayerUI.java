@@ -21,25 +21,29 @@ public class PlayerUI {
     private Texture playerHealthBarTexture;
 
     // Variables de position et de taille pour player_status.png
-    private final float statusX;
-    private final float statusY;
-    private final float statusWidth;
-    private final float statusHeight;
+    private float statusX;
+    private float statusY;
+    private float statusWidth;
+    private float statusHeight;
 
     // Variables de position et de taille pour player_health_bar.png
-    private final float healthBarX;
-    private final float healthBarY;
-    private final float healthBarFullWidth;
-    private final float healthBarHeight;
+    private float healthBarX;
+    private float healthBarY;
+    private float healthBarFullWidth;
+    private float healthBarHeight;
 
     // Variables de position et de taille pour l'icône de l'arme
-    private final float weaponIconX;
-    private final float weaponIconY;
-    private final float weaponIconWidth;
-    private final float weaponIconHeight;
+    private float weaponIconX;
+    private float weaponIconY;
+    private float weaponIconWidth;
+    private float weaponIconHeight;
 
     // Référence au joueur
     private final PlayerCharacter player;
+
+    // Dimensions virtuelles de l'UI
+    private float uiWidth;
+    private float uiHeight;
 
     // Cache pour les textures des icônes d'armes
     private Map<String, Texture> toolIcons;
@@ -49,28 +53,13 @@ public class PlayerUI {
      *
      * @param playerInstance Instance du joueur pour accéder à sa santé et à ses outils.
      */
-    public PlayerUI(PlayerCharacter playerInstance) {
+    public PlayerUI(PlayerCharacter playerInstance, float uiWidth, float uiHeight) {
         this.player = playerInstance;
+        this.uiWidth = uiWidth;
+        this.uiHeight = uiHeight;
 
-        // Initialisation des variables de position et de taille
-
-        // Position et taille du cadre de la barre de santé (player_status.png)
-        this.statusX = 0f;          // Position X en pixels depuis la gauche de l'écran
-        this.statusY = 580f;         // Position Y en pixels depuis le bas de l'écran
-        this.statusWidth = 83f * 4;     // Largeur en pixels
-        this.statusHeight = 35f * 4;     // Hauteur en pixels
-
-        // Position et taille de la barre de santé (player_health_bar.png)
-        this.healthBarX = 132f;       // Position X en pixels depuis la gauche de l'écran
-        this.healthBarY = 652f;       // Position Y en pixels depuis le bas de l'écran
-        this.healthBarFullWidth = 45f * 4; // Largeur maximale en pixels
-        this.healthBarHeight = 5f * 4;  // Hauteur en pixels
-
-        // Position et taille de l'icône de l'arme équipée
-        this.weaponIconX = 45f;      // Position X en pixels depuis la gauche de l'écran
-        this.weaponIconY = 638f;       // Position Y en pixels depuis le bas de l'écran
-        this.weaponIconWidth = 16f * 3;   // Largeur en pixels
-        this.weaponIconHeight = 16f * 3;  // Hauteur en pixels
+        // Initialiser le cache des icônes d'armes
+        this.toolIcons = new HashMap<>();
 
         // Charger les textures
         try {
@@ -87,8 +76,38 @@ public class PlayerUI {
             this.playerHealthBarTexture = null;
         }
 
-        // Initialiser le cache des icônes d'armes
-        this.toolIcons = new HashMap<>();
+        // Initialisation des variables de position et de taille
+        initializePositions();
+    }
+
+    private void initializePositions() {
+        // Dimensions des textures originales
+        float originalStatusWidth = 83f;
+        float originalStatusHeight = 35f;
+        float originalHealthBarWidth = 45f;
+        float originalHealthBarHeight = 5f;
+        float originalWeaponIconSize = 16f;
+
+        // Facteur d'échelle pour agrandir les textures
+        float scaleFactor = 4f;
+
+        // Taille des éléments UI après mise à l'échelle
+        statusWidth = originalStatusWidth * scaleFactor;
+        statusHeight = originalStatusHeight * scaleFactor;
+        healthBarFullWidth = originalHealthBarWidth * scaleFactor;
+        healthBarHeight = originalHealthBarHeight * scaleFactor;
+        weaponIconWidth = originalWeaponIconSize * scaleFactor * 0.75f; // Ajuster si nécessaire
+        weaponIconHeight = originalWeaponIconSize * scaleFactor * 0.75f;
+
+        // Positions des éléments UI
+        statusX = 0f; // Position X fixe à gauche
+        statusY = uiHeight - statusHeight; // Position Y en haut
+
+        healthBarX = statusX + statusWidth / 2f - 34f; // Ajuster en fonction du design
+        healthBarY = statusY + statusHeight / 2f + 2f; // Ajuster en fonction du design
+
+        weaponIconX = statusX + 46f; // Ajuster en fonction du design
+        weaponIconY = statusY + 56f; // Ajuster en fonction du design
     }
 
     /**

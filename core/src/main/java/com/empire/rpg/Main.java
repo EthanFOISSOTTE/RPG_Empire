@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.badlogic.gdx.Input;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,6 +45,7 @@ public class Main extends ApplicationAdapter {
     private ZoneManager zoneManager;
     private ZoneUI zoneUI;
     private OrthographicCamera uiCamera;
+    private Viewport uiViewport;
 
     private DebugRenderer debugRenderer;
     private boolean debugMode = false;
@@ -52,15 +54,20 @@ public class Main extends ApplicationAdapter {
     private static final float WORLD_WIDTH = 854f;
     private static final float WORLD_HEIGHT = 480f;
 
+    // Dimensions virtuelles de l'UI
+    private static final float UI_WIDTH = 1280f;
+    private static final float UI_HEIGHT = 720f;
+
     @Override
     public void create() {
+        Gdx.input.setCursorCatched(true);
         batch = new SpriteBatch();
         camera = new OrthographicCamera();
         viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
 
-        // Initialiser la caméra de l'UI
+        // Initialiser la caméra et le Viewport de l'UI
         uiCamera = new OrthographicCamera();
-        uiCamera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        uiViewport = new FitViewport(UI_WIDTH, UI_HEIGHT, uiCamera);
 
         // Charger la carte et les collisions
         mapManager = new MapManager("rpg-map.tmx", camera);
@@ -114,11 +121,10 @@ public class Main extends ApplicationAdapter {
         }
         collisionHandler.handleCollisions(player, Mob.allMobs);
 
-        // Démarrer le batch pour dessiner les mobs, le joueur et les barres de vie
+        // Rendre les mobs et le joueur
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         for (Mob mob : Mob.allMobs) {
-            // Rendu du mob
             batch.draw(
                 mob.getCurrentTexture(),
                 mob.getPosition().x + mob.getOffsetX(),
@@ -127,7 +133,6 @@ public class Main extends ApplicationAdapter {
                 mob.getCurrentTexture().getRegionHeight() * mob.getScale()
             );
         }
-        // Rendu du joueur
         player.render(batch);
         for (Mob mob : Mob.allMobs) {
             // Rendu de la barre de vie du mob
@@ -150,7 +155,8 @@ public class Main extends ApplicationAdapter {
         zoneUI.update();
 
         // Rendre l'UI du joueur et de la zone
-        batch.setProjectionMatrix(uiCamera.combined); // Utiliser la caméra UI
+        uiViewport.apply();
+        batch.setProjectionMatrix(uiCamera.combined);
         batch.begin();
         playerUI.render(batch);
         zoneUI.render(batch);
@@ -164,7 +170,7 @@ public class Main extends ApplicationAdapter {
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
-        uiCamera.setToOrtho(false, width, height); // Mettre à jour la caméra UI
+        uiViewport.update(width, height, true);
     }
 
     private void resetGame() {
@@ -196,7 +202,7 @@ public class Main extends ApplicationAdapter {
     private void initializeGame() {
         // Création d'une map de composants avec PositionComponent et HealthComponent
         Map<Class<? extends Component>, Component> components = new HashMap<>();
-        components.put(HealthComponent.class, new HealthComponent(90, 100));
+        components.put(HealthComponent.class, new HealthComponent(100, 100));
         components.put(PositionComponent.class, new PositionComponent(4800f, 4800f));
 
         // Recharger les mobs depuis la carte
@@ -206,10 +212,10 @@ public class Main extends ApplicationAdapter {
         player = new PlayerCharacter(2.0f, UUID.randomUUID(), "Hero", components);
 
         // Initialiser l'UI du joueur
-        playerUI = new PlayerUI(player);
+        playerUI = new PlayerUI(player, UI_WIDTH, UI_HEIGHT);
 
         // Initialiser le ZoneUI
-        zoneUI = new ZoneUI(player, zoneManager);
+        zoneUI = new ZoneUI(player, zoneManager, UI_WIDTH, UI_HEIGHT);
 
         // Mettre à jour la caméra sur le joueur
         camera.position.set(player.getX(), player.getY(), 0);

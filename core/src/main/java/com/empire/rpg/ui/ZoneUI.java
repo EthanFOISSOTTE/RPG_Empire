@@ -19,6 +19,10 @@ public class ZoneUI {
     private float bannerX;
     private float bannerY;
 
+    // Dimensions virtuelles de l'UI
+    private float uiWidth;
+    private float uiHeight;
+
     // Joueur et ZoneManager pour obtenir la zone actuelle
     private PlayerCharacter player;
     private ZoneManager zoneManager;
@@ -33,9 +37,11 @@ public class ZoneUI {
     // Facteur de mise à l'échelle du texte
     private float textScale;
 
-    public ZoneUI(PlayerCharacter player, ZoneManager zoneManager) {
+    public ZoneUI(PlayerCharacter player, ZoneManager zoneManager, float uiWidth, float uiHeight) {
         this.player = player;
         this.zoneManager = zoneManager;
+        this.uiWidth = uiWidth;
+        this.uiHeight = uiHeight;
 
         // Charger la texture de la bannière
         try {
@@ -49,16 +55,28 @@ public class ZoneUI {
         font = new BitmapFont();
         font.setColor(Color.WHITE);
 
-        // Définir les dimensions et la position par défaut de la bannière
-        bannerWidth = 192f * 3.5f;  // Largeur par défaut
-        bannerHeight = 32f * 3.5f; // Hauteur par défaut
-        bannerX = Gdx.graphics.getWidth() - bannerWidth - 80f; // Position horizontale
-        bannerY = Gdx.graphics.getHeight() - bannerHeight; // Position verticale
-
-        currentZoneName = "";
-
         // Initialiser le facteur de mise à l'échelle du texte
         textScale = 2.0f; // Échelle par défaut
+
+        // Définir les dimensions et la position de la bannière
+        initializeBannerPosition();
+    }
+
+    private void initializeBannerPosition() {
+        // Dimensions de la texture originale
+        float originalBannerWidth = 192f;
+        float originalBannerHeight = 32f;
+
+        // Facteur d'échelle
+        float scaleFactor = 3.5f;
+
+        // Taille de la bannière après mise à l'échelle
+        bannerWidth = originalBannerWidth * scaleFactor;
+        bannerHeight = originalBannerHeight * scaleFactor;
+
+        // Position de la bannière
+        bannerX = uiWidth - bannerWidth - 80f; // Ajuster si nécessaire
+        bannerY = uiHeight - bannerHeight;     // Ajuster si nécessaire
     }
 
     public void update() {
@@ -107,9 +125,6 @@ public class ZoneUI {
         float textY = bannerY + (bannerHeight + layout.height) / 2f;
 
         font.draw(batch, layout, textX, textY);
-
-        // Si nécessaire, réinitialisez l'échelle de la police
-        // font.getData().setScale(1.0f);
     }
 
     public void dispose() {
@@ -125,6 +140,7 @@ public class ZoneUI {
     public void setBannerSize(float width, float height) {
         this.bannerWidth = width;
         this.bannerHeight = height;
+        initializeBannerPosition();
     }
 
     public void setBannerPosition(float x, float y) {
