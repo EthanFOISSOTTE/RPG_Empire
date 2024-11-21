@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="200" height="200" tilewidth="48" tileheight="48" infinite="0" nextlayerid="24" nextobjectid="2217">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="200" height="200" tilewidth="48" tileheight="48" infinite="0" nextlayerid="25" nextobjectid="2300">
  <tileset firstgid="1" source="Spritesheets/A3_Walls_And_Floors.tsx"/>
  <tileset firstgid="513" source="Spritesheets/A2_Terrain_And_Misc.tsx"/>
  <tileset firstgid="2593" source="Spritesheets/Fantasy_Door1.tsx"/>
@@ -4882,5 +4882,229 @@
    <polygon points="0,0 0.181818,-23.6364 34,-44.7273 43.0909,-44.5455 48.1818,-37.8182 48.3636,-29.6364 14.5455,-6.72727"/>
   </object>
   <object id="2216" x="4085" y="9024" width="39.25" height="41.75"/>
+ </objectgroup>
+ <objectgroup id="24" name="mob">
+  <object id="2220" name="goblin" x="6393.33" y="3514.67">
+   <point/>
+  </object>
+  <object id="2221" name="goblin" x="6536" y="3546.67">
+   <point/>
+  </object>
+  <object id="2222" name="goblin" x="6441.33" y="3636">
+   <point/>
+  </object>
+  <object id="2223" name="ogre" x="8160" y="4560">
+   <point/>
+  </object>
+  <object id="2224" name="ogre" x="8302" y="4618">
+   <point/>
+  </object>
+  <object id="2226" name="ogre" x="8372" y="3632">
+   <point/>
+  </object>
+  <object id="2227" name="ogre" x="5048" y="3720">
+   <point/>
+  </object>
+  <object id="2228" name="ogre" x="1816" y="5048">
+   <point/>
+  </object>
+  <object id="2231" name="ogre" x="896" y="4736">
+   <point/>
+  </object>
+  <object id="2232" name="ogre" x="680" y="1344">
+   <point/>
+  </object>
+  <object id="2233" name="ogre" x="2016" y="1376">
+   <point/>
+  </object>
+  <object id="2234" name="ogre" x="2904" y="2160">
+   <point/>
+  </object>
+  <object id="2235" name="goblin" x="8536" y="3728">
+   <point/>
+  </object>
+  <object id="2236" name="goblin" x="8152" y="3560">
+   <point/>
+  </object>
+  <object id="2237" name="goblin" x="8624" y="5776">
+   <point/>
+  </object>
+  <object id="2238" name="goblin" x="8872" y="5488">
+   <point/>
+  </object>
+  <object id="2239" name="goblin" x="8816" y="5728">
+   <point/>
+  </object>
+  <object id="2240" name="goblin" x="6820" y="5920">
+   <point/>
+  </object>
+  <object id="2241" name="goblin" x="6784" y="6056">
+   <point/>
+  </object>
+  <object id="2242" name="goblin" x="6972" y="6052">
+   <point/>
+  </object>
+  <object id="2243" name="goblin" x="4951.52" y="3875.76">
+   <point/>
+  </object>
+  <object id="2244" name="goblin" x="5115.15" y="3839.39">
+   <point/>
+  </object>
+  <object id="2245" name="goblin" x="1600" y="4640">
+   <point/>
+  </object>
+  <object id="2247" name="goblin" x="1712" y="4812">
+   <point/>
+  </object>
+  <object id="2248" name="goblin" x="3781.82" y="3290.91">
+   <point/>
+  </object>
+  <object id="2249" name="goblin" x="3954.55" y="3369.7">
+   <point/>
+  </object>
+  <object id="2250" name="goblin" x="616" y="4640">
+   <point/>
+  </object>
+  <object id="2251" name="goblin" x="756" y="4188">
+   <point/>
+  </object>
+  <object id="2252" name="goblin" x="1020" y="3772">
+   <point/>
+  </object>
+  <object id="2253" name="goblin" x="716" y="1548">
+   <point/>
+  </object>
+  <object id="2255" name="goblin" x="1864" y="1424">
+   <point/>
+  </object>
+  <object id="2256" name="goblin" x="2116" y="1220">
+   <point/>
+  </object>
+  <object id="2257" name="goblin" x="2732" y="1960">
+   <point/>
+  </object>
+  <object id="2258" name="goblin" x="3164" y="668">
+   <point/>
+  </object>
+  <object id="2259" name="goblin" x="3308" y="1540">
+   <point/>
+  </object>
+  <object id="2260" name="goblin" x="1964" y="2784">
+   <point/>
+  </object>
+  <object id="2261" name="goblin" x="1844" y="2840">
+   <point/>
+  </object>
+  <object id="2262" name="goblin" x="1956" y="2968">
+   <point/>
+  </object>
+  <object id="2263" name="goblin" x="3584" y="3732">
+   <point/>
+  </object>
+  <object id="2264" name="goblin" x="3744" y="3776">
+   <point/>
+  </object>
+  <object id="2265" name="orc" x="672" y="1200">
+   <point/>
+  </object>
+  <object id="2266" name="orc" x="3592" y="3288">
+   <point/>
+  </object>
+  <object id="2267" name="orc" x="8436" y="4556">
+   <point/>
+  </object>
+  <object id="2268" name="orc" x="8709.09" y="2663.64">
+   <point/>
+  </object>
+  <object id="2269" name="orc" x="8866.67" y="2712.12">
+   <point/>
+  </object>
+  <object id="2270" name="orc" x="3422" y="1434">
+   <point/>
+  </object>
+  <object id="2271" name="orc" x="728" y="5240">
+   <point/>
+  </object>
+  <object id="2272" name="orc" x="3800" y="3888">
+   <point/>
+  </object>
+  <object id="2273" name="rabbit" x="4800" y="4608">
+   <point/>
+  </object>
+  <object id="2274" name="rabbit" x="6944" y="3936">
+   <point/>
+  </object>
+  <object id="2275" name="rabbit" x="6528" y="4680">
+   <point/>
+  </object>
+  <object id="2276" name="rabbit" x="5480" y="3664">
+   <point/>
+  </object>
+  <object id="2277" name="rabbit" x="7584" y="5512">
+   <point/>
+  </object>
+  <object id="2278" name="rabbit" x="6536" y="6248">
+   <point/>
+  </object>
+  <object id="2279" name="rabbit" x="6872" y="7088">
+   <point/>
+  </object>
+  <object id="2280" name="rabbit" x="1760" y="5776">
+   <point/>
+  </object>
+  <object id="2281" name="rabbit" x="2248" y="4608">
+   <point/>
+  </object>
+  <object id="2282" name="rabbit" x="3224" y="4840">
+   <point/>
+  </object>
+  <object id="2283" name="rabbit" x="4160" y="4272">
+   <point/>
+  </object>
+  <object id="2284" name="rabbit" x="3833.33" y="5678.79">
+   <point/>
+  </object>
+  <object id="2285" name="rabbit" x="2501.33" y="6292">
+   <point/>
+  </object>
+  <object id="2287" name="rabbit" x="1973.5" y="8889.5">
+   <point/>
+  </object>
+  <object id="2288" name="rabbit" x="5047.33" y="8567.33">
+   <point/>
+  </object>
+  <object id="2289" name="rabbit" x="5673.33" y="7460">
+   <point/>
+  </object>
+  <object id="2290" name="rabbit" x="7588" y="6420">
+   <point/>
+  </object>
+  <object id="2291" name="rabbit" x="4145.45" y="3424.24">
+   <point/>
+  </object>
+  <object id="2292" name="rabbit" x="4863.64" y="3269.7">
+   <point/>
+  </object>
+  <object id="2293" name="rabbit" x="8829.33" y="630.667">
+   <point/>
+  </object>
+  <object id="2294" name="rabbit" x="8864" y="808">
+   <point/>
+  </object>
+  <object id="2295" name="rabbit" x="9040" y="792">
+   <point/>
+  </object>
+  <object id="2296" name="rabbit-horned" x="8976" y="624">
+   <point/>
+  </object>
+  <object id="2297" name="rabbit-horned" x="8880" y="6152">
+   <point/>
+  </object>
+  <object id="2298" name="rabbit-horned" x="7048" y="4544">
+   <point/>
+  </object>
+  <object id="2299" name="rabbit-horned" x="2208" y="5232">
+   <point/>
+  </object>
  </objectgroup>
 </map>

@@ -36,6 +36,7 @@ public class Main extends ApplicationAdapter {
     private PlayerUI playerUI;
     private SoundManager soundManager;
     private Pathfinding pathfinding;
+    private MobManager mobManager;
 
     private DebugRenderer debugRenderer;
     private boolean debugMode = false;
@@ -68,12 +69,10 @@ public class Main extends ApplicationAdapter {
         pathfinding = new Pathfinding(collisionManager);
         // Définit le pathfinding global pour tous les mobs
         MobFactory.setPathfinding(pathfinding);
-        // Créer des mobs avec des comportements spécifiques
-        MobFactory.createMob("goblin", new Vector2(4700, 4900), collisionManager);
-        MobFactory.createMob("ogre", new Vector2(4800, 4900), collisionManager);
-        MobFactory.createMob("orc", new Vector2(4900, 4900), collisionManager);
-        MobFactory.createMob("rabbit", new Vector2(4700, 5000), collisionManager);
-        MobFactory.createMob("rabbit-horned", new Vector2(4800, 5000), collisionManager);
+        // Initialiser le MobManager
+        mobManager = new MobManager(collisionManager);
+        // Charger les mobs depuis la carte
+        mobManager.loadMobsFromMap(mapManager.getTiledMap());
         // Créer un gestionnaire de collisions
         collisionHandler = new CollisionHandler(collisionManager);
 
@@ -170,12 +169,8 @@ public class Main extends ApplicationAdapter {
         // Recréer l'UI du joueur
         playerUI = new PlayerUI(player);
 
-        // Recréer les mobs
-        MobFactory.createMob("goblin", new Vector2(4700, 4900), collisionManager);
-        MobFactory.createMob("ogre", new Vector2(4800, 4900), collisionManager);
-        MobFactory.createMob("orc", new Vector2(4900, 4900), collisionManager);
-        MobFactory.createMob("rabbit", new Vector2(4700, 5000), collisionManager);
-        MobFactory.createMob("rabbit-horned", new Vector2(4800, 5000), collisionManager);
+        // Recharger les mobs depuis la carte
+        mobManager.loadMobsFromMap(mapManager.getTiledMap());
 
         // Réinitialiser la caméra
         camera.position.set(player.getX(), player.getY(), 0);
