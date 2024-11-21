@@ -37,12 +37,19 @@ public class GameScreen extends ApplicationAdapter implements Screen{
     private DebugRenderer debugRenderer;
     private PlayerUI playerUI;
     private Screen currentScreen;
+    private String playerName;
     private boolean animationFinished = false;
     private boolean debugMode = false;
 
     private static final float WORLD_WIDTH = 854f;
     private static final float WORLD_HEIGHT = 480f;
 
+    public GameScreen(String playerName) {
+        // Charger l'écran d'introduction avec un Runnable pour afficher le menu principal
+        IntroScreen introScreen = new IntroScreen(() -> setScreen(new MainMenuScreen()));
+        setScreen(introScreen);
+        this.playerName = playerName;
+    }
 
 
     @Override

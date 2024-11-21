@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -12,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+import com.empire.rpg.Main;
 import com.empire.rpg.utils.FontUtils;
 
 public class MainMenuScreen implements Screen {
@@ -19,6 +21,7 @@ public class MainMenuScreen implements Screen {
     private int selectedOption = 0;
     private final String[] options = new String[]{"Nouvelle Partie", "Quitter le jeu"};
     private TextField playerNameField = null;
+    private String playerName = "";
     private Stage stage;
     private Skin skin;
     private BitmapFont customFont;
@@ -43,10 +46,6 @@ public class MainMenuScreen implements Screen {
         // Charger le skin
         skin = new Skin(Gdx.files.internal("uiskin.json"));
 
-        // Initialisation du Stage
-        stage = new Stage(new ScreenViewport());
-        Gdx.input.setInputProcessor(stage);
-
         // Création d'un style personnalisé pour le TextField
         playerNameField.setVisible(false); // Le champ est masqué par défaut
         stage.addActor(playerNameField);
@@ -66,9 +65,6 @@ public class MainMenuScreen implements Screen {
         if (batch == null) {
             batch = new SpriteBatch();
         }
-        if (stage == null) {
-            stage = new Stage(new ScreenViewport());
-        }
         if (customFont == null) {
             customFont = FontUtils.createCustomFont("SinisterRegular.ttf", 32, Color.WHITE);
         }
@@ -82,14 +78,14 @@ public class MainMenuScreen implements Screen {
             customStyle.cursor = skin.getDrawable("cursor");
             customStyle.selection = skin.getDrawable("selection");
             customStyle.background = skin.getDrawable("textfield");
-
             // Création du champ de texte
             playerNameField = new TextField("", customStyle);
             playerNameField.setMessageText("Entrez votre nom...");
             playerNameField.setAlignment(Align.center);
             playerNameField.setSize(400, 60);
-            playerNameField.setPosition(WORLD_WIDTH / 2f - 150, WORLD_HEIGHT / 2f - 70);
+            playerNameField.setPosition(WORLD_WIDTH / 2f - 250, WORLD_HEIGHT / 2f - 70);
             playerNameField.setVisible(false); // Le champ est masqué par défaut
+            stage = new Stage(new ScreenViewport());
             stage.addActor(playerNameField);
         }
 
@@ -99,7 +95,11 @@ public class MainMenuScreen implements Screen {
         if (customFontTitle == null) {
             customFontTitle = FontUtils.createCustomFont("SinisterRegular.ttf", 54, Color.RED);
         }
-        customFontTitle.draw(batch, "Menu principal", WORLD_WIDTH / 2f - 100, WORLD_HEIGHT - 50);
+        customFontTitle.draw(batch, "MENU PRINCIPAL", WORLD_WIDTH / 2f - 200, WORLD_HEIGHT - 50);
+
+        // Ajouter l'image de fond
+        Texture background = new Texture("Background/logo-rpg-empire.png");
+        batch.draw(background, 550, 190, WORLD_WIDTH-250, WORLD_HEIGHT-50);
 
         // Dessiner les options du menu
         for (int i = 0; i < options.length; i++) {
@@ -152,8 +152,16 @@ public class MainMenuScreen implements Screen {
                 case 0:
                     // Nouvelle Partie
                     playerNameField.setVisible(true);
+                    Gdx.input.setInputProcessor(stage); // Activer le clavier virtuel
                     stage.setKeyboardFocus(playerNameField); // Donner le focus
                     isEnteringName = true;
+                    // Garder le nom du joueur dans une variable
+                    playerName = playerNameField.getText();
+                    // Démarre le jeu si le joueur appuie sur Enter & a entré un nom
+                    if (!playerName.isEmpty() && Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+                        // Démarrer le jeu avec le nom du joueur
+                        Main.getInstance().setScreen(new GameScreen(playerName));
+                    }
                     break;
                 case 1:
                     // Quitter le jeu
