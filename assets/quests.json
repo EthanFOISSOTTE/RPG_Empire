@@ -92,14 +92,15 @@
 		gold: 50
 	}
 }
-  {
-    class: com.empire.rpg.quest.QuestItem
-    title: Des pioches pour les mineurs
-    description: "Les mineurs de la région ont besoin de nouvelles pioches pour continuer leur travail. Rapportez leur 5 pioches."
-    id: 8
-    author: Archéologue
-    reward: {
-      gold: 50
-    }
-  }
+{
+	class: com.empire.rpg.quest.QuestItem
+	title: Des pioches pour les mineurs
+	description: Les mineurs de la région ont besoin de nouvelles pioches pour continuer leur travail. Rapportez leur 5 pioches.
+	id: 8
+	status: 1
+	author: Archéologue
+	reward: {
+		gold: 50
+	}
+}
 ]

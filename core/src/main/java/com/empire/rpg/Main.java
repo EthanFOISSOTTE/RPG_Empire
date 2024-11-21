@@ -25,8 +25,6 @@ import com.empire.rpg.ui.PlayerUI;
 
 import com.empire.rpg.entity.player.Inventory.Inventory;
 
-
-
 public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
     private OrthographicCamera camera;
@@ -38,6 +36,7 @@ public class Main extends ApplicationAdapter {
     private SoundManager soundManager;
     private DebugRenderer debugRenderer;
     private PlayerUI playerUI;
+    private Texture F_Key_Texture;
     private Texture questBoardTexture;
     private boolean debugMode = false;
     private static final float WORLD_WIDTH = 854f;
@@ -95,6 +94,7 @@ public class Main extends ApplicationAdapter {
         dialogue = new DialogueManager(camera, batch); // Initialisation du gestionnaire de dialogues
         // Chargement de la texture de l'icône du tableau de quête
         questBoardTexture = new Texture(Gdx.files.internal("exclamation.png"));  // Chemin vers l'image du tableau de quêtes
+        F_Key_Texture = new Texture(Gdx.files.internal("Images/F_Key.png"));  // Chemin vers l'image de la touche F
 
         // Création d'une map de composants avec PositionComponent et HealthComponent
         // Création du Map avec les composants nécessaires
@@ -159,21 +159,36 @@ public class Main extends ApplicationAdapter {
 // Region
         if (isPlayerWithinInteractionDistance(player.getPlayerPosition(), pnj_radagast.getPosition(), INTERACTION_DISTANCE)) {
             batch.begin();
-            font.draw(batch, "F pour parler", pnj_radagast.getPosition().x + 27, pnj_radagast.getPosition().y + 85);
+
+            // Dessinez la texture de la touche "F"
+            batch.draw(F_Key_Texture, pnj_radagast.getPosition().x + 27, pnj_radagast.getPosition().y + 85, 24, 24);
+
+            // Dessinez le texte "interagir" à côté de l'image
+            font.draw(batch, " interagir", pnj_radagast.getPosition().x + 55, pnj_radagast.getPosition().y + 105);
+
             batch.end();
 
+            // Détecter l'appui sur la touche "F"
             if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
                 dialogue.startDialogue("Radagast");
             }
         }
 
+
         if (isPlayerWithinInteractionDistance(player.getPlayerPosition(), pnj_duc.getPosition(), INTERACTION_DISTANCE)) {
             batch.begin();
-            font.draw(batch, "F pour parler", pnj_duc.getPosition().x + 27, pnj_duc.getPosition().y + 85);
+
+            // Dessinez la texture de la touche "F"
+            batch.draw(F_Key_Texture, pnj_duc.getPosition().x + 52, pnj_duc.getPosition().y + 78, 24, 24);
+
+            // Dessinez le texte "interagir" à côté de l'image
+//            font.draw(batch, " INTERAGIR", pnj_duc.getPosition().x + 50, pnj_duc.getPosition().y + 90);
+
             batch.end();
 
+            // Détecter l'appui sur la touche "F"
             if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
-                dialogue.startDialogue("Duc_Michel");
+                dialogue.startDialogue("Duc Michel");
             }
         }
 
@@ -270,7 +285,7 @@ public class Main extends ApplicationAdapter {
         }
         debugRenderer.dispose();
         playerUI.dispose();
-
+        F_Key_Texture.dispose();
         shapeRenderer.dispose(); // Libère ShapeRenderer
         font.dispose();
         inventaire.dispose();  // Libère les ressources utilisées dans inventaire

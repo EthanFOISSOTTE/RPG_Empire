@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="200" height="200" tilewidth="48" tileheight="48" infinite="0" nextlayerid="24" nextobjectid="2217">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="200" height="200" tilewidth="48" tileheight="48" infinite="0" nextlayerid="24" nextobjectid="2226">
  <tileset firstgid="1" source="Spritesheets/A3_Walls_And_Floors.tsx"/>
  <tileset firstgid="513" source="Spritesheets/A2_Terrain_And_Misc.tsx"/>
  <tileset firstgid="2593" source="Spritesheets/Fantasy_Door1.tsx"/>
@@ -2481,7 +2481,7 @@
 0,0,0,0,0,0,0,0,0,8886,0,0,8683,0,0,0,0,0,0,0,0,0,0,0,8683,0,8699,0,0,0,0,8683,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="15" name="collision" visible="0">
+ <objectgroup id="15" name="collision">
   <object id="4" x="1152" y="7920" width="288" height="288"/>
   <object id="5" x="1152" y="8208" width="192" height="42.5"/>
   <object id="7" x="1440" y="8064" width="68.4242" height="97.75"/>
@@ -4882,5 +4882,6 @@
    <polygon points="0,0 0.181818,-23.6364 34,-44.7273 43.0909,-44.5455 48.1818,-37.8182 48.3636,-29.6364 14.5455,-6.72727"/>
   </object>
   <object id="2216" x="4085" y="9024" width="39.25" height="41.75"/>
+  <object id="2222" x="8562.5" y="6241.5" width="35" height="68.5"/>
  </objectgroup>
 </map>
