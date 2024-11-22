@@ -86,6 +86,7 @@ public class Item extends Entity {
         return style;
     }
 
+
     // Setters pour chaque attribut
     public void setStates(boolean states) {
         this.states = states;

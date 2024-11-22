@@ -9,8 +9,8 @@ import com.badlogic.gdx.math.Vector2;
 
 public class InteractionImageManager {
     private Rectangle interactionZone; // La zone du carré
-    private static Texture[] images; // Les images à afficher
-    private static int currentImageIndex; // Index de l'image actuellement affichée
+    private Texture[] images; // Les images à afficher
+    private int currentImageIndex; // Index de l'image actuellement affichée
     private static boolean isImageVisible; // Indique si une image est affichée
 
     public InteractionImageManager(float x, float y, float width, float height, String[] imagePaths) {
@@ -47,17 +47,11 @@ public class InteractionImageManager {
         }
     }
 
-    public static int getCurrentImageIndex(){
-        return currentImageIndex;
-    }
 
     public static boolean getIsImageVisible() {
         return isImageVisible;
     }
 
-    public static int getImageslength(){
-        return images.length ;
-    }
 
     public void render(SpriteBatch batch) {
         if (isImageVisible) {

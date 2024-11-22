@@ -2,7 +2,9 @@ package com.empire.rpg.entity.player;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -26,6 +28,7 @@ import java.util.*;
 
 import com.empire.rpg.entity.player.Inventory.Inventory;
 import com.empire.rpg.InteractionImageManager;
+import com.empire.rpg.shop.Shop;
 
 
 /**
@@ -113,9 +116,13 @@ public class PlayerCharacter extends Player {
      */
 
     private static boolean showInteractionFrame = false;
+    private static boolean showShopFrame = false;
+
+    private Inventory inventaire;
 
     public PlayerCharacter(float scale, UUID id, String name, Map<Class<? extends Component>, Component> components) {
         super(name, components, id); // Appel au constructeur de la superclasse
+
 
         // Vérifier la présence du PositionComponent
         PositionComponent position = (PositionComponent) components.get(PositionComponent.class);
@@ -166,6 +173,10 @@ public class PlayerCharacter extends Player {
 
         // Initialisation des ensembles d'outils
         initializeToolSets();
+
+        // Autres initialisations
+        inventaire = new Inventory(new OrthographicCamera(), new SpriteBatch());
+
     }
 
 
@@ -299,6 +310,16 @@ public class PlayerCharacter extends Player {
 
             showInteractionFrame = !showInteractionFrame;   //inverse true en false et inversement
             Inventory.setShowInteractionFrame(showInteractionFrame);  // Active le cadre d'inventaire
+
+            Inventory.loadInventoryFromJson();
+        }
+
+        // Gérer l'affichage et la mise à jour de l'inventaire
+        if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
+
+            showShopFrame = !showShopFrame;   //inverse true en false et inversement
+            Shop.setShowShopFrame(showShopFrame);  // Active le cadre d'inventaire
+
         }
 
     }
@@ -455,6 +476,9 @@ public class PlayerCharacter extends Player {
             return;
         }
         if (Inventory.getShowInteractionFrame()){
+            return;
+        }
+        if (Shop.getShowShopFrame()){
             return;
         }
         if (InteractionImageManager.getIsImageVisible()){
