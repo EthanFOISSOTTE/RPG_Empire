@@ -240,6 +240,17 @@ public class PlayerCharacter extends Player {
         return currentState;
     }
 
+    private boolean isInShopArea(float playerX, float playerY) {
+        // Taille du carré (par exemple, 48x48)
+        float squareSize = 48f;
+        float shopX = 1306f;
+        float shopY = 1831f;
+
+        // Vérifie si le joueur est dans la zone
+        return playerX >= shopX && playerX <= shopX + squareSize &&
+            playerY >= shopY && playerY <= shopY + squareSize;
+    }
+
     // Gestion des entrées utilisateur
     private void handleInput() {
         // Si le joueur n'est pas en train d'attaquer
@@ -308,19 +319,28 @@ public class PlayerCharacter extends Player {
         // Gérer l'affichage et la mise à jour de l'inventaire
         if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
 
-            showInteractionFrame = !showInteractionFrame;   //inverse true en false et inversement
-            Inventory.setShowInteractionFrame(showInteractionFrame);  // Active le cadre d'inventaire
+            if(!showShopFrame){
+                showInteractionFrame = !showInteractionFrame;   //inverse true en false et inversement
+                Inventory.setShowInteractionFrame(showInteractionFrame);  // Active le cadre d'inventaire
 
-            Inventory.loadInventoryFromJson();
+                Inventory.loadInventoryFromJson();
+            }
+
         }
-
         // Gérer l'affichage et la mise à jour de l'inventaire
-        if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
+        if(!showInteractionFrame) {
+            if (isInShopArea(getX(), getY())) {
+                if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
 
-            showShopFrame = !showShopFrame;   //inverse true en false et inversement
-            Shop.setShowShopFrame(showShopFrame);  // Active le cadre d'inventaire
+                    showShopFrame = !showShopFrame;   //inverse true en false et inversement
+                    Shop.setShowShopFrame(showShopFrame);  // Active le cadre d'inventaire
 
+                }
+            }
         }
+
+
+
 
     }
 

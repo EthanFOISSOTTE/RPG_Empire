@@ -77,7 +77,7 @@ public class Main extends ApplicationAdapter {
         // Création d'une map de composants avec PositionComponent et HealthComponent
         Map<Class<? extends Component>, Component> components = Map.of(
             HealthComponent.class, new HealthComponent(90, 100),
-            PositionComponent.class, new PositionComponent(180 * 48 + 24,55 * 48 + 24)
+            PositionComponent.class, new PositionComponent(1306f,1831f)
         );
 
         // Création et initialisation de l'instance de PlayerCharacter
