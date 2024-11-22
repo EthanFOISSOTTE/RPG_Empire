@@ -40,6 +40,8 @@ public class GameScreen extends ApplicationAdapter implements Screen{
     private String playerName;
     private boolean animationFinished = false;
     private boolean debugMode = false;
+    private PauseScreen pauseScreen;
+
 
     private static final float WORLD_WIDTH = 854f;
     private static final float WORLD_HEIGHT = 480f;
@@ -82,6 +84,10 @@ public class GameScreen extends ApplicationAdapter implements Screen{
         // Mettre à jour la caméra sur le joueur
         camera.position.set(player.getX(), player.getY(), 0);
         camera.update();
+
+        // Initialiser le menu pause
+        pauseScreen = new PauseScreen();
+
     }
 
     private void setScreen(Screen screen) {
@@ -131,6 +137,35 @@ public class GameScreen extends ApplicationAdapter implements Screen{
         if (currentScreen != null) {
             currentScreen.render(Gdx.graphics.getDeltaTime());
         }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            if (currentScreen instanceof PauseScreen) {
+                ((PauseScreen) currentScreen).toggleVisibility();
+            } else {
+                setScreen(new PauseScreen());
+            }
+        }
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        if (pauseScreen.isVisible()) {
+            pauseScreen.render(null); // Passer `null` pour simplifier.
+            return; // Interrompt le rendu du reste.
+        }
+
+        // Rendu normal du jeu.
+        mapManager.renderLowerLayers(camera);
+        deltaTime = Gdx.graphics.getDeltaTime();
+        player.update(deltaTime, collisionManager);
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+        player.render(batch);
+        batch.end();
+        mapManager.renderUpperLayers(camera);
+        playerUI.render(batch);
+        camera.position.set(player.getX(), player.getY(), 0);
+        camera.update();
+
     }
 
     @Override

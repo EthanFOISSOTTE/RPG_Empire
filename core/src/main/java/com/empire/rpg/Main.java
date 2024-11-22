@@ -19,11 +19,10 @@ import com.empire.rpg.entity.player.PlayerCharacter;
 import com.empire.rpg.component.Component;
 import com.empire.rpg.entity.player.audio.SoundManager;
 import com.empire.rpg.debug.DebugRenderer;
-import com.empire.rpg.screen.GameScreen;
-import com.empire.rpg.screen.IntroScreen;
-import com.empire.rpg.screen.MainMenuScreen;
-import com.empire.rpg.screen.Screen;
+import com.empire.rpg.screen.*;
 import com.empire.rpg.ui.PlayerUI;
+
+
 
 public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
@@ -38,6 +37,7 @@ public class Main extends ApplicationAdapter {
     private Screen currentScreen;
     private boolean animationFinished = false;
     private boolean debugMode = false;
+    private PauseScreen pauseScreen;
 
     private static final float WORLD_WIDTH = 854f;
     private static final float WORLD_HEIGHT = 480f;
@@ -62,6 +62,7 @@ public class Main extends ApplicationAdapter {
         batch = new SpriteBatch();
         camera = new OrthographicCamera();
         viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
+        pauseScreen = new PauseScreen();
 
         // Charger la carte et les collisions
         mapManager = new MapManager("rpg-map.tmx", camera);
@@ -99,38 +100,38 @@ public class Main extends ApplicationAdapter {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // Rendre les couches inférieures (en-dessous du joueur)
-        mapManager.renderLowerLayers(camera);
+        // Gestion de la touche Echap
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            pauseScreen.toggleVisibility(); // Basculer la visibilité du menu Pause
+        }
 
-        // Mettre à jour le joueur
+        // Si le menu Pause est visible, ne pas rendre le reste du jeu
+        if (pauseScreen.isVisible()) {
+            pauseScreen.render(null); // Passer `null` ou une instance de `Graphics` si nécessaire
+            return;
+        }
+
+        // Rendu normal du jeu
+        mapManager.renderLowerLayers(camera);
         float deltaTime = Gdx.graphics.getDeltaTime();
         player.update(deltaTime, collisionManager);
 
-        // Démarrer le batch pour dessiner le joueur
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         player.render(batch);
         batch.end();
 
-        // Rendre les couches supérieures (au-dessus du joueur)
         mapManager.renderUpperLayers(camera);
 
-        // Activer/Désactiver le mode de débogage
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F1)) {
-            debugMode = !debugMode;
-        }
         if (debugMode) {
             debugRenderer.renderDebugBounds(camera, player, collisionManager);
         }
 
-        // Rendre l'UI du joueur (après le rendu des éléments du jeu)
         playerUI.render(batch);
 
-        // Mettre à jour la caméra pour suivre le joueur
         camera.position.set(player.getX(), player.getY(), 0);
         camera.update();
 
-        // Mettre à jour la screen actuelle
         if (currentScreen != null) {
             currentScreen.render(Gdx.graphics.getDeltaTime());
         }
