@@ -34,9 +34,24 @@ public class QuestPlayer {
         return questList;
     }
 
-    // Méthode pour mettre à jour la liste des quêtes avec une nouvelle liste
+    // Méthode utilitaire pour vérifier si une quête existe déjà dans la liste
+    private boolean questExists(QuestItem newQuest) {
+        for (QuestItem quest : questList) {
+            if (quest.getId() == newQuest.getId()) { // Comparaison d'ID avec ==
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    // Méthode pour mettre à jour la liste des quêtes sans doublons
     public void updateQuestList(ArrayList<QuestItem> newQuestList) {
-        this.questList = newQuestList;  // Remplacer la liste actuelle par la nouvelle
+        for (QuestItem newQuest : newQuestList) {
+            if (!questExists(newQuest)) {
+                questList.add(newQuest); // Ajoute uniquement si la quête n'est pas un doublon
+            }
+        }
     }
 
     // Méthode principale de rendu

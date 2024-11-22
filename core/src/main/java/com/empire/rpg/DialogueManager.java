@@ -70,6 +70,7 @@ public class DialogueManager {
         Json json = new Json();
         FileHandle file = Gdx.files.local(filePath);
         if (file.exists()) {
+            questList.clear(); // Vider la liste avant d'ajouter de nouvelles quêtes
             QuestItem[] quests = json.fromJson(QuestItem[].class, file);
             for (QuestItem quest : quests) {
                 questList.add(quest);
@@ -77,22 +78,12 @@ public class DialogueManager {
         }
     }
 
-    // Méthode pour mettre à jour la liste des quêtes du joueur
-    public void updateQuestList(ArrayList<QuestItem> newQuestList) {
-        // Mettre à jour la liste des quêtes dans QuestPlayer
-        if (questPlayer != null) {
-            questPlayer.updateQuestList(newQuestList);
-        }
-    }
 
-    // Exemple d'utilisation de la mise à jour de la liste des quêtes
-    public void addNewQuest(QuestItem newQuest) {
-        // Ajouter un nouveau QuestItem à la liste des quêtes
-        currentQuestList.add(newQuest);
-
-        // Mettre à jour la liste des quêtes dans QuestPlayer
-        updateQuestList(currentQuestList);
-    }
+//    // Exemple d'utilisation de la mise à jour de la liste des quêtes
+//    public void addNewQuest(QuestItem newQuest) {
+//        // Ajouter un nouveau QuestItem à la liste des quêtes
+//        currentQuestList.add(newQuest);
+//    }
 
     private void saveQuestsToFile(String filePath) {
         System.out.println("Appel de saveQuestsToFile avec fichier " + filePath);
@@ -115,12 +106,12 @@ public class DialogueManager {
         saveQuestsToFile("quests.json");
     }
 
+
     public void handleInput() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.O)) {
             saveQuestStatus(1, 1);  // Par exemple, changer le statut de la quête avec l'ID 1
             saveQuestsToFile("quests.json");
-            // Rafraîchir la liste des quêtes dans QuestPlayer après modification
-            questPlayer.updateQuestList(questList);
+            closeDialogue();
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.N)) {
             closeDialogue();
         }
