@@ -146,19 +146,19 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void dispose () {
-            batch.dispose();
-            mapManager.dispose();
-            player.dispose();
-            if (soundManager != null) {
-                soundManager.dispose();
-            }
-            debugRenderer.dispose();
-            playerUI.dispose();
+        batch.dispose();
+        mapManager.dispose();
+        player.dispose();
+        if (soundManager != null) {
+            soundManager.dispose();
+        }
+        debugRenderer.dispose();
+        playerUI.dispose();
 
-            if (currentScreen != null) {
-                currentScreen.dispose();
-            }
+        if (currentScreen != null) {
+            currentScreen.dispose();
         }
     }
+}
 
 

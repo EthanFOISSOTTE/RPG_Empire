@@ -38,9 +38,10 @@ public class MainMenuScreen implements Screen {
         // Charger une police personnalisée
         try {
             customFont = FontUtils.createCustomFont("SinisterRegular.ttf", 42, Color.WHITE);
-        } catch (Exception e) {
             customFont = new BitmapFont();
             customFont.setColor(Color.WHITE);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         // Charger le skin
@@ -66,7 +67,7 @@ public class MainMenuScreen implements Screen {
             batch = new SpriteBatch();
         }
         if (customFont == null) {
-            customFont = FontUtils.createCustomFont("SinisterRegular.ttf", 32, Color.WHITE);
+            customFont = FontUtils.createCustomFont("SinisterRegular.ttf", 48, Color.WHITE);
         }
         if (skin == null) {
             skin = new Skin(Gdx.files.internal("uiskin.json"));
@@ -83,7 +84,7 @@ public class MainMenuScreen implements Screen {
             playerNameField.setMessageText("Entrez votre nom...");
             playerNameField.setAlignment(Align.center);
             playerNameField.setSize(400, 60);
-            playerNameField.setPosition(WORLD_WIDTH / 2f - 250, WORLD_HEIGHT / 2f - 70);
+            playerNameField.setPosition(WORLD_WIDTH / 2f + 150, WORLD_HEIGHT / 2f - 70);
             playerNameField.setVisible(false); // Le champ est masqué par défaut
             stage = new Stage(new ScreenViewport());
             stage.addActor(playerNameField);
@@ -93,13 +94,13 @@ public class MainMenuScreen implements Screen {
         batch.begin();
         customFont.setColor(Color.WHITE);
         if (customFontTitle == null) {
-            customFontTitle = FontUtils.createCustomFont("SinisterRegular.ttf", 54, Color.RED);
+            customFontTitle = FontUtils.createCustomFont("SinisterRegular.ttf", 72, Color.RED);
         }
-        customFontTitle.draw(batch, "MENU PRINCIPAL", WORLD_WIDTH / 2f - 200, WORLD_HEIGHT - 50);
+        customFontTitle.draw(batch, "MENU PRINCIPAL", WORLD_WIDTH / 2f + 150, WORLD_HEIGHT + 200);
 
         // Ajouter l'image de fond
         Texture background = new Texture("Background/logo-rpg-empire.png");
-        batch.draw(background, 550, 190, WORLD_WIDTH-250, WORLD_HEIGHT-50);
+        batch.draw(background, 1050, 250, 550, 500);
 
         // Dessiner les options du menu
         for (int i = 0; i < options.length; i++) {
@@ -108,7 +109,7 @@ public class MainMenuScreen implements Screen {
             } else {
                 customFont.setColor(Color.WHITE); // Blanc pour les autres
             }
-            customFont.draw(batch, options[i], WORLD_WIDTH / 2f - 50, WORLD_HEIGHT - 150 - i * 40);
+            customFont.draw(batch, options[i], WORLD_WIDTH / 2f + 100, WORLD_HEIGHT + 50 - i * 60);
         }
         batch.end();
 
@@ -153,7 +154,6 @@ public class MainMenuScreen implements Screen {
                     // Nouvelle Partie
                     playerNameField.setVisible(true);
                     Gdx.input.setInputProcessor(stage); // Activer le clavier virtuel
-                    stage.setKeyboardFocus(playerNameField); // Donner le focus
                     isEnteringName = true;
                     // Garder le nom du joueur dans une variable
                     playerName = playerNameField.getText();
