@@ -659,8 +659,17 @@ public abstract class Mob extends MOB {
      * @param player Le joueur cible.
      * @return True si le joueur est touché, sinon false.
      */
+    /**
+     * Détecte si l'attaque en cours touche le joueur.
+     *
+     * @param player Le joueur cible.
+     * @return True si le joueur est touché, sinon false.
+     */
     protected boolean detectCollisionWithPlayer(PlayerCharacter player) {
         Polygon attackHitbox = getAttackHitbox();
+        if (attackHitbox == null) {
+            return false;
+        }
         Rectangle playerBounds = player.getCollisionBounds();
 
         // Convertir la bounding box du joueur en polygone
@@ -681,6 +690,11 @@ public abstract class Mob extends MOB {
      *
      * @return La hitbox de l'attaque sous forme de Rectangle.
      */
+    /**
+     * Calcule la hitbox de l'attaque en cours, centrée sur le mob.
+     *
+     * @return La hitbox de l'attaque sous forme de Polygon.
+     */
     public Polygon getAttackHitbox() {
         if (currentAttack == null) {
             return null; // Aucun polygone à retourner
@@ -688,49 +702,29 @@ public abstract class Mob extends MOB {
         float width = currentAttack.getHitboxWidth();
         float height = currentAttack.getHitboxHeight();
 
-        // Obtenir la position du monstre
-        Vector2 mobPos = getPositionVector();
+        // Obtenir les bordures de collision du mob
+        Rectangle mobBounds = getCollisionBounds();
+        float mobCenterX = mobBounds.x + mobBounds.width / 2;
+        float mobCenterY = mobBounds.y + mobBounds.height / 2;
 
-        // Définir les sommets du polygone (un rectangle de base)
+        // Définir les sommets du polygone centré sur (0,0)
         float[] vertices = new float[] {
-            0, 0,           // Point inférieur gauche
-            width, 0,       // Point inférieur droit
-            width, height,  // Point supérieur droit
-            0, height       // Point supérieur gauche
+            -width / 2, -height / 2,  // Point inférieur gauche
+            width / 2, -height / 2,   // Point inférieur droit
+            width / 2, height / 2,    // Point supérieur droit
+            -width / 2, height / 2    // Point supérieur gauche
         };
 
         // Créer le polygone
         Polygon attackPolygon = new Polygon(vertices);
 
-        // Positionner le polygone à la position du monstre
-        attackPolygon.setPosition(mobPos.x, mobPos.y);
-
-        // Calculer l'angle de rotation en fonction de la direction
-        float rotationAngle = 0f;
-        switch (getFacingDirection()) {
-            case "UP":
-                rotationAngle = 0f;
-                attackPolygon.setPosition(mobPos.x - width / 2, mobPos.y + collisionComponent.getBoundingBox().height);
-                break;
-            case "DOWN":
-                rotationAngle = 180f;
-                attackPolygon.setPosition(mobPos.x + width / 2, mobPos.y);
-                break;
-            case "LEFT":
-                rotationAngle = 90f;
-                attackPolygon.setPosition(mobPos.x, mobPos.y + height / 2);
-                break;
-            case "RIGHT":
-                rotationAngle = -90f;
-                attackPolygon.setPosition(mobPos.x + collisionComponent.getBoundingBox().width, mobPos.y + height / 2);
-                break;
-        }
-
         // Définir le point d'origine pour la rotation (centre du polygone)
-        attackPolygon.setOrigin(width / 2, height / 2);
+        attackPolygon.setOrigin(0, 0);
 
-        // Appliquer la rotation
-        attackPolygon.rotate(rotationAngle);
+        // Pas de rotation nécessaire
+
+        // Positionner le polygone au centre de la bounding box du mob
+        attackPolygon.setPosition(mobCenterX, mobCenterY);
 
         return attackPolygon;
     }

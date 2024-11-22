@@ -60,7 +60,7 @@ public class Ogre extends Mob {
             0.5f, // Durée de l'attaque
             50f,  // Portée de l'attaque
             80f,  // Largeur de la hitbox
-            50f   // Hauteur de la hitbox
+            80f   // Hauteur de la hitbox
         );
         availableAttacks.add(basicAttack);
     }
