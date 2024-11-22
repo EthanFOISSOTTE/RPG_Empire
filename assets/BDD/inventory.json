@@ -599,7 +599,7 @@
 }
 {
 	class: com.empire.rpg.entity.Item
-	name: Divers 1
+	name: Astrales
 	id: {}
 	components: {
 		class: java.util.ImmutableCollections$MapN
@@ -614,9 +614,9 @@
 		}
 	}
 	type: Divers
-	quantity: 30
-	description: Blablabla
-	valeur: 10
+	quantity: 0
+	description: Pièces de monnaie de l'Empire
+	valeur: 1
 	states: false
 	style: "null"
 }

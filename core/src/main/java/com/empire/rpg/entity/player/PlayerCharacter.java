@@ -480,6 +480,9 @@ public class PlayerCharacter extends Player {
         if (currentState instanceof AttackingState) {
             return;
         }
+        if (Inventory.getShowInteractionFrame()){
+            return;
+        }
 
         Vector2 direction = new Vector2(0, 0);
 
