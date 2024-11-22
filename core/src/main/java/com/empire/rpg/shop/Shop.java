@@ -315,10 +315,11 @@ public class Shop {
                         Item selectedItem = currentItems.get(selectedObjectIndex);
 
                         if (selectedItem.getValeur() <= Inventory.getPiece()) {
+
+                            Inventory.setPiece(Inventory.getPiece() - selectedItem.getValeur());
+
                             // Ajouter ou mettre à jour l'item dans l'inventaire
                             addItemToInventory(selectedItem);
-
-                            Inventory.setPiece(Inventory.getPiece()- selectedItem.getValeur());
 
                             // Optionnel : Message pour informer que l'item a été ajouté
                             System.out.println(selectedItem.getName() + "l'objet a été acheté ");

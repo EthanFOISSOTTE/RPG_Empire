@@ -131,7 +131,7 @@
 		}
 	}
 	type: Armes
-	quantity: 7
+	quantity: 9
 	description: Blablabla
 	valeur: 30
 	states: false
@@ -154,7 +154,7 @@
 		}
 	}
 	type: Divers
-	quantity: 9969
+	quantity: 9789
 	description: Blablabla
 	valeur: 10
 	states: false
@@ -182,5 +182,51 @@
 	valeur: 20
 	states: false
 	style: "null"
+}
+{
+	class: com.empire.rpg.entity.Item
+	name: Lance en acier
+	id: {}
+	components: {
+		class: java.util.ImmutableCollections$MapN
+		com.empire.rpg.component.CollisionComponent: {
+			class: com.empire.rpg.component.CollisionComponent
+			isCollidable: true
+		}
+		com.empire.rpg.component.PositionComponent: {
+			class: com.empire.rpg.component.PositionComponent
+			x: 0
+			y: 0
+		}
+	}
+	type: Armes
+	quantity: 1
+	description: Blablabla
+	valeur: 30
+	states: false
+	style: lance
+}
+{
+	class: com.empire.rpg.entity.Item
+	name: Arc en bois
+	id: {}
+	components: {
+		class: java.util.ImmutableCollections$MapN
+		com.empire.rpg.component.CollisionComponent: {
+			class: com.empire.rpg.component.CollisionComponent
+			isCollidable: true
+		}
+		com.empire.rpg.component.PositionComponent: {
+			class: com.empire.rpg.component.PositionComponent
+			x: 0
+			y: 0
+		}
+	}
+	type: Armes
+	quantity: 1
+	description: Blablabla
+	valeur: 30
+	states: false
+	style: arc
 }
 ]}
