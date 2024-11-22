@@ -12,6 +12,7 @@ import com.empire.rpg.component.PositionComponent;
 import com.empire.rpg.CollisionManager;
 import com.empire.rpg.component.pathfinding.*;
 
+
 import com.empire.rpg.entity.MOB;
 import com.empire.rpg.entity.player.PlayerCharacter;
 
@@ -472,14 +473,42 @@ public abstract class Mob extends MOB {
      */
     public void printDeathInfo() {
         Map<String, Object> deathInfo = getDeathInfo();
+
+        // Déclarer des variables pour stocker les informations
+        String itemName = "";
+        int itemQuantity = 0;
+        String itemDescription = "";
+        String itemType = "";
+
+        // Récupérer les informations et les assigner aux variables correspondantes
+        for (Map.Entry<String, Object> entry : deathInfo.entrySet()) {
+            switch (entry.getKey()) {
+                case "Item-Name":
+                    itemName = (String) entry.getValue();  // Stocker le nom de l'item
+                    break;
+                case "Item-Quantity":
+                    itemQuantity = (int) entry.getValue();  // Stocker la quantité de l'item
+                    break;
+                case "Item-Description":
+                    itemDescription = (String) entry.getValue();  // Stocker la description de l'item
+                    break;
+                case "Item-Type":
+                    itemType = (String) entry.getValue();  // Stocker le type de l'item
+                    break;
+            }
+        }
+
+        // Afficher les informations stockées dans les variables
         System.out.println("----- Informations de Mort -----");
         System.out.printf("| %-20s | %-15s |\n", "Paramètre", "Valeur");
         System.out.println("--------------------------------");
-        for (Map.Entry<String, Object> entry : deathInfo.entrySet()) {
-            System.out.printf("| %-20s | %-15s |\n", entry.getKey(), entry.getValue());
-        }
+        System.out.printf("| %-20s | %-15s |\n", "Item-Name", itemName);
+        System.out.printf("| %-20s | %-15d |\n", "Item-Quantity", itemQuantity);
+        System.out.printf("| %-20s | %-15s |\n", "Item-Description", itemDescription);
+        System.out.printf("| %-20s | %-15s |\n", "Item-Type", itemType);
         System.out.println("--------------------------------");
     }
+
 
     /**
      * Gère la logique de mort du mob.

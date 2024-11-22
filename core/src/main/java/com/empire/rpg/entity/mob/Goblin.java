@@ -12,6 +12,7 @@ import com.empire.rpg.component.PositionComponent;
 import com.empire.rpg.CollisionManager;
 import com.empire.rpg.component.pathfinding.*;
 import com.empire.rpg.entity.player.PlayerCharacter;
+import com.empire.rpg.entity.player.Inventory.InventoryManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -166,6 +167,11 @@ public class Goblin extends Mob {
         info.put("Item-Description", "Peau de gobelin, un ingrédient commun.");
         info.put("Item-Quantity", 1);
         info.put("Item-Type", "divers");
+
+        // Sauvegarder l'item dans inventory.json
+        InventoryManager.saveItemToInventory(info);
+
         return info;
     }
+
 }
