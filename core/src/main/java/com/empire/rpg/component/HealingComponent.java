@@ -53,4 +53,5 @@ public class HealingComponent implements Component {
     public int getCurrentHealthPoints() {
         return 0;
     }
+
 }

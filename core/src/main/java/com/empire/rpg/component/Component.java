@@ -9,7 +9,7 @@ public interface Component {
      * Affecte le nombre de points de dégâts réduit par le composant.
      *
      * @return les dégâts réduits par le composant
-        */
+     */
 
     int getDamageReduction();
 
@@ -27,5 +27,4 @@ public interface Component {
      * @return les points de vie actuels
      */
     int getCurrentHealthPoints();
-
 }

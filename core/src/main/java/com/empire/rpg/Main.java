@@ -1,28 +1,25 @@
 package com.empire.rpg;
 
 import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.Input;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import com.empire.rpg.component.HealthComponent;
 import com.empire.rpg.component.PositionComponent;
-import com.empire.rpg.component.WeaponComponent;
+import com.empire.rpg.entity.Entity;
+import com.empire.rpg.entity.EntityManager;
 import com.empire.rpg.entity.player.PlayerCharacter;
-import com.empire.rpg.component.Component;
-import com.empire.rpg.entity.player.audio.SoundManager;
 import com.empire.rpg.debug.DebugRenderer;
 import com.empire.rpg.screen.*;
 import com.empire.rpg.ui.PlayerUI;
-
-
+import com.empire.rpg.utils.SaveData;
+import com.empire.rpg.utils.SaveManager;
 
 public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
@@ -31,14 +28,13 @@ public class Main extends ApplicationAdapter {
     private MapManager mapManager;
     private CollisionManager collisionManager;
     private PlayerCharacter player;
-    private SoundManager soundManager;
     private DebugRenderer debugRenderer;
     private PlayerUI playerUI;
     private Screen currentScreen;
-    private boolean animationFinished = false;
-    private boolean debugMode = false;
     private PauseScreen pauseScreen;
-
+    private EntityManager entityManager;
+    private String playerName = "Hero";
+    private boolean debugMode = false;
     private static final float WORLD_WIDTH = 854f;
     private static final float WORLD_HEIGHT = 480f;
     private static Main instance;
@@ -53,61 +49,114 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void create() {
-        // Charger l'écran d'introduction avec un Runnable pour afficher le menu principal
-        IntroScreen introScreen = new IntroScreen(() -> setScreen(new MainMenuScreen()));
-        setScreen(introScreen);
-
-
-        // Charger les ressources
+        // Initialisation
         batch = new SpriteBatch();
         camera = new OrthographicCamera();
         viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
-        pauseScreen = new PauseScreen();
+        debugRenderer = new DebugRenderer();
+        // Création du joueur
+        UUID playerId = UUID.randomUUID();
+        player = new PlayerCharacter(
+            2.0f,
+            playerId,
+            playerName,
+            Map.of(
+                HealthComponent.class, new HealthComponent(90, 100),
+                PositionComponent.class, new PositionComponent(4800f, 4800f)
+            )
+        );
+        entityManager = new EntityManager(player.getName()) {
+            @Override
+            public void createEntity(UUID id) {
+                new Entity(entityManager.getName(), Map.of(
+                    HealthComponent.class, new HealthComponent(100, 100),
+                    PositionComponent.class, new PositionComponent(0, 0)
+                ), id) {
+                    @Override
+                    public String getName() {
+                        return null;
+                    }
 
-        // Charger la carte et les collisions
+                    @Override
+                    public Entity addEntity() {
+                        return null;
+                    }
+
+                    @Override
+                    public Entity removeEntity(String name) {
+                        return null;
+                    }
+                };
+            }
+
+            @Override
+            public Entity addEntity() {
+                return null;
+            }
+        };
+
+
+
+
+        // Ajouter le joueur à l'EntityManager
+        entityManager.addEntity(playerId, player);
+        entityManager.setName(playerId, playerName);
+
+        // Initialisation des autres composants
         mapManager = new MapManager("rpg-map.tmx", camera);
         collisionManager = new CollisionManager(mapManager.getTiledMap());
-
-        // Création d'une map de composants avec PositionComponent et HealthComponent
-        Map<Class<? extends Component>, Component> components = Map.of(
-            HealthComponent.class, new HealthComponent(90, 100),
-            PositionComponent.class, new PositionComponent(4800f, 4800f)
-        );
-
-        // Création et initialisation de l'instance de PlayerCharacter
-        player = new PlayerCharacter(2.0f, UUID.randomUUID(), "Hero", components);
-
-        // Initialiser le débogueur
-        debugRenderer = new DebugRenderer();
-
-        // Initialiser l'UI du joueur
         playerUI = new PlayerUI(player);
+        pauseScreen = new PauseScreen(player,entityManager.getName());
 
-        // Mettre à jour la caméra sur le joueur
-        camera.position.set(player.getX(), player.getY(), 0);
-        camera.update();
+        // Charger l'écran principal
+        setScreen(new IntroScreen(() -> setScreen(new MainMenuScreen())));
     }
+
 
     public void setScreen(Screen screen) {
         currentScreen = screen;
-        if (!(currentScreen instanceof IntroScreen)) {
-            return;
+    }
+
+    public void updatePlayerName(String playerName) {
+        if (entityManager != null && player != null) {
+            entityManager.setName(player.getId(), playerName);
+            player.setName(playerName);
+        }
+    }
+
+    private void loadGame() {
+        SaveData data = SaveManager.loadGame();
+        if (data != null) {
+            player.setName(data.playerName);
+            player.setPosition(data.positionX, data.positionY);
+
+            HealthComponent health = (HealthComponent) player.getComponent(HealthComponent.class);
+            if (health != null) {
+                health.setCurrentHealthPoints(data.currentHealth);
+            } else {
+                System.err.println("Erreur : HealthComponent introuvable !");
+            }
+
+            pauseScreen.setPlayer(player); // Mise à jour du joueur dans PauseScreen
+            System.out.println("Jeu chargé : Nom=" + data.playerName + ", Position=(" + data.positionX + ", " + data.positionY + ")");
+        } else {
+            System.out.println("Aucune sauvegarde trouvée.");
         }
     }
 
     @Override
-    public void render () {
+    public void render() {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // Gestion de la touche Echap
+        // Gestion de la pause
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            pauseScreen.toggleVisibility(); // Basculer la visibilité du menu Pause
+            pauseScreen.toggleVisibility();
         }
 
-        // Si le menu Pause est visible, ne pas rendre le reste du jeu
+        // Rendu du menu pause
         if (pauseScreen.isVisible()) {
-            pauseScreen.render(null); // Passer `null` ou une instance de `Graphics` si nécessaire
+            pauseScreen.render(null);
             return;
         }
 
@@ -122,23 +171,22 @@ public class Main extends ApplicationAdapter {
         batch.end();
 
         mapManager.renderUpperLayers(camera);
+        playerUI.render(batch);
 
         if (debugMode) {
             debugRenderer.renderDebugBounds(camera, player, collisionManager);
         }
 
-        playerUI.render(batch);
-
         camera.position.set(player.getX(), player.getY(), 0);
         camera.update();
 
         if (currentScreen != null) {
-            currentScreen.render(Gdx.graphics.getDeltaTime());
+            currentScreen.render(deltaTime);
         }
     }
 
     @Override
-    public void resize ( int width, int height){
+    public void resize(int width, int height) {
         viewport.update(width, height);
         if (currentScreen != null) {
             currentScreen.resize(width, height);
@@ -146,13 +194,10 @@ public class Main extends ApplicationAdapter {
     }
 
     @Override
-    public void dispose () {
+    public void dispose() {
         batch.dispose();
         mapManager.dispose();
         player.dispose();
-        if (soundManager != null) {
-            soundManager.dispose();
-        }
         debugRenderer.dispose();
         playerUI.dispose();
 
@@ -161,5 +206,3 @@ public class Main extends ApplicationAdapter {
         }
     }
 }
-
-

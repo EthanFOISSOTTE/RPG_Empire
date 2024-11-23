@@ -7,7 +7,13 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.empire.rpg.component.HealthComponent;
+import com.empire.rpg.component.PositionComponent;
+import com.empire.rpg.entity.EntityManager;
+import com.empire.rpg.entity.player.PlayerCharacter;
 import com.empire.rpg.utils.FontUtils;
+import com.empire.rpg.utils.SaveData;
+import com.empire.rpg.utils.SaveManager;
 
 public class PauseScreen implements Screen {
     private boolean visible;
@@ -15,17 +21,21 @@ public class PauseScreen implements Screen {
     private BitmapFont font;
     private ShapeRenderer shapeRenderer;
     private Graphics g;
-    private final String[] options = {"Reprendre", "Quitter"};
+    private final String[] options = {"Reprendre", "Sauvegarder", "Quitter"};
     private int selectedOption = 0;
     private BitmapFont customFont;
     private BitmapFont customFontTitle;
+    private PlayerCharacter player;
+    private String playerName;
 
 
-    public PauseScreen() {
+    public PauseScreen(PlayerCharacter player, String playerName) {
         this.visible = false;
         this.batch = new SpriteBatch();
         this.font = new BitmapFont();
         this.shapeRenderer = new ShapeRenderer();
+        this.playerName = playerName;
+        this.player = player;
     }
 
     public void toggleVisibility() {
@@ -46,12 +56,37 @@ public class PauseScreen implements Screen {
         }
     }
 
+    private void saveGame() {
+        PositionComponent position = (PositionComponent) player.getComponent(PositionComponent.class);
+        HealthComponent health = (HealthComponent) player.getComponent(HealthComponent.class);
+
+        if (position != null && health != null) {
+            SaveData data = new SaveData(
+                player.getId(),
+                player.getName(),
+                position.getX(),
+                position.getY(),
+                health.getCurrentHealthPoints(),
+                health.getMaxHealthPoints()
+            );
+            SaveManager.saveGame(data);
+            System.out.println("Jeu sauvegardé : Nom=" + data.playerName + ", Position=(" + data.positionX + ", " + data.positionY + ")" +
+                ", Santé=" + data.currentHealth + "/" + data.maxHealth);
+        } else {
+            System.err.println("Impossible de sauvegarder : Composants manquants.");
+        }
+    }
+
+
     private void handleSelection() {
         switch (selectedOption) {
             case 0: // Reprendre
                 toggleVisibility();
                 break;
-            case 1: // Quitter
+            case 1: // Sauvegarder
+                saveGame();
+                break;
+            case 2: // Quitter
                 Gdx.app.exit();
                 break;
         }
@@ -71,6 +106,7 @@ public class PauseScreen implements Screen {
         batch.begin();
         customFontTitle = FontUtils.createCustomFont("SinisterRegular.ttf", 72, Color.RED);
         customFontTitle.draw(batch, "MENU PAUSE", 540,  500);
+
 
         customFont = FontUtils.createCustomFont("SinisterRegular.ttf", 48, Color.WHITE);
 
@@ -107,5 +143,9 @@ public class PauseScreen implements Screen {
     @Override
     public void dispose() {
 
+    }
+
+    public void setPlayer(PlayerCharacter player) {
+        this.player = player;
     }
 }

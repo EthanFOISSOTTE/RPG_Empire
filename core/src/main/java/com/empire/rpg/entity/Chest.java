@@ -19,10 +19,6 @@ public class Chest extends Entity{
         return name;
     }
 
-    @Override
-    public void setName(String name) {
-        this.name = name;
-    }
 
     @Override
     public Entity addEntity() {

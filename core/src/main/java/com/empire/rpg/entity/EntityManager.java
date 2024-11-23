@@ -1,5 +1,7 @@
 package com.empire.rpg.entity;
 
+import com.empire.rpg.entity.player.PlayerCharacter;
+
 import java.util.UUID;
 
 /**
@@ -50,9 +52,12 @@ public abstract class EntityManager extends EntityFactory {
      *
      * @param name Le nouveau nom de l'EntityManager.
      */
-    public void setName(String name) {
+    public void setName(UUID id, String name) {
         this.name = name;
     }
 
     public abstract Entity addEntity();
+
+    public void addEntity(UUID playerId, PlayerCharacter player) {
+    }
 }

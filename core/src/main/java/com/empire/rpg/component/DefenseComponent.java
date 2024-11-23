@@ -64,6 +64,7 @@ public class DefenseComponent implements Component {
         return 0;
     }
 
+
     /**
      * Définit la réduction des dégâts.
      *

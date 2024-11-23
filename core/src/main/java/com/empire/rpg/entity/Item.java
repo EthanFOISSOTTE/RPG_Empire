@@ -44,16 +44,6 @@ public class Item extends Entity {
     }
 
     /**
-     * Affecter un nouveau nom à l'item.
-     *
-     * @param name le nouveau nom de l'item.
-     */
-    @Override
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
      * Recuperer les categories d'item.
      *
      * @return les categories de l'item

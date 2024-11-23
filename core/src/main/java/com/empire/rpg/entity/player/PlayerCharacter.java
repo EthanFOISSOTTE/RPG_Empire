@@ -55,6 +55,8 @@ public class PlayerCharacter extends Player {
     private boolean movingRight;
     private boolean running;
     private AnimationState lastFacingDirection;
+    private PositionComponent positionComponent;
+    private String name;
 
     // Outils équipés par le joueur
     private Tool currentTool1; // Outil principal (main gauche)
@@ -74,6 +76,20 @@ public class PlayerCharacter extends Player {
 
     // File d'attaque des attaques à exécuter
     private Queue<AttackData> attackQueue;
+
+    public void setX(float x) {
+        PositionComponent position = (PositionComponent) getComponent(PositionComponent.class);
+        if (position != null) {
+            position.setX(x);
+        }
+    }
+
+    public void setY(float y) {
+        PositionComponent position = (PositionComponent) getComponent(PositionComponent.class);
+        if (position != null) {
+            position.setY(y);
+        }
+    }
 
     // Classe interne pour stocker les données d'une attaque en attente
     private class AttackData {
@@ -95,7 +111,10 @@ public class PlayerCharacter extends Player {
      * Constructeur par défaut qui initialise le joueur à la position (0,0) avec l'échelle par défaut.
      */
     public PlayerCharacter() {
-        this(Constants.PLAYER_SCALE, UUID.randomUUID(), "PlayerCharacter", new HashMap<>());
+        this(Constants.PLAYER_SCALE, UUID.randomUUID(), "PlayerCharacter", Map.of(
+            PositionComponent.class, new PositionComponent(0, 0),
+            HealthComponent.class, new HealthComponent(100, 100)
+        ));
     }
 
     /**
@@ -110,10 +129,11 @@ public class PlayerCharacter extends Player {
     public PlayerCharacter(float scale, UUID id, String name, Map<Class<? extends Component>, Component> components) {
         super(name, components, id); // Appel au constructeur de la superclasse
 
+
         // Vérifier la présence du PositionComponent
         PositionComponent position = (PositionComponent) components.get(PositionComponent.class);
         if (position == null) {
-            throw new IllegalArgumentException("PositionComponent is required");
+            throw new IllegalArgumentException("PositionComponent missing");
         }
 
         // Initialisation des composants visuels
@@ -673,4 +693,19 @@ public class PlayerCharacter extends Player {
         HealthComponent health = (HealthComponent) getComponent(HealthComponent.class);
         return health != null ? health.getMaxHealthPoints() : 0;
     }
+
+    public void setPosition(float x, float y) {
+    positionComponent.setX(x);
+    positionComponent.setY(y);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+
 }

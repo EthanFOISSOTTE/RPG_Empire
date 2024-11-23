@@ -14,47 +14,67 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import com.empire.rpg.Main;
+import com.empire.rpg.component.HealthComponent;
+import com.empire.rpg.component.PositionComponent;
+import com.empire.rpg.entity.EntityManager;
+import com.empire.rpg.entity.player.PlayerCharacter;
 import com.empire.rpg.utils.FontUtils;
+import com.empire.rpg.utils.SaveData;
+import com.empire.rpg.utils.SaveManager;
 
 public class MainMenuScreen implements Screen {
     private SpriteBatch batch;
     private int selectedOption = 0;
-    private final String[] options = new String[]{"Nouvelle Partie", "Quitter le jeu"};
+    private final String[] options = new String[]{"Nouvelle Partie", "Charger la dernière partie", "Quitter le jeu"};
     private TextField playerNameField = null;
     private String playerName = "";
-    private Stage stage;
     private Skin skin;
     private BitmapFont customFont;
     private BitmapFont customFontTitle;
     private boolean isEnteringName = false; // Indique si le joueur est en train d'entrer son nom
-
+    private PlayerCharacter player = new PlayerCharacter();
+    private EntityManager entityManager;
+    private Stage stage;
+    private ScreenViewport screenViewport;
+    private String playerNameSend;
     private static final float WORLD_WIDTH = 854f;
     private static final float WORLD_HEIGHT = 480f;
 
+
     @Override
-    public void show() {
-        batch = new SpriteBatch();
+public void show() {
+    batch = new SpriteBatch();
 
-        // Charger une police personnalisée
-        try {
-            customFont = FontUtils.createCustomFont("SinisterRegular.ttf", 42, Color.WHITE);
-            customFont = new BitmapFont();
-            customFont.setColor(Color.WHITE);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // Charger le skin
-        skin = new Skin(Gdx.files.internal("uiskin.json"));
-
-        // Création d'un style personnalisé pour le TextField
-        playerNameField.setVisible(false); // Le champ est masqué par défaut
-        stage.addActor(playerNameField);
-
-        // Activer le clavier virtuel
-        Gdx.input.setInputProcessor(stage);
-
+    // Charger une police personnalisée
+    try {
+        customFont = FontUtils.createCustomFont("SinisterRegular.ttf", 42, Color.WHITE);
+        customFont.setColor(Color.WHITE);
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+
+    // Charger le skin
+    skin = new Skin(Gdx.files.internal("uiskin.json"));
+
+    // Initialiser la scène et le champ de texte
+    stage = new Stage(new ScreenViewport());
+    TextField.TextFieldStyle customStyle = new TextField.TextFieldStyle();
+    customStyle.font = customFont;
+    customStyle.fontColor = Color.WHITE;
+    customStyle.cursor = skin.getDrawable("cursor");
+    customStyle.selection = skin.getDrawable("selection");
+    customStyle.background = skin.getDrawable("textfield");
+    playerNameField = new TextField("", customStyle);
+    playerNameField.setMessageText("Entrez votre nom...");
+    playerNameField.setAlignment(Align.center);
+    playerNameField.setSize(400, 60);
+    playerNameField.setPosition(WORLD_WIDTH / 2f + 150, WORLD_HEIGHT / 2f - 70);
+    playerNameField.setVisible(false); // Le champ est masqué par défaut
+    stage.addActor(playerNameField);
+
+    // Activer le clavier virtuel
+    Gdx.input.setInputProcessor(stage);
+}
 
     @Override
     public void render(float delta) {
@@ -124,9 +144,25 @@ public class MainMenuScreen implements Screen {
         stage.draw();
     }
 
+    private void loadGame() {
+        SaveData data = SaveManager.loadGame();
+        if (data != null) {
+            // Mettre à jour les données du joueur
+            player = new PlayerCharacter();
+            player.setName(data.playerName);
+            player.setX(data.positionX);
+            player.setY(data.positionY);
+            player.getComponent(HealthComponent.class).setCurrentHealthPoints(data.currentHealth);
+            player.getMaxHealth();
+            // Démarrer le jeu avec les données sauvegardées
+            Main.getInstance().setScreen(new GameScreen(player, data.playerName));
+        }
+    }
 
     @Override
     public void resize(int width, int height) {
+        // Mettre à jour la taille de la fenêtre
+        stage = new Stage(new ScreenViewport());
         stage.getViewport().update(width, height, true);
     }
 
@@ -159,11 +195,17 @@ public class MainMenuScreen implements Screen {
                     playerName = playerNameField.getText();
                     // Démarre le jeu si le joueur appuie sur Enter & a entré un nom
                     if (!playerName.isEmpty() && Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-                        // Démarrer le jeu avec le nom du joueur
-                        Main.getInstance().setScreen(new GameScreen(playerName));
+                        // Mettre à jour le nom dans Main
+                        Main.getInstance().updatePlayerName(playerName);
+                        // Démarrer le jeu
+                        Main.getInstance().setScreen(new GameScreen(player, playerName));
                     }
                     break;
                 case 1:
+                    // Charger le jeu
+                    loadGame();
+                    break;
+                case 2:
                     // Quitter le jeu
                     Gdx.app.exit();
                     break;

@@ -17,6 +17,7 @@ import com.empire.rpg.MapManager;
 import com.empire.rpg.component.HealthComponent;
 import com.empire.rpg.component.PositionComponent;
 import com.empire.rpg.component.WeaponComponent;
+import com.empire.rpg.entity.EntityManager;
 import com.empire.rpg.entity.player.PlayerCharacter;
 import com.empire.rpg.component.Component;
 import com.empire.rpg.entity.player.audio.SoundManager;
@@ -27,6 +28,7 @@ import com.empire.rpg.screen.Screen;
 import com.empire.rpg.ui.PlayerUI;
 
 public class GameScreen extends ApplicationAdapter implements Screen{
+    private final EntityManager entityManager;
     private SpriteBatch batch;
     private OrthographicCamera camera;
     private FitViewport viewport;
@@ -41,16 +43,27 @@ public class GameScreen extends ApplicationAdapter implements Screen{
     private boolean animationFinished = false;
     private boolean debugMode = false;
     private PauseScreen pauseScreen;
+    private float positionX;
+    private float positionY;
+    private int currentHealth;
+    private int maxHealth;
 
 
     private static final float WORLD_WIDTH = 854f;
     private static final float WORLD_HEIGHT = 480f;
 
-    public GameScreen(String playerName) {
+    public GameScreen(EntityManager entityManager, String playerName) {
         // Charger l'écran d'introduction avec un Runnable pour afficher le menu principal
         IntroScreen introScreen = new IntroScreen(() -> setScreen(new MainMenuScreen()));
         setScreen(introScreen);
+        this.entityManager = entityManager;
         this.playerName = playerName;
+        this.positionX = positionX;
+        this.positionY = positionY;
+        this.currentHealth = currentHealth;
+        this.maxHealth = maxHealth;
+
+
     }
 
 
@@ -62,31 +75,12 @@ public class GameScreen extends ApplicationAdapter implements Screen{
         camera = new OrthographicCamera();
         viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
 
-        // Charger la carte et les collisions
-        mapManager = new MapManager("rpg-map.tmx", camera);
-        collisionManager = new CollisionManager(mapManager.getTiledMap());
-
-        // Création d'une map de composants avec PositionComponent et HealthComponent
-        Map<Class<? extends Component>, Component> components = Map.of(
-            HealthComponent.class, new HealthComponent(90, 100),
-            PositionComponent.class, new PositionComponent(4800f, 4800f)
-        );
-
-        // Création et initialisation de l'instance de PlayerCharacter
-        player = new PlayerCharacter(2.0f, UUID.randomUUID(), "Hero", components);
-
-        // Initialiser le débogueur
-        debugRenderer = new DebugRenderer();
-
-        // Initialiser l'UI du joueur
-        playerUI = new PlayerUI(player);
-
         // Mettre à jour la caméra sur le joueur
         camera.position.set(player.getX(), player.getY(), 0);
         camera.update();
 
         // Initialiser le menu pause
-        pauseScreen = new PauseScreen();
+        pauseScreen = new PauseScreen(player,playerName);
 
     }
 
@@ -142,7 +136,7 @@ public class GameScreen extends ApplicationAdapter implements Screen{
             if (currentScreen instanceof PauseScreen) {
                 ((PauseScreen) currentScreen).toggleVisibility();
             } else {
-                setScreen(new PauseScreen());
+                setScreen(new PauseScreen(player, player.getName()));
             }
         }
         Gdx.gl.glClearColor(0, 0, 0, 1);
