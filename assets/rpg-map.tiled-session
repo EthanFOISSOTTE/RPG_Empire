@@ -79,6 +79,7 @@
             "scaleInEditor": 1.5
         },
         "Spritesheets/A2_Terrain_Red.tsx": {
+            "dynamicWrapping": false,
             "scaleInDock": 1,
             "scaleInEditor": 2
         },
@@ -288,6 +289,7 @@
     ],
     "project": "rpg-map.tiled-project",
     "recentFiles": [
+        "Spritesheets/A2_Terrain_And_Misc.tsx",
         "Spritesheets/Big_Misc.tsx",
         "Spritesheets/Glowing_Tree.tsx",
         "Spritesheets/Decoration.tsx",
@@ -298,8 +300,7 @@
         "Spritesheets/Flags_Banner.tsx",
         "Spritesheets/Fantasy_Switches.tsx",
         "Spritesheets/Fantasy_Roofs.tsx",
-        "Spritesheets/Fantasy_Outside_D.tsx",
-        "Spritesheets/Fantasy_Outside_D_Red.tsx"
+        "Spritesheets/Fantasy_Outside_D.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
