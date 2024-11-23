@@ -46,7 +46,7 @@ public class Lucas extends Mob {
             "Lucas",
             UUID.randomUUID(),
             initializeComponents(position),
-            200f,
+            400f,
             new FollowPathfindingStrategy(MobFactory.getPathfinding()), // Stratégie de suivi du joueur
             new GoToPathfindingStrategy(MobFactory.getPathfinding()), // Stratégie pour retourner au spawn
             collisionManager
