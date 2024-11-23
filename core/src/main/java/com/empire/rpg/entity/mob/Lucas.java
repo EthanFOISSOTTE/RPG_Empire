@@ -58,7 +58,7 @@ public class Lucas extends Mob {
         // Définir l'attaque du Goblin
         MobAttack basicAttack = new MobAttack(
             "goblin_basic_attack",
-            1f, // Dégâts infligés
+            95f, // Dégâts infligés
             1f,  // Cooldown en secondes
             0.5f, // Durée de l'attaque
             80f,  // Portée de l'attaque
