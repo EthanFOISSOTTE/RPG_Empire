@@ -46,7 +46,7 @@ public class Lucas extends Mob {
             "Lucas",
             UUID.randomUUID(),
             initializeComponents(position),
-            400f,
+            200f,
             new FollowPathfindingStrategy(MobFactory.getPathfinding()), // Stratégie de suivi du joueur
             new GoToPathfindingStrategy(MobFactory.getPathfinding()), // Stratégie pour retourner au spawn
             collisionManager
@@ -58,7 +58,7 @@ public class Lucas extends Mob {
         // Définir l'attaque du Goblin
         MobAttack basicAttack = new MobAttack(
             "goblin_basic_attack",
-            95f, // Dégâts infligés
+            1f, // Dégâts infligés
             1f,  // Cooldown en secondes
             0.5f, // Durée de l'attaque
             80f,  // Portée de l'attaque
@@ -79,40 +79,48 @@ public class Lucas extends Mob {
     @Override
     protected void initializeTextures() {
         // Charger et diviser les textures d'idle
-        idleTexture = new Texture("mobs/lucas/demon1.png");
+        idleTexture = new Texture("mobs/lucas/lucas.png");
         TextureRegion[][] idleSplit = TextureRegion.split(idleTexture, 64, 64);
 
-        idleUp = new Animation<>(0.1f, idleSplit[1][0]);
-        idleDown = new Animation<>(0.1f, idleSplit[0][0]);
-        idleLeft = new Animation<>(0.1f, idleSplit[2][0]);
-        idleRight = new Animation<>(0.1f, idleSplit[3][0]);
+        idleUp = new Animation<>(0.5f, idleSplit[1][0], idleSplit[1][1]);
+        idleDown = new Animation<>(0.5f, idleSplit[0][0], idleSplit[0][1]);
+        idleLeft = new Animation<>(0.5f, idleSplit[2][0], idleSplit[2][1]);
+        idleRight = new Animation<>(0.5f, idleSplit[3][0], idleSplit[3][1]);
 
         // Charger et diviser les textures de déplacement
-        runTexture = new Texture("mobs/lucas/demon1.png");
+        runTexture = new Texture("mobs/lucas/lucas.png");
         TextureRegion[][] runSplit = TextureRegion.split(runTexture, 64, 64);
 
-        runUp = new Animation<>(0.05f,
-            runSplit[5][0], runSplit[5][1], runSplit[5][6],
-            runSplit[5][3], runSplit[5][4], runSplit[5][7]);
-        runDown = new Animation<>(0.05f,
-            runSplit[4][0], runSplit[4][1], runSplit[4][6],
-            runSplit[4][3], runSplit[4][4], runSplit[4][7]);
-        runLeft = new Animation<>(0.05f,
-            runSplit[7][0], runSplit[7][1], runSplit[7][6],
-            runSplit[7][3], runSplit[7][4], runSplit[7][7]);
-        runRight = new Animation<>(0.05f,
-            runSplit[6][0], runSplit[6][1], runSplit[6][6],
-            runSplit[6][3], runSplit[6][4], runSplit[6][7]);
+        runUp = new Animation<>(0.083f,
+            runSplit[5][0], runSplit[5][1], runSplit[5][3],
+            runSplit[5][3], runSplit[5][4], runSplit[5][5]);
+        runDown = new Animation<>(0.083f,
+            runSplit[4][0], runSplit[4][1], runSplit[4][3],
+            runSplit[4][3], runSplit[4][4], runSplit[4][5]);
+        runLeft = new Animation<>(0.083f,
+            runSplit[7][0], runSplit[7][1], runSplit[7][3],
+            runSplit[7][3], runSplit[7][4], runSplit[7][5]);
+        runRight = new Animation<>(0.083f,
+            runSplit[6][0], runSplit[6][1], runSplit[6][3],
+            runSplit[6][3], runSplit[6][4], runSplit[6][5]);
 
         // Charger et diviser les textures d'attaque
-        attackTexture = new Texture("mobs/lucas/demon1.png");
+        attackTexture = new Texture("mobs/lucas/lucas.png");
         TextureRegion[][] attackSplit = TextureRegion.split(attackTexture, 64, 64);
 
         // Créer les animations d'attaque pour chaque direction
-        attackUp = new Animation<>(0.05f, attackSplit[5][6]);
-        attackDown = new Animation<>(0.05f, attackSplit[4][6]);
-        attackLeft = new Animation<>(0.05f, attackSplit[7][6]);
-        attackRight = new Animation<>(0.05f, attackSplit[6][6]);
+        attackUp = new Animation<>(0.083f,
+            attackSplit[1][2], attackSplit[1][3], attackSplit[1][4],
+            attackSplit[1][5], attackSplit[1][6], attackSplit[1][7]);
+        attackDown = new Animation<>(0.083f,
+            attackSplit[0][2], attackSplit[0][3], attackSplit[0][4],
+            attackSplit[0][5], attackSplit[0][6], attackSplit[0][7]);
+        attackLeft = new Animation<>(0.083f,
+            attackSplit[3][2], attackSplit[3][3], attackSplit[3][4],
+            attackSplit[3][5], attackSplit[3][6], attackSplit[3][7]);
+        attackRight = new Animation<>(0.083f,
+            attackSplit[2][2], attackSplit[2][3], attackSplit[2][4],
+            attackSplit[2][5], attackSplit[2][6], attackSplit[2][7]);
 
         // Initialiser la texture courante
         currentTexture = idleDown.getKeyFrame(0, true);
