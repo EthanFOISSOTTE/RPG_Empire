@@ -50,7 +50,7 @@ public class PositionComponent implements Component {
     /**
      * Affiche la position actuelle.
      */
-    public void getPosition() {
+    public void printPosition() {
         System.out.println("X: " + x + " Y: " + y);
     }
 
@@ -66,7 +66,7 @@ public class PositionComponent implements Component {
     }
 
     /**
-     * Obtient la réduction des dégâts.
+     * Retourne la réduction de dégâts.
      *
      * @return Toujours 0 pour ce composant.
      */
@@ -86,7 +86,7 @@ public class PositionComponent implements Component {
     }
 
     /**
-     * Obtient les points de vie actuels.
+     * Retourne les points de vie actuels.
      *
      * @return Toujours 0 pour ce composant.
      */

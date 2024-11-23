@@ -6,28 +6,95 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.empire.rpg.player.Player;
+import com.badlogic.gdx.utils.viewport.Viewport;
+import com.badlogic.gdx.Input;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+import com.empire.rpg.component.HealthComponent;
+import com.empire.rpg.component.PositionComponent;
+import com.empire.rpg.entity.player.PlayerCharacter;
+import com.empire.rpg.component.Component;
+import com.empire.rpg.entity.player.audio.SoundManager;
+import com.empire.rpg.debug.DebugRenderer;
+import com.empire.rpg.map.CollisionManager;
+import com.empire.rpg.map.MapManager;
+import com.empire.rpg.map.MobManager;
+import com.empire.rpg.map.ZoneManager;
+import com.empire.rpg.ui.PlayerUI;
+import com.empire.rpg.ui.MobUI;
+import com.empire.rpg.ui.ZoneUI;
+import com.empire.rpg.entity.mob.MobFactory;
+import com.empire.rpg.component.pathfinding.Pathfinding;
+import com.empire.rpg.entity.mob.Mob;
 
 public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
     private OrthographicCamera camera;
     private FitViewport viewport;
-    private Player player;
     private MapManager mapManager;
     private CollisionManager collisionManager;
+    private CollisionHandler collisionHandler;
+    private PlayerCharacter player;
+    private PlayerUI playerUI;
+    private SoundManager soundManager;
+    private Pathfinding pathfinding;
+    private MobManager mobManager;
+    private MobUI mobUI;
+    private ZoneManager zoneManager;
+    private ZoneUI zoneUI;
+    private OrthographicCamera uiCamera;
+    private Viewport uiViewport;
 
+    private DebugRenderer debugRenderer;
+    private boolean debugMode = false;
+
+    // Taille de l'écran de jeu (16:9 | 480p)
     private static final float WORLD_WIDTH = 854f;
     private static final float WORLD_HEIGHT = 480f;
 
+    // Dimensions virtuelles de l'UI
+    private static final float UI_WIDTH = 1280f;
+    private static final float UI_HEIGHT = 720f;
+
     @Override
     public void create() {
+        Gdx.input.setCursorCatched(true);
         batch = new SpriteBatch();
         camera = new OrthographicCamera();
         viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
 
+        // Initialiser la caméra et le Viewport de l'UI
+        uiCamera = new OrthographicCamera();
+        uiViewport = new FitViewport(UI_WIDTH, UI_HEIGHT, uiCamera);
+
+        // Charger la carte et les collisions
         mapManager = new MapManager("rpg-map.tmx", camera);
         collisionManager = new CollisionManager(mapManager.getTiledMap());
-        player = new Player(collisionManager);
+
+        // Initialiser collisionHandler
+        collisionHandler = new CollisionHandler(collisionManager);
+
+        // Initialiser le pathfinding
+        pathfinding = new Pathfinding(collisionManager);
+        // Définit le pathfinding global pour tous les mobs
+        MobFactory.setPathfinding(pathfinding);
+
+        // Initialiser le MobManager
+        mobManager = new MobManager(collisionManager);
+        // Initialiser le MobUI
+        mobUI = new MobUI();
+
+        // Initialiser le ZoneManager et charger les zones
+        zoneManager = new ZoneManager();
+        zoneManager.loadZonesFromMap(mapManager.getTiledMap());
+
+        // Initialiser le débogueur
+        debugRenderer = new DebugRenderer();
+
+        // Appeler initializeGame() pour initialiser le joueur et l'UI
+        initializeGame();
     }
 
     @Override
@@ -35,35 +102,154 @@ public class Main extends ApplicationAdapter {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // Mise à jour du joueur
-        player.update(Gdx.graphics.getDeltaTime());
-
-        // La caméra suit la position du joueur
-        camera.position.set(player.getPosition().x, player.getPosition().y, 0);
-        camera.update();
-
-        // Rendre les couches inférieures (sous le joueur)
+        // Rendre les couches inférieures (en-dessous du joueur)
         mapManager.renderLowerLayers(camera);
 
-        // Démarrer le batch pour dessiner le joueur
+        // Mettre à jour le joueur
+        float deltaTime = Gdx.graphics.getDeltaTime();
+        player.update(deltaTime, collisionManager);
+
+        // Vérifier si le joueur est mort
+        if (player.isDead()) {
+            resetGame();
+            return; // Arrêter le rendu pour cette frame
+        }
+
+        // Mettre à jour les mobs
+        for (Mob mob : Mob.allMobs) {
+            mob.update(deltaTime, player, camera);
+        }
+        collisionHandler.handleCollisions(player, Mob.allMobs);
+
+        // Rendre les mobs et le joueur
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-        player.render(batch); // Rendre le joueur sans vérification de collision
+        for (Mob mob : Mob.allMobs) {
+            batch.draw(
+                mob.getCurrentTexture(),
+                mob.getPosition().x + mob.getOffsetX(),
+                mob.getPosition().y + mob.getOffsetY(),
+                mob.getCurrentTexture().getRegionWidth() * mob.getScale(),
+                mob.getCurrentTexture().getRegionHeight() * mob.getScale()
+            );
+        }
+        player.render(batch);
+        for (Mob mob : Mob.allMobs) {
+            // Rendu de la barre de vie du mob
+            mobUI.render(batch, mob);
+        }
         batch.end();
 
         // Rendre les couches supérieures (au-dessus du joueur)
         mapManager.renderUpperLayers(camera);
+
+        // Activer/Désactiver le mode de débogage
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F1)) {
+            debugMode = !debugMode;
+        }
+        if (debugMode) {
+            debugRenderer.renderDebugBounds(camera, player, collisionManager);
+        }
+
+        // Mettre à jour la ZoneUI
+        zoneUI.update();
+
+        // Rendre l'UI du joueur et de la zone
+        uiViewport.apply();
+        batch.setProjectionMatrix(uiCamera.combined);
+        batch.begin();
+        playerUI.render(batch);
+        zoneUI.render(batch);
+        batch.end();
+
+        // Mettre à jour la caméra pour suivre le joueur
+        camera.position.set(player.getX(), player.getY(), 0);
+        camera.update();
     }
 
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
+        uiViewport.update(width, height, true);
+    }
+
+    private void resetGame() {
+        System.out.println("Redémarrage du jeu...");
+
+        // Dispose des ressources existantes
+        if (player != null) {
+            player.dispose();
+            player = null;
+        }
+        if (playerUI != null) {
+            playerUI.dispose();
+            playerUI = null;
+        }
+        if (zoneUI != null) {
+            zoneUI.dispose();
+            zoneUI = null;
+        }
+        // Disposer les mobs
+        for (Mob mob : Mob.allMobs) {
+            mob.dispose();
+        }
+        Mob.allMobs.clear();
+
+        // Appeler initializeGame() pour recréer le joueur et l'UI
+        initializeGame();
+    }
+
+    private void initializeGame() {
+        // Création d'une map de composants avec PositionComponent et HealthComponent
+        Map<Class<? extends Component>, Component> components = new HashMap<>();
+        components.put(HealthComponent.class, new HealthComponent(100, 100));
+        components.put(PositionComponent.class, new PositionComponent(4800f, 4800f));
+
+        // Recharger les mobs depuis la carte
+        mobManager.loadMobsFromMap(mapManager.getTiledMap());
+
+        // Création et initialisation de l'instance de PlayerCharacter
+        player = new PlayerCharacter(2.0f, UUID.randomUUID(), "Hero", components);
+
+        // Initialiser l'UI du joueur
+        playerUI = new PlayerUI(player, UI_WIDTH, UI_HEIGHT);
+
+        // Initialiser le ZoneUI
+        zoneUI = new ZoneUI(player, zoneManager, UI_WIDTH, UI_HEIGHT);
+
+        // Mettre à jour la caméra sur le joueur
+        camera.position.set(player.getX(), player.getY(), 0);
+        camera.update();
     }
 
     @Override
     public void dispose() {
         batch.dispose();
         mapManager.dispose();
-        player.dispose();
+        if (player != null) {
+            player.dispose();
+        }
+        if (playerUI != null) {
+            playerUI.dispose();
+        }
+        if (zoneUI != null) {
+            zoneUI.dispose();
+        }
+        if (pathfinding != null) {
+            pathfinding.dispose();
+        }
+        if (debugRenderer != null) {
+            debugRenderer.dispose();
+        }
+        if (mobUI != null) {
+            mobUI.dispose();
+        }
+        if (soundManager != null) {
+            soundManager.dispose();
+        }
+        for (Mob mob : Mob.allMobs) {
+            mob.dispose();
+        }
+        Mob.allMobs.clear();
     }
 }

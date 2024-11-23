@@ -1,5 +1,6 @@
 package com.empire.rpg.entity;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.empire.rpg.component.CollisionComponent;
 import com.empire.rpg.component.Component;
 import com.empire.rpg.component.MovementComponent;
@@ -25,7 +26,7 @@ public class PNJ extends Entity {
         return new PNJ(name, Map.of(
             PositionComponent.class, new PositionComponent(0, 0),
             MovementComponent.class, new MovementComponent(1.5f, "north"),
-            CollisionComponent.class, new CollisionComponent(true)
+            CollisionComponent.class, new CollisionComponent(true, new Rectangle(0, 0, 32, 32))
         ), UUID.randomUUID(), "Hello", 0);
     }
 

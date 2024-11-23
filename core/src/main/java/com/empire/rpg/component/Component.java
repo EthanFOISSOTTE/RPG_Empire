@@ -6,25 +6,23 @@ package com.empire.rpg.component;
 public interface Component {
 
     /**
-     * Affecte le nombre de points de dégâts réduit par le composant.
+     * Retourne la réduction de dégâts.
      *
-     * @return les dégâts réduits par le composant
-        */
-
+     * @return Réduction de dégâts (toujours 0 dans cette implémentation).
+     */
     int getDamageReduction();
 
     /**
-     * Affecte le nombre de points de dégâts réduit par le composant.
+     * Définit les points de vie actuels.
      *
-     * @param i les dégâts réduits par le composant
+     * @param i Les nouveaux points de vie.
      */
-
     void setCurrentHealthPoints(int i);
 
     /**
-     * Retourne les points de vie actuels du composant.
+     * Retourne les points de vie actuels.
      *
-     * @return les points de vie actuels
+     * @return Points de vie actuels.
      */
     int getCurrentHealthPoints();
 }
