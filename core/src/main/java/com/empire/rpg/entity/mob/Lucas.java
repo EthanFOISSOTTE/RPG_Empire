@@ -84,8 +84,8 @@ public class Lucas extends Mob {
 
         idleUp = new Animation<>(0.5f, idleSplit[1][0], idleSplit[1][1]);
         idleDown = new Animation<>(0.5f, idleSplit[0][0], idleSplit[0][1]);
-        idleLeft = new Animation<>(0.5f, idleSplit[2][0], idleSplit[2][1]);
-        idleRight = new Animation<>(0.5f, idleSplit[3][0], idleSplit[3][1]);
+        idleLeft = new Animation<>(0.5f, idleSplit[3][0], idleSplit[3][1]);
+        idleRight = new Animation<>(0.5f, idleSplit[2][0], idleSplit[2][1]);
 
         // Charger et diviser les textures de déplacement
         runTexture = new Texture("mobs/lucas/lucas.png");
