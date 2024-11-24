@@ -5,14 +5,14 @@
 	id: {}
 	components: {
 		class: java.util.ImmutableCollections$MapN
+		com.empire.rpg.component.CollisionComponent: {
+			class: com.empire.rpg.component.CollisionComponent
+			isCollidable: true
+		}
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent
 			x: 0
 			y: 0
-		}
-		com.empire.rpg.component.CollisionComponent: {
-			class: com.empire.rpg.component.CollisionComponent
-			isCollidable: true
 		}
 	}
 	type: Consommable
@@ -28,18 +28,18 @@
 	id: {}
 	components: {
 		class: java.util.ImmutableCollections$MapN
+		com.empire.rpg.component.CollisionComponent: {
+			class: com.empire.rpg.component.CollisionComponent
+			isCollidable: true
+		}
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent
 			x: 0
 			y: 0
 		}
-		com.empire.rpg.component.CollisionComponent: {
-			class: com.empire.rpg.component.CollisionComponent
-			isCollidable: true
-		}
 	}
 	type: Divers
-	quantity: 2130
+	quantity: 2070
 	description: Blablablazf
 	valeur: 0
 	states: false
@@ -51,18 +51,18 @@
 	id: {}
 	components: {
 		class: java.util.ImmutableCollections$MapN
+		com.empire.rpg.component.CollisionComponent: {
+			class: com.empire.rpg.component.CollisionComponent
+			isCollidable: true
+		}
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent
 			x: 0
 			y: 0
 		}
-		com.empire.rpg.component.CollisionComponent: {
-			class: com.empire.rpg.component.CollisionComponent
-			isCollidable: true
-		}
 	}
 	type: Armes
-	quantity: 2
+	quantity: 4
 	description: Blablabla
 	valeur: 30
 	states: false
