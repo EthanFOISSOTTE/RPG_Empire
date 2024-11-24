@@ -188,8 +188,6 @@ public class GameScreen extends ApplicationAdapter implements Screen{
 
     @Override
     public void dispose () {
-        batch.dispose();
-        mapManager.dispose();
         player.dispose();
         if (soundManager != null) {
             soundManager.dispose();
