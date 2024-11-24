@@ -10,13 +10,12 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.Input;
-import java.util.HashMap;
+
 import java.util.Map;
 import java.util.UUID;
 
 import com.empire.rpg.component.HealthComponent;
 import com.empire.rpg.component.PositionComponent;
-import com.empire.rpg.component.WeaponComponent;
 import com.empire.rpg.entity.player.PlayerCharacter;
 import com.empire.rpg.component.Component;
 import com.empire.rpg.entity.player.audio.SoundManager;
@@ -29,13 +28,9 @@ import com.empire.rpg.shop.Shop;
 import com.empire.rpg.shop.Vente;
 
 
-
-
-
 public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
     private OrthographicCamera camera;
-    private FitViewport viewport;
     private MapManager mapManager;
     private CollisionManager collisionManager;
     private PlayerCharacter player;
@@ -50,15 +45,6 @@ public class Main extends ApplicationAdapter {
     private static final float WORLD_WIDTH = 854f;
     private static final float WORLD_HEIGHT = 480f;
     private static Main instance;
-
-    public Main() {
-        instance = this;
-    }
-
-    public static Main getInstance() {
-        return instance;
-    }
-
     //inventaire
     private Inventory inventaire; // Instance de l'inventaire
     private boolean showInteractionFrame = false;
@@ -75,6 +61,15 @@ public class Main extends ApplicationAdapter {
     //Shop
     private Vente vente; // Instance du shop
     private boolean showVenteFrame = false;
+    public static Main getInstance() {
+        return instance;
+    }
+
+
+
+    public static void setInstance(Main instance) {
+        Main.instance = instance;
+    }
 
     @Override
     public void create() {
@@ -83,10 +78,11 @@ public class Main extends ApplicationAdapter {
         setScreen(introScreen);
 
 
+
         // Charger les ressources
         batch = new SpriteBatch();
         camera = new OrthographicCamera();
-        viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
+        FitViewport viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
         pauseScreen = new PauseScreen();
         shapeRenderer = new ShapeRenderer(); // Initialisation de ShapeRenderer
         font = new BitmapFont();
@@ -99,7 +95,7 @@ public class Main extends ApplicationAdapter {
         // Création d'une map de composants avec PositionComponent et HealthComponent
         Map<Class<? extends Component>, Component> components = Map.of(
             HealthComponent.class, new HealthComponent(90, 100),
-            PositionComponent.class, new PositionComponent(1306f,1831f)
+            PositionComponent.class, new PositionComponent(1306f, 1831f)
         );
 
         // Création et initialisation de l'instance de PlayerCharacter
@@ -146,12 +142,9 @@ public class Main extends ApplicationAdapter {
     }
 
     @Override
-    public void render () {
+    public void render() {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        public void render() {
-            Gdx.gl.glClearColor(0, 0, 0, 1);
-            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // Gestion de la touche Echap
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
@@ -163,115 +156,67 @@ public class Main extends ApplicationAdapter {
             pauseScreen.render(null); // Passer `null` ou une instance de `Graphics` si nécessaire
             return;
         }
-
-        // Rendu normal du jeu
+        // Rendre les couches inférieures (en-dessous du joueur)
         mapManager.renderLowerLayers(camera);
+
+        // Mettre à jour le joueur
         float deltaTime = Gdx.graphics.getDeltaTime();
         player.update(deltaTime, collisionManager);
-            // Rendre les couches inférieures (en-dessous du joueur)
-            mapManager.renderLowerLayers(camera);
 
-            // Mettre à jour le joueur
-            float deltaTime = Gdx.graphics.getDeltaTime();
-            player.update(deltaTime, collisionManager);
-
-            // Démarrer le batch pour dessiner le joueur
-            batch.setProjectionMatrix(camera.combined);
-            batch.begin();
-            player.render(batch);
-            batch.end();
+        // Démarrer le batch pour dessiner le joueur
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+        player.render(batch);
+        batch.end();
 
 
-
-            // Rendre les couches supérieures (au-dessus du joueur)
-            mapManager.renderUpperLayers(camera);
-
-
-            // Mettre à jour l'inventaire pour gérer les entrées
-            if (!showInteractionFrame) {
-                inventaire.update();  // Appel de update() pour gérer la navigation dans l'inventaire
-                inventaire.render(new Vector2(player.getX(),player.getY()));
-            }
-
-            if (!showShopFrame){
-                shop.update();  // Appel de update() pour gérer la navigation dans le shop
-                shop.render(new Vector2(player.getX(),player.getY()));
-            }
-
-            if (!showShopFrame){
-                vente.update();  // Appel de update() pour gérer la navigation dans le vente
-                vente.render(new Vector2(player.getX(),player.getY()));
-            }
+        // Rendre les couches supérieures (au-dessus du joueur)
+        mapManager.renderUpperLayers(camera);
 
 
-            if (Inventory.getShowInteractionFrame()) {
-                inventaire.render(new Vector2(player.getX(), player.getY()));  // Rendu uniquement si l'inventaire est actif
-            }
-
-
-            // Rendre l'UI du joueur (après le rendu des éléments du jeu)
-            playerUI.render(batch);
-
-            // Activer/Désactiver le mode de débogage
-            if (Gdx.input.isKeyJustPressed(Input.Keys.F1)) {
-                debugMode = !debugMode;
-            }
-            if (debugMode) {
-                debugRenderer.renderDebugBounds(camera, player, collisionManager);
-            }
-
-            // Mettre à jour la caméra pour suivre le joueur
-            camera.position.set(player.getX(), player.getY(), 0);
-            camera.update();
-
-            // Mise à jour et rendu de l'interaction avec les images
-            interactionImageManager.update(new Vector2(player.getX(), player.getY()));
-            interactionImageManager.render(batch);
-
+        // Mettre à jour l'inventaire pour gérer les entrées
+        if (!showInteractionFrame) {
+            inventaire.update();  // Appel de update() pour gérer la navigation dans l'inventaire
+            inventaire.render(new Vector2(player.getX(), player.getY()));
         }
+
+        if (!showShopFrame) {
+            shop.update();  // Appel de update() pour gérer la navigation dans le shop
+            shop.render(new Vector2(player.getX(), player.getY()));
+        }
+
+        if (!showShopFrame) {
+            vente.update();  // Appel de update() pour gérer la navigation dans le vente
+            vente.render(new Vector2(player.getX(), player.getY()));
+        }
+
+
+        if (Inventory.getShowInteractionFrame()) {
+            inventaire.render(new Vector2(player.getX(), player.getY()));  // Rendu uniquement si l'inventaire est actif
+        }
+
+
+        // Rendre l'UI du joueur (après le rendu des éléments du jeu)
         playerUI.render(batch);
 
+        // Activer/Désactiver le mode de débogage
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F1)) {
+            debugMode = !debugMode;
+        }
+        if (debugMode) {
+            debugRenderer.renderDebugBounds(camera, player, collisionManager);
+        }
+
+        // Mettre à jour la caméra pour suivre le joueur
         camera.position.set(player.getX(), player.getY(), 0);
         camera.update();
 
-        if (currentScreen != null) {
-            currentScreen.render(Gdx.graphics.getDeltaTime());
-        }
-    }
-
-    @Override
-    public void resize ( int width, int height){
-        viewport.update(width, height);
-        if (currentScreen != null) {
-            currentScreen.resize(width, height);
-        }
-    }
-
-    @Override
-    public void dispose () {
-        player.dispose();
-        if (soundManager != null) {
-            soundManager.dispose();
-        }
-        debugRenderer.dispose();
-        playerUI.dispose();
-
-        if (currentScreen != null) {
-            currentScreen.dispose();
-        }
-
-        shapeRenderer.dispose(); // Libère ShapeRenderer
-        font.dispose();
-        inventaire.dispose();  // Libère les ressources utilisées dans inventaire
-
-
-        shop.dispose();  // Libère les ressources utilisées dans shop
-        vente.dispose();  // Libère les ressources utilisées dans vente
-
-        // Autres libérations de ressources...
-        interactionImageManager.dispose();
+        // Mise à jour et rendu de l'interaction avec les images
+        interactionImageManager.update(new Vector2(player.getX(), player.getY()));
+        interactionImageManager.render(batch);
 
     }
 }
+
 
 
