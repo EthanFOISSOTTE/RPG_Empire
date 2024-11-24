@@ -27,4 +27,5 @@ public interface Component {
      * @return les points de vie actuels
      */
     int getCurrentHealthPoints();
+
 }

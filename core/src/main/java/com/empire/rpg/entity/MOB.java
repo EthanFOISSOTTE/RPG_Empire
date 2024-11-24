@@ -33,7 +33,6 @@ public class MOB extends Entity {
     public Entity addEntity() {
         return null;
     }
-
     /**
      * Supprimer une entité par son nom.
      *

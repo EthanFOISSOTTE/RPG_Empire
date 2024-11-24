@@ -21,6 +21,7 @@ import com.empire.rpg.entity.player.PlayerCharacter;
 import com.empire.rpg.component.Component;
 import com.empire.rpg.entity.player.audio.SoundManager;
 import com.empire.rpg.debug.DebugRenderer;
+import com.empire.rpg.screen.*;
 import com.empire.rpg.ui.PlayerUI;
 
 import com.empire.rpg.entity.player.Inventory.Inventory;
@@ -41,11 +42,22 @@ public class Main extends ApplicationAdapter {
     private SoundManager soundManager;
     private DebugRenderer debugRenderer;
     private PlayerUI playerUI;
-
+    private Screen currentScreen;
+    private boolean animationFinished = false;
     private boolean debugMode = false;
+    private PauseScreen pauseScreen;
 
     private static final float WORLD_WIDTH = 854f;
     private static final float WORLD_HEIGHT = 480f;
+    private static Main instance;
+
+    public Main() {
+        instance = this;
+    }
+
+    public static Main getInstance() {
+        return instance;
+    }
 
     //inventaire
     private Inventory inventaire; // Instance de l'inventaire
@@ -66,9 +78,16 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void create() {
+        // Charger l'écran d'introduction avec un Runnable pour afficher le menu principal
+        IntroScreen introScreen = new IntroScreen(() -> setScreen(new MainMenuScreen()));
+        setScreen(introScreen);
+
+
+        // Charger les ressources
         batch = new SpriteBatch();
         camera = new OrthographicCamera();
         viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
+        pauseScreen = new PauseScreen();
         shapeRenderer = new ShapeRenderer(); // Initialisation de ShapeRenderer
         font = new BitmapFont();
 
@@ -119,11 +138,36 @@ public class Main extends ApplicationAdapter {
 
     }
 
+    public void setScreen(Screen screen) {
+        currentScreen = screen;
+        if (!(currentScreen instanceof IntroScreen)) {
+            return;
+        }
+    }
+
     @Override
+    public void render () {
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         public void render() {
             Gdx.gl.glClearColor(0, 0, 0, 1);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        // Gestion de la touche Echap
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            pauseScreen.toggleVisibility(); // Basculer la visibilité du menu Pause
+        }
+
+        // Si le menu Pause est visible, ne pas rendre le reste du jeu
+        if (pauseScreen.isVisible()) {
+            pauseScreen.render(null); // Passer `null` ou une instance de `Graphics` si nécessaire
+            return;
+        }
+
+        // Rendu normal du jeu
+        mapManager.renderLowerLayers(camera);
+        float deltaTime = Gdx.graphics.getDeltaTime();
+        player.update(deltaTime, collisionManager);
             // Rendre les couches inférieures (en-dessous du joueur)
             mapManager.renderLowerLayers(camera);
 
@@ -185,22 +229,36 @@ public class Main extends ApplicationAdapter {
             interactionImageManager.render(batch);
 
         }
+        playerUI.render(batch);
 
-    @Override
-    public void resize(int width, int height) {
-        viewport.update(width, height);
+        camera.position.set(player.getX(), player.getY(), 0);
+        camera.update();
+
+        if (currentScreen != null) {
+            currentScreen.render(Gdx.graphics.getDeltaTime());
+        }
     }
 
     @Override
-    public void dispose() {
-        batch.dispose();
-        mapManager.dispose();
+    public void resize ( int width, int height){
+        viewport.update(width, height);
+        if (currentScreen != null) {
+            currentScreen.resize(width, height);
+        }
+    }
+
+    @Override
+    public void dispose () {
         player.dispose();
         if (soundManager != null) {
             soundManager.dispose();
         }
         debugRenderer.dispose();
         playerUI.dispose();
+
+        if (currentScreen != null) {
+            currentScreen.dispose();
+        }
 
         shapeRenderer.dispose(); // Libère ShapeRenderer
         font.dispose();
@@ -215,3 +273,5 @@ public class Main extends ApplicationAdapter {
 
     }
 }
+
+
