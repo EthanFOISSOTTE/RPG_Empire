@@ -27,6 +27,7 @@ public class InteractionImageManager {
         // Vérifie si le joueur est dans la zone et appuie sur F
         if (interactionZone.contains(playerPosition)) {
             if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+                System.out.println("F pressed");
                 isImageVisible = !isImageVisible; // Afficher ou cacher l'image
                 currentImageIndex = 0; // Réinitialiser à la première image
             }

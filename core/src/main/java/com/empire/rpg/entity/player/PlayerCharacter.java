@@ -525,6 +525,15 @@ public class PlayerCharacter extends Player {
         if (Inventory.getShowInteractionFrame()){
             return;
         }
+        if (Shop.getShowShopFrame()){
+            return;
+        }
+        if (Vente.getShowVenteFrame()){
+            return;
+        }
+        if (InteractionImageManager.getIsImageVisible()){
+            return;
+        }
 
         Vector2 direction = new Vector2(0, 0);
 

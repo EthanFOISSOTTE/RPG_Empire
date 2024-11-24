@@ -8,6 +8,10 @@
 		com.empire.rpg.component.CollisionComponent: {
 			class: com.empire.rpg.component.CollisionComponent
 			isCollidable: true
+			boundingBox: {
+				width: 32
+				height: 32
+			}
 		}
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent
@@ -31,6 +35,10 @@
 		com.empire.rpg.component.CollisionComponent: {
 			class: com.empire.rpg.component.CollisionComponent
 			isCollidable: true
+			boundingBox: {
+				width: 32
+				height: 32
+			}
 		}
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent
@@ -39,7 +47,7 @@
 		}
 	}
 	type: Divers
-	quantity: 2070
+	quantity: 2040
 	description: Blablablazf
 	valeur: 0
 	states: false
@@ -54,6 +62,10 @@
 		com.empire.rpg.component.CollisionComponent: {
 			class: com.empire.rpg.component.CollisionComponent
 			isCollidable: true
+			boundingBox: {
+				width: 32
+				height: 32
+			}
 		}
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent

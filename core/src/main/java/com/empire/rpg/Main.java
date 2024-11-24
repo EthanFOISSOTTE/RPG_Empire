@@ -30,8 +30,11 @@ import com.empire.rpg.ui.PlayerUI;
 import com.empire.rpg.ui.MobUI;
 import com.empire.rpg.ui.ZoneUI;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.empire.rpg.screen.*;
 
 import com.empire.rpg.entity.player.Inventory.Inventory;
+import com.empire.rpg.shop.Shop;
+import com.empire.rpg.shop.Vente;
 
 public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
@@ -72,16 +75,52 @@ public class Main extends ApplicationAdapter {
     private Viewport uiViewport;
     private ZoneManager zoneManager;
     private MobManager mobManager;
+    private Screen currentScreen;
+    private boolean animationFinished = false;
+    private PauseScreen pauseScreen;
+    private static Main instance;
 
     // Dimensions virtuelles de l'UI
     private static final float UI_WIDTH = 1280f;
     private static final float UI_HEIGHT = 720f;
 
+    //PPT
+    private InteractionImageManager interactionImageManager;
+
+    //Shop
+    private Shop shop; // Instance du shop
+    private boolean showShopFrame = false;
+
+    //Shop
+    private Vente vente; // Instance du shop
+    private boolean showVenteFrame = false;
+
+    public static Main getInstance() {
+        return instance;
+    }
+
+    public static void setInstance(Main instance) {
+        Main.instance = instance;
+    }
+
+    public void setScreen(Screen screen) {
+        currentScreen = screen;
+        if (!(currentScreen instanceof IntroScreen)) {
+            return;
+        }
+    }
+
     @Override
     public void create() {
-        Gdx.input.setCursorCatched(true);
+        // Charger l'écran d'introduction avec un Runnable pour afficher le menu principal
+        IntroScreen introScreen = new IntroScreen(() -> setScreen(new MainMenuScreen()));
+        setScreen(introScreen);
+
+        instance = this;
+//        Gdx.input.setCursorCatched(true);
         batch = new SpriteBatch();
         camera = new OrthographicCamera();
+        pauseScreen = new PauseScreen();
         viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
         shapeRenderer = new ShapeRenderer(); // Initialisation de ShapeRenderer
         font = new BitmapFont();
@@ -113,11 +152,30 @@ public class Main extends ApplicationAdapter {
         components.put(HealthComponent.class, new HealthComponent(90, 100));
         //components.put(PositionComponent.class, new PositionComponent(180 * 48 + 24, 55 * 48 + 24)); // Spawn au port de la ville
         //components.put(PositionComponent.class, new PositionComponent(51 * 48 + 24, 42 * 48 + 24)); // Spawn au tableau des guêtes
-        components.put(PositionComponent.class, new PositionComponent(100 * 48 + 24, 100 * 48 + 24));
+        components.put(PositionComponent.class, new PositionComponent(8300, 2530));
 
         this.player = new PlayerCharacter(2.0f, UUID.randomUUID(), "Hero", components);
 
         inventaire = new Inventory(camera, batch);  // Initialisation de l'inventaire
+
+        shop = new Shop(camera, batch);  // Initialisation du shop
+
+        vente = new Vente(camera, batch);  // Initialisation de vente
+
+        // Initialiser l'InteractionImageManager
+        interactionImageManager = new InteractionImageManager(
+            8300, 2530, 48, 48, // Coordonnées et taille du carré
+            // Chemins des images
+            new String[]{
+                "PPT/image1.png",
+                "PPT/image2.png",
+                "PPT/image3.png",
+                "PPT/image4.png",
+                "PPT/image5.png",
+                "PPT/image6.png",
+                "PPT/image7.png"
+            }
+        );
 
         // Initialiser la caméra et le Viewport de l'UI
         uiCamera = new OrthographicCamera();
@@ -157,12 +215,27 @@ public class Main extends ApplicationAdapter {
         } else {
             System.err.println("Erreur : 'player' n'a pas été initialisé correctement dans initializeGame().");
         }
+
+        // Mise à jour et rendu de l'interaction avec les images
+        interactionImageManager.update(new Vector2(player.getX(), player.getY()));
+        interactionImageManager.render(batch);
     }
 
     @Override
     public void render() {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        // Gestion de la touche Echap
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            pauseScreen.toggleVisibility(); // Basculer la visibilité du menu Pause
+        }
+
+        // Si le menu Pause est visible, ne pas rendre le reste du jeu
+        if (pauseScreen.isVisible()) {
+            pauseScreen.render(null); // Passer `null` ou une instance de `Graphics` si nécessaire
+            return;
+        }
 
         // Rendre les couches inférieures (en-dessous du joueur)
         mapManager.renderLowerLayers(camera);
@@ -241,6 +314,16 @@ public class Main extends ApplicationAdapter {
         if (!showInteractionFrame) {
             inventaire.update();  // Appel de update() pour gérer la navigation dans l'inventaire
             inventaire.render(new Vector2(player.getX(),player.getY()));
+        }
+
+        if (!showShopFrame) {
+            shop.update();  // Appel de update() pour gérer la navigation dans le shop
+            shop.render(new Vector2(player.getX(), player.getY()));
+        }
+
+        if (!showShopFrame) {
+            vente.update();  // Appel de update() pour gérer la navigation dans le vente
+            vente.render(new Vector2(player.getX(), player.getY()));
         }
 
         // Affichage de l'icône de quête si le joueur est proche du tableau
@@ -325,6 +408,10 @@ public class Main extends ApplicationAdapter {
         // Mettre à jour la caméra pour suivre le joueur
         camera.position.set(player.getX(), player.getY(), 0);
         camera.update();
+
+        if (currentScreen != null) {
+            currentScreen.render(Gdx.graphics.getDeltaTime());
+        }
     }
 
     // Méthode pour déterminer si le joueur peut se déplacer
@@ -378,7 +465,7 @@ public class Main extends ApplicationAdapter {
         // Création d'une map de composants avec PositionComponent et HealthComponent
         Map<Class<? extends Component>, Component> components = new HashMap<>();
         components.put(HealthComponent.class, new HealthComponent(100, 100));
-        components.put(PositionComponent.class, new PositionComponent(4800f, 4800f));
+        components.put(PositionComponent.class, new PositionComponent(8300f, 2530f));
 
         // Recharger les mobs depuis la carte
         mobManager.loadMobsFromMap(mapManager.getTiledMap());
@@ -439,5 +526,6 @@ public class Main extends ApplicationAdapter {
         quest.dispose();
         questBoardTexture.dispose();
         pathfinding.dispose();
+        interactionImageManager.dispose();
     }
 }

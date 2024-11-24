@@ -5,6 +5,7 @@
 	description: "Dans la région proche de la capitale, se trouve des repaires de groupe de gobelins qui ont commencé à attaquer les convois commerciaux et les fermiers aux alentours. Le Duc Michel, a mis une récompense pour quiconque parviendrait à éliminer cette menace. Raportez lui 10 peau de gobelin."
 	id: 1
 	unique: true
+	status: 1
 	author: Duc Michel
 	reward: {
 		gold: 180
@@ -15,6 +16,7 @@
 	title: La Cueillette des Herbes de Soin
 	description: "Maître Théon, herboriste du village, cherche désespérément des herbes médicinales rares pour concocter un remède. Rapportez lui 5 herbes de soin."
 	id: 2
+	status: 1
 	author: Maître Théon
 	reward: {
 		gold: 100
