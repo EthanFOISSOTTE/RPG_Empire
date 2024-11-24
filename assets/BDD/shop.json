@@ -553,52 +553,6 @@
 }
 {
 	class: com.empire.rpg.entity.Item
-	name: Lettre
-	id: {}
-	components: {
-		class: java.util.ImmutableCollections$MapN
-		com.empire.rpg.component.CollisionComponent: {
-			class: com.empire.rpg.component.CollisionComponent
-			isCollidable: true
-		}
-		com.empire.rpg.component.PositionComponent: {
-			class: com.empire.rpg.component.PositionComponent
-			x: 0
-			y: 0
-		}
-	}
-	type: Objet de quête
-	quantity: 1
-	description: Blablabla
-	valeur: 0
-	states: false
-	style: "null"
-}
-{
-	class: com.empire.rpg.entity.Item
-	name: Carte
-	id: {}
-	components: {
-		class: java.util.ImmutableCollections$MapN
-		com.empire.rpg.component.CollisionComponent: {
-			class: com.empire.rpg.component.CollisionComponent
-			isCollidable: true
-		}
-		com.empire.rpg.component.PositionComponent: {
-			class: com.empire.rpg.component.PositionComponent
-			x: 0
-			y: 0
-		}
-	}
-	type: Objet de quête
-	quantity: 1
-	description: Blablabla
-	valeur: 0
-	states: false
-	style: "null"
-}
-{
-	class: com.empire.rpg.entity.Item
 	name: Divers 1
 	id: {}
 	components: {
