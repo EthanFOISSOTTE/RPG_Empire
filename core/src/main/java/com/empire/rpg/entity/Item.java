@@ -110,6 +110,7 @@ public class Item extends Entity {
         return quantity;
     }
 
+
     /**
      * Affecter une nouvelle quantité à l'item.
      *
