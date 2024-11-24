@@ -39,7 +39,11 @@
 		}
 	}
 	type: Divers
+<<<<<<< HEAD
 	quantity: 2130
+=======
+	quantity: 2070
+>>>>>>> 1463da865958efc2878219ac0e4f27fb93a2d180
 	description: Blablablazf
 	valeur: 0
 	states: false
@@ -51,18 +55,25 @@
 	id: {}
 	components: {
 		class: java.util.ImmutableCollections$MapN
+<<<<<<< HEAD
 		com.empire.rpg.component.PositionComponent: {
 			class: com.empire.rpg.component.PositionComponent
 			x: 0
 			y: 0
 		}
+=======
+>>>>>>> 1463da865958efc2878219ac0e4f27fb93a2d180
 		com.empire.rpg.component.CollisionComponent: {
 			class: com.empire.rpg.component.CollisionComponent
 			isCollidable: true
 		}
 	}
 	type: Armes
+<<<<<<< HEAD
 	quantity: 2
+=======
+	quantity: 4
+>>>>>>> 1463da865958efc2878219ac0e4f27fb93a2d180
 	description: Blablabla
 	valeur: 30
 	states: false
