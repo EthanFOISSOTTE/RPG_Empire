@@ -2,6 +2,7 @@ package com.empire.rpg;
 
 import com.empire.rpg.entity.player.PlayerCharacter;
 import com.empire.rpg.entity.mob.Mob;
+import com.empire.rpg.map.CollisionManager;
 
 public class CollisionHandler {
     private final CollisionManager collisionManager;

@@ -15,17 +15,21 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import com.empire.rpg.map.*;
 import com.empire.rpg.entity.PNJ;
 import com.empire.rpg.quest.Quest;
 import com.empire.rpg.quest.QuestPlayer;
 import com.empire.rpg.entity.player.PlayerCharacter;
 import com.empire.rpg.entity.player.audio.SoundManager;
 import com.empire.rpg.debug.DebugRenderer;
-import com.empire.rpg.ui.PlayerUI;
 import com.empire.rpg.entity.mob.MobFactory;
 import com.empire.rpg.component.pathfinding.Pathfinding;
 import com.empire.rpg.CollisionHandler;
 import com.empire.rpg.entity.mob.Mob;
+import com.empire.rpg.ui.PlayerUI;
+import com.empire.rpg.ui.MobUI;
+import com.empire.rpg.ui.ZoneUI;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 import com.empire.rpg.entity.player.Inventory.Inventory;
 
@@ -56,16 +60,26 @@ public class Main extends ApplicationAdapter {
     private Quest quest;  // Objet Quest qui gère les quêtes dans le jeu
     private QuestPlayer questPlayer;
     private DialogueManager dialogue; // Objet qui gère les dialogues avec les PNJ
-    private PNJ pnj_radagast;
     private PNJ pnj_duc;
     private static final float INTERACTION_DISTANCE = 70;  // Distance d'interaction avec un objet
     private static final float DISPLAY_DISTANCE = 500;
     private static final float SQUARE_SIZE = 64;
     private static final float INTERACTION_DISTANCE_PNJ = 70;
     private Pathfinding pathfinding;
+    private MobUI mobUI;
+    private ZoneUI zoneUI;
+    private OrthographicCamera uiCamera;
+    private Viewport uiViewport;
+    private ZoneManager zoneManager;
+    private MobManager mobManager;
+
+    // Dimensions virtuelles de l'UI
+    private static final float UI_WIDTH = 1280f;
+    private static final float UI_HEIGHT = 720f;
 
     @Override
     public void create() {
+        Gdx.input.setCursorCatched(true);
         batch = new SpriteBatch();
         camera = new OrthographicCamera();
         viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
@@ -76,13 +90,8 @@ public class Main extends ApplicationAdapter {
         mapManager = new MapManager("rpg-map.tmx", camera);
         collisionManager = new CollisionManager(mapManager.getTiledMap());
 
-        Map<Class<? extends Component>, Component> Radagast = Map.of(
-            PositionComponent.class, new PositionComponent(49 * 48 + 24, 44 * 48 + 24),
-            MovementComponent.class, new MovementComponent(1.5f, "north"),
-            TextureComponent.class, new TextureComponent(new Texture("PNJ/Radagast.png"), 48, 48, 0, 0, 2.0f)
-        );
-        pnj_radagast = new PNJ("Radagast", Radagast, UUID.randomUUID());
-        pnj_radagast.setName("Radagast");
+        // Initialiser collisionHandler
+        collisionHandler = new CollisionHandler(collisionManager);
 
         Map<Class<? extends Component>, Component> Duc_Michel = Map.of(
             PositionComponent.class, new PositionComponent(177* 48 + 24, 68 * 48 + 24),
@@ -100,8 +109,6 @@ public class Main extends ApplicationAdapter {
         questBoardTexture = new Texture(Gdx.files.internal("exclamation.png"));  // Chemin vers l'image du tableau de quêtes
         F_Key_Texture = new Texture(Gdx.files.internal("Images/F_Key.png"));  // Chemin vers l'image de la touche F
 
-        // Création d'une map de composants avec PositionComponent et HealthComponent
-        // Création du Map avec les composants nécessaires
         Map<Class<? extends Component>, Component> components = new HashMap<>();
         components.put(HealthComponent.class, new HealthComponent(90, 100));
         //components.put(PositionComponent.class, new PositionComponent(180 * 48 + 24, 55 * 48 + 24)); // Spawn au port de la ville
@@ -109,24 +116,29 @@ public class Main extends ApplicationAdapter {
         components.put(PositionComponent.class, new PositionComponent(100 * 48 + 24, 100 * 48 + 24));
 
         this.player = new PlayerCharacter(2.0f, UUID.randomUUID(), "Hero", components);
+
+        inventaire = new Inventory(camera, batch);  // Initialisation de l'inventaire
+
+        // Initialiser la caméra et le Viewport de l'UI
+        uiCamera = new OrthographicCamera();
+        uiViewport = new FitViewport(UI_WIDTH, UI_HEIGHT, uiCamera);
+
         // Initialiser le débogueur
         debugRenderer = new DebugRenderer();
-
-        // Initialiser l'UI du joueur
-        playerUI = new PlayerUI(player);
 
         // Initialiser le pathfinding
         pathfinding = new Pathfinding(collisionManager);
         // Définit le pathfinding global pour tous les mobs
         MobFactory.setPathfinding(pathfinding);
-        // Créer des mobs avec des comportements spécifiques
-        MobFactory.createMob("goblin", new Vector2(4700, 4900), collisionManager);
-        MobFactory.createMob("ogre", new Vector2(4800, 4900), collisionManager);
-        MobFactory.createMob("orc", new Vector2(4900, 4900), collisionManager);
-        MobFactory.createMob("rabbit", new Vector2(4700, 5000), collisionManager);
-        MobFactory.createMob("rabbit-horned", new Vector2(4800, 5000), collisionManager);
-        // Créer un gestionnaire de collisions
-        collisionHandler = new CollisionHandler(collisionManager);
+
+        // Initialiser le MobManager
+        mobManager = new MobManager(collisionManager);
+        // Initialiser le MobUI
+        mobUI = new MobUI();
+
+        // Initialiser le ZoneManager et charger les zones
+        zoneManager = new ZoneManager();
+        zoneManager.loadZonesFromMap(mapManager.getTiledMap());
 
         // Initialiser le débogueur
         debugRenderer = new DebugRenderer();
@@ -135,7 +147,16 @@ public class Main extends ApplicationAdapter {
         camera.position.set(player.getX(), player.getY(), 0);
         camera.update();
 
-        inventaire = new Inventory(camera, batch);  // Initialisation de l'inventaire
+        // Appeler initializeGame() pour initialiser le joueur et l'UI
+        initializeGame();
+
+        // Mettre à jour la caméra sur le joueur
+        if (player != null) {
+            camera.position.set(player.getX(), player.getY(), 0);
+            camera.update();
+        } else {
+            System.err.println("Erreur : 'player' n'a pas été initialisé correctement dans initializeGame().");
+        }
     }
 
     @Override
@@ -150,12 +171,21 @@ public class Main extends ApplicationAdapter {
             float deltaTime = Gdx.graphics.getDeltaTime();
             player.update(deltaTime, collisionManager);
         }
+
+        // Vérifier si le joueur est mort
+        if (player.isDead()) {
+            resetGame();
+            return; // Arrêter le rendu pour cette frame
+        }
+
         // Mettre à jour les mobs
         for (Mob mob : Mob.allMobs) {
             mob.update(Gdx.graphics.getDeltaTime(), player, camera);
         }
+        collisionHandler.handleCollisions(player, Mob.allMobs);
         // Démarrer le batch pour dessiner le joueur
         batch.setProjectionMatrix(camera.combined);
+
         batch.begin();
         for (Mob mob : Mob.allMobs) {
             // Appliquer le facteur de zoom lors du rendu
@@ -167,13 +197,34 @@ public class Main extends ApplicationAdapter {
                 mob.getCurrentTexture().getRegionHeight() * mob.getScale()
             );
         }
-        pnj_radagast.render(batch);
+
+
         pnj_duc.render(batch);
         player.render(batch);
+
+        for (Mob mob : Mob.allMobs) {
+            // Rendu de la barre de vie du mob
+            mobUI.render(batch, mob);
+        }
         batch.end();
+
+
 
         // Rendre les couches supérieures (au-dessus du joueur)
         mapManager.renderUpperLayers(camera);
+
+
+//        // Mettre à jour la ZoneUI
+//        zoneUI.update();
+//
+//        // Rendre l'UI du joueur et de la zone
+//        uiViewport.apply();
+//        batch.setProjectionMatrix(uiCamera.combined);
+//        batch.begin();
+//        playerUI.render(batch);
+//        zoneUI.render(batch);
+//        batch.end();
+
 
         dialogue.render(batch, player.getPlayerPosition());
 
@@ -197,24 +248,6 @@ public class Main extends ApplicationAdapter {
             batch.begin();
             batch.draw(questBoardTexture, squarePosition.x + 19, squarePosition.y + SQUARE_SIZE);  // Affiche l'icône du tableau de quête
             batch.end();
-        }
-
-// Region
-        if (isPlayerWithinInteractionDistance(player.getPlayerPosition(), pnj_radagast.getPosition(), INTERACTION_DISTANCE)) {
-            batch.begin();
-
-            // Dessinez la texture de la touche "F"
-            batch.draw(F_Key_Texture, pnj_radagast.getPosition().x + 27, pnj_radagast.getPosition().y + 85, 24, 24);
-
-            // Dessinez le texte "interagir" à côté de l'image
-            font.draw(batch, " interagir", pnj_radagast.getPosition().x + 55, pnj_radagast.getPosition().y + 105);
-
-            batch.end();
-
-            // Détecter l'appui sur la touche "F"
-            if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
-                dialogue.startDialogue("Radagast");
-            }
         }
 
 
@@ -251,7 +284,6 @@ public class Main extends ApplicationAdapter {
             showDialogueFrame = false;  // Désactive le cadre d'interaction
             dialogue.setShowDialogueFrame(false);  // Désactive le cadre d'interaction dans Quest
         }
-        //End Region
 
         // Bascule d'affichage du cadre d'interaction avec la touche F
         if (isPlayerWithinInteractionDistance(player.getPlayerPosition(), squarePosition, INTERACTION_DISTANCE) && Gdx.input.isKeyJustPressed(Input.Keys.F)) {
@@ -281,9 +313,6 @@ public class Main extends ApplicationAdapter {
         if (showInteractionFrame) {
             quest.render(batch, player.getPlayerPosition());  // Affiche l'interaction avec le tableau de quête
         }
-
-        // Rendre l'UI du joueur (après le rendu des éléments du jeu)
-        playerUI.render(batch);
 
         // Activer/Désactiver le mode de débogage
         if (Gdx.input.isKeyJustPressed(Input.Keys.F1)) {
@@ -316,6 +345,56 @@ public class Main extends ApplicationAdapter {
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
+        uiViewport.update(width, height, true);
+    }
+
+    private void resetGame() {
+        System.out.println("Redémarrage du jeu...");
+
+        // Dispose des ressources existantes
+        if (player != null) {
+            player.dispose();
+            player = null;
+        }
+        if (playerUI != null) {
+            playerUI.dispose();
+            playerUI = null;
+        }
+        if (zoneUI != null) {
+            zoneUI.dispose();
+            zoneUI = null;
+        }
+        // Disposer les mobs
+        for (Mob mob : Mob.allMobs) {
+            mob.dispose();
+        }
+        Mob.allMobs.clear();
+
+        // Appeler initializeGame() pour recréer le joueur et l'UI
+        initializeGame();
+    }
+
+    private void initializeGame() {
+        // Création d'une map de composants avec PositionComponent et HealthComponent
+        Map<Class<? extends Component>, Component> components = new HashMap<>();
+        components.put(HealthComponent.class, new HealthComponent(100, 100));
+        components.put(PositionComponent.class, new PositionComponent(4800f, 4800f));
+
+        // Recharger les mobs depuis la carte
+        mobManager.loadMobsFromMap(mapManager.getTiledMap());
+
+        // Création et initialisation de l'instance de PlayerCharacter
+        player = new PlayerCharacter(2.0f, UUID.randomUUID(), "Hero", components);
+
+        // Initialiser l'UI du joueur
+        playerUI = new PlayerUI(player, UI_WIDTH, UI_HEIGHT);
+
+        // Initialiser le ZoneUI
+        zoneUI = new ZoneUI(player, zoneManager, UI_WIDTH, UI_HEIGHT);
+
+        // Mettre à jour la caméra sur le joueur
+        camera.position.set(player.getX(), player.getY(), 0);
+        camera.update();
     }
 
     @Override
@@ -326,6 +405,31 @@ public class Main extends ApplicationAdapter {
         if (soundManager != null) {
             soundManager.dispose();
         }
+        if (player != null) {
+            player.dispose();
+        }
+        if (playerUI != null) {
+            playerUI.dispose();
+        }
+        if (zoneUI != null) {
+            zoneUI.dispose();
+        }
+        if (pathfinding != null) {
+            pathfinding.dispose();
+        }
+        if (debugRenderer != null) {
+            debugRenderer.dispose();
+        }
+        if (mobUI != null) {
+            mobUI.dispose();
+        }
+        if (soundManager != null) {
+            soundManager.dispose();
+        }
+        for (Mob mob : Mob.allMobs) {
+            mob.dispose();
+        }
+        Mob.allMobs.clear();
         debugRenderer.dispose();
         playerUI.dispose();
         F_Key_Texture.dispose();

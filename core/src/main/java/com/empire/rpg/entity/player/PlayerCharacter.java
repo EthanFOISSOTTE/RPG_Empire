@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.empire.rpg.component.Component;
 import com.empire.rpg.entity.Entity;
 import com.empire.rpg.entity.Player;
-import com.empire.rpg.CollisionManager;
+import com.empire.rpg.map.CollisionManager;
 import com.empire.rpg.component.HealthComponent;
 import com.empire.rpg.component.CollisionComponent;
 import com.empire.rpg.component.PositionComponent;
@@ -27,6 +27,9 @@ import com.empire.rpg.entity.player.utils.Constants;
 import java.util.*;
 
 import com.empire.rpg.entity.player.Inventory.Inventory;
+import com.empire.rpg.InteractionImageManager;
+import com.empire.rpg.shop.Shop;
+import com.empire.rpg.shop.Vente;
 
 
 /**
@@ -84,6 +87,12 @@ public class PlayerCharacter extends Player {
     private Vector2 position;
     private Vector2 previousPosition;
 
+    private boolean isDead = false;
+
+    public boolean isDead() {
+        return isDead;
+    }
+
     // Classe interne pour stocker les données d'une attaque en attente
     private class AttackData {
         public Attack attack; // Attaque à exécuter
@@ -118,6 +127,8 @@ public class PlayerCharacter extends Player {
      */
 
     private static boolean showInteractionFrame = false;
+    private static boolean showShopFrame = false;
+    private static boolean showVenteFrame = false;
 
     public PlayerCharacter(float scale, UUID id, String name, Map<Class<? extends Component>, Component> components) {
         super(name, components, id); // Appel au constructeur de la superclasse
@@ -255,6 +266,17 @@ public class PlayerCharacter extends Player {
         return currentState;
     }
 
+    private boolean isInShopArea(float playerX, float playerY) {
+        // Taille du carré (par exemple, 48x48)
+        float squareSize = 48f;
+        float shopX = 1306f;
+        float shopY = 1831f;
+
+        // Vérifie si le joueur est dans la zone
+        return playerX >= shopX && playerX <= shopX + squareSize &&
+            playerY >= shopY && playerY <= shopY + squareSize;
+    }
+
     // Gestion des entrées utilisateur
     private void handleInput() {
         // Si le joueur n'est pas en train d'attaquer
@@ -323,8 +345,28 @@ public class PlayerCharacter extends Player {
         // Gérer l'affichage et la mise à jour de l'inventaire
         if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
 
-            showInteractionFrame = !showInteractionFrame;   //inverse true en false et inversement
-            Inventory.setShowInteractionFrame(showInteractionFrame);  // Active le cadre d'inventaire
+            if(!showShopFrame){
+                if (!showVenteFrame){
+                    showInteractionFrame = !showInteractionFrame;   //inverse true en false et inversement
+                    Inventory.setShowInteractionFrame(showInteractionFrame);  // Active le cadre d'inventaire
+
+                    Inventory.loadInventoryFromJson();
+                }
+
+            }
+
+        }
+
+        // Gérer l'affichage et la mise à jour de l'inventaire
+        if(!showInteractionFrame) {
+            if (isInShopArea(getX(), getY())) {
+                if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+
+                    showShopFrame = !showShopFrame;   //inverse true en false et inversement
+                    Shop.setShowShopFrame(showShopFrame);  // Active le cadre d'inventaire
+
+                }
+            }
         }
 
     }
@@ -772,5 +814,30 @@ public class PlayerCharacter extends Player {
             return this;
         }
         return null;
+    }
+
+    /**
+     * Applique des dégâts au joueur.
+     *
+     * @param damage La quantité de dégâts à appliquer.
+     */
+    public void takeDamage(float damage) {
+        HealthComponent health = (HealthComponent) getComponent(HealthComponent.class);
+        if (health != null) {
+            health.takeDamage((int) damage);
+            System.out.println(getName() + " a subi " + (int) damage + " dégâts. PV restants : "
+                + health.getCurrentHealthPoints() + "/" + health.getMaxHealthPoints());
+            if (health.getCurrentHealthPoints() <= 0) {
+                onDeath();
+            }
+        }
+    }
+
+    /**
+     * Gère la logique de mort du joueur.
+     */
+    private void onDeath() {
+        System.out.println(getName() + " est mort !");
+        isDead = true;
     }
 }

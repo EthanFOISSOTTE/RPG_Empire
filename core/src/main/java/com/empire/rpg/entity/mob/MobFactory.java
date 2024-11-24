@@ -1,7 +1,7 @@
 package com.empire.rpg.entity.mob;
 
 import com.badlogic.gdx.math.Vector2;
-import com.empire.rpg.CollisionManager;
+import com.empire.rpg.map.CollisionManager;
 import com.empire.rpg.component.pathfinding.Pathfinding;
 
 /**
@@ -36,13 +36,11 @@ public class MobFactory {
             case "rabbit-horned":
                 mob = new RabbitHorned(position, collisionManager);
                 break;
+            case "lucas":
+                mob = new Lucas(position, collisionManager);
+                break;
             default:
                 System.out.println("Type de mob inconnu: " + type);
-        }
-
-        if (mob != null) {
-            // Mob ajouté à la liste des mobs dans la classe Mob
-            // Pas besoin d'action supplémentaire car Mob ajoute automatiquement à allMobs
         }
     }
 }

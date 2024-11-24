@@ -32,20 +32,20 @@ public class Inventory {
     private int selectedCategoryIndex = 0;
     private int selectedObjectIndex = 0;
     private boolean inCategorySelection = true;
-    private List<Item> items;  // Liste des objets chargés à partir du JSON
+    private static List<Item> items;  // Liste des objets chargés à partir du JSON
 
     //scroll des objet
     private static final int MAX_VISIBLE_ITEMS = 11; // Nombre maximum d'objets affichés en même temps
     private int scrollOffset = 0; // Décalage de défilement pour l'affichage des objets
 
 
-    private Item equippedArmor;
-    private Item equippedConsommable;
-    private Item equippedLance;
-    private Item equippedEpee;
-    private Item equippedBouclier;
-    private Item equippedArc;
-    private Item equippedCarquois;
+    private static Item equippedArmor;
+    private static Item equippedConsommable;
+    private static Item equippedLance;
+    private static Item equippedEpee;
+    private static Item equippedBouclier;
+    private static Item equippedArc;
+    private static Item equippedCarquois;
 
 
     public Inventory(OrthographicCamera camera, SpriteBatch batch) {
@@ -54,11 +54,15 @@ public class Inventory {
         this.shapeRenderer = new ShapeRenderer();
         this.font = new BitmapFont();
         this.items = new ArrayList<>();
-        loadInventoryFromJson();  // Charger les données JSON à l'initialisation
+        loadInventoryFromJson();
     }
 
     //partie trie de la liste du fichier JSON
-    private void loadInventoryFromJson() {
+    public static void loadInventoryFromJson() {
+
+        // Vider la liste existante
+        items.clear();
+
         Json json = new Json();
         JsonValue base = new JsonReader().parse(Gdx.files.internal("BDD/inventory.json"));
 
@@ -103,7 +107,7 @@ public class Inventory {
         }
     }
 
-    private void saveInventoryToJson() {
+    private static void saveInventoryToJson() {
         Json json = new Json();
 
         // Filtrer les objets avec une quantité > 0
@@ -111,13 +115,14 @@ public class Inventory {
             .filter(item -> item.getQuantity() > 0)
             .collect(Collectors.toList());
 
-        String inventoryJson = json.prettyPrint(items); // Convertit la liste des objets en JSON
+        String inventoryJson = json.prettyPrint(itemsToSave); // Convertit la liste des objets en JSON
         Gdx.files.local("BDD/inventory.json").writeString("{\"inventory\":" + inventoryJson + "}", false);
     }
 
     public void render(Vector2 playerPosition) {
         if (showInteractionFrame) {
             drawInteractionFrame(playerPosition);
+
         }
     }
 
@@ -268,127 +273,168 @@ public class Inventory {
     public void update() {
         List<Item> currentItems = getItemsByType(categories[selectedCategoryIndex]);
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.W)) {
-            if (inCategorySelection) {
-                selectedCategoryIndex = (selectedCategoryIndex - 1 + categories.length) % categories.length;
-            } else {
-                if (selectedObjectIndex > 0) {
-                    selectedObjectIndex--;
-                    // Vérifier si on doit défiler vers le haut
-                    if (selectedObjectIndex < scrollOffset) {
-                        scrollOffset--;
-                    }
-                }
-            }
-        }
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
-            if (inCategorySelection) {
-                selectedCategoryIndex = (selectedCategoryIndex + 1) % categories.length;
-            } else {
-                if (selectedObjectIndex < currentItems.size() - 1) {
-                    selectedObjectIndex++;
-                    // Vérifier si on doit défiler vers le bas
-                    if (selectedObjectIndex >= scrollOffset + MAX_VISIBLE_ITEMS) {
-                        scrollOffset++;
-                    }
-                }
-            }
-        }
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
-            if (inCategorySelection) {
-                inCategorySelection = false;
-                selectedObjectIndex = 0;
-                scrollOffset = 0; // Réinitialiser le défilement pour le nouvel écran d'objets
-            }
-        }
-
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
-            if (!inCategorySelection) {
-                inCategorySelection = true;
-                selectedObjectIndex = 0;
-                scrollOffset = 0; // Réinitialiser le défilement pour le nouvel écran de catégories
-            }
-        }
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            if (!inCategorySelection && !currentItems.isEmpty() && selectedObjectIndex < currentItems.size()) {
-                Item selectedItem = currentItems.get(selectedObjectIndex);
-
-                // Vérifier si la quantité de l'objet est à 0 et le supprimer
-                items.removeIf(item -> item.getQuantity() == 0);
-
-                // Si l'objet est déjà équipé, on le déséquipe
-                if (selectedItem.getStates()) {
-                    selectedItem.setStates(false);
-
-                    // Déséquipement selon le type
-                    if (selectedItem.getType().equalsIgnoreCase("Tenue")) {
-                        equippedArmor = null;
-                    } else if (selectedItem.getType().equalsIgnoreCase("Consommable")) {
-                        equippedConsommable = null;
-                    } else if (selectedItem.getType().equalsIgnoreCase("Armes")) {
-                        // Déséquiper une arme spécifique selon son style
-                        if (selectedItem.getStyle().equalsIgnoreCase("lance")) {
-                            equippedLance = null;
-                        } else if (selectedItem.getStyle().equalsIgnoreCase("épée")) {
-                            equippedEpee = null;
-                        } else if (selectedItem.getStyle().equalsIgnoreCase("arc")) {
-                            equippedArc = null;
-                        } else if (selectedItem.getStyle().equalsIgnoreCase("bouclier")) {
-                            equippedBouclier = null;
-                        } else if (selectedItem.getStyle().equalsIgnoreCase("carquois")) {
-                            equippedCarquois = null;
+        if(showInteractionFrame){
+            if (Gdx.input.isKeyJustPressed(Input.Keys.W)) {
+                if (inCategorySelection) {
+                    selectedCategoryIndex = (selectedCategoryIndex - 1 + categories.length) % categories.length;
+                } else {
+                    if (selectedObjectIndex > 0) {
+                        selectedObjectIndex--;
+                        // Vérifier si on doit défiler vers le haut
+                        if (selectedObjectIndex < scrollOffset) {
+                            scrollOffset--;
                         }
                     }
-                } else { // Si l'objet n'est pas équipé, on l'équipe
-                     if (selectedItem.getType().equalsIgnoreCase("Tenue")) {
-                        // Si une tenue est déjà équipée, la déséquiper
-                        if (equippedArmor != null) equippedArmor.setStates(false);
-                        equippedArmor = selectedItem;
-                        selectedItem.setStates(true);  // Marquer comme équipé
-                    }
-
-                    else if (selectedItem.getType().equalsIgnoreCase("Consommable")) {
-                        // Si un consommable est déjà équipé, la déséquiper
-                        if (equippedConsommable != null) equippedConsommable.setStates(false);
-                        equippedConsommable = selectedItem;
-                        selectedItem.setStates(true);  // Marquer comme équipé
-                    }
-
-                    else if (selectedItem.getType().equalsIgnoreCase("Armes")) {
-                        switch (selectedItem.getStyle().toLowerCase()) {
-                            case "lance":
-                                if (equippedLance != null) equippedLance.setStates(false); // Déséquiper la lance précédente
-                                equippedLance = selectedItem;
-                                break;
-                            case "épée":
-                                if (equippedEpee != null) equippedEpee.setStates(false); // Déséquiper l'épée précédente
-                                equippedEpee = selectedItem;
-                                break;
-                            case "arc":
-                                if (equippedArc != null) equippedArc.setStates(false); // Déséquiper l'arc précédent
-                                equippedArc = selectedItem;
-                                break;
-                            case "bouclier":
-                                if (equippedBouclier != null) equippedBouclier.setStates(false); // Déséquiper le bouclier précédent
-                                equippedBouclier = selectedItem;
-                                break;
-                            case "carquois":
-                                if (equippedCarquois != null) equippedCarquois.setStates(false); // Déséquiper le carquois précédent
-                                equippedCarquois = selectedItem;
-                                break;
-                        }
-                        selectedItem.setStates(true);
-                    }
-
                 }
-                saveInventoryToJson(); // Sauvegarde après modification
+            }
+
+            if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+                if (inCategorySelection) {
+                    selectedCategoryIndex = (selectedCategoryIndex + 1) % categories.length;
+                } else {
+                    if (selectedObjectIndex < currentItems.size() - 1) {
+                        selectedObjectIndex++;
+                        // Vérifier si on doit défiler vers le bas
+                        if (selectedObjectIndex >= scrollOffset + MAX_VISIBLE_ITEMS) {
+                            scrollOffset++;
+                        }
+                    }
+                }
+            }
+
+            if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
+                if (inCategorySelection) {
+                    inCategorySelection = false;
+                    selectedObjectIndex = 0;
+                    scrollOffset = 0; // Réinitialiser le défilement pour le nouvel écran d'objets
+                }
+            }
+
+
+            if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
+                if (!inCategorySelection) {
+                    inCategorySelection = true;
+                    selectedObjectIndex = 0;
+                    scrollOffset = 0; // Réinitialiser le défilement pour le nouvel écran de catégories
+                }
+            }
+
+            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+                if (!inCategorySelection && !currentItems.isEmpty() && selectedObjectIndex < currentItems.size()) {
+                    Item selectedItem = currentItems.get(selectedObjectIndex);
+
+                    // Vérifier si la quantité de l'objet est à 0 et le supprimer
+                    items.removeIf(item -> item.getQuantity() == 0);
+
+                    // Si l'objet est déjà équipé, on le déséquipe
+                    if (selectedItem.getStates()) {
+                        selectedItem.setStates(false);
+
+                        // Déséquipement selon le type
+                        if (selectedItem.getType().equalsIgnoreCase("Tenue")) {
+                            equippedArmor = null;
+                        } else if (selectedItem.getType().equalsIgnoreCase("Consommable")) {
+                            equippedConsommable = null;
+                        } else if (selectedItem.getType().equalsIgnoreCase("Armes")) {
+                            // Déséquiper une arme spécifique selon son style
+                            if (selectedItem.getStyle().equalsIgnoreCase("lance")) {
+                                equippedLance = null;
+                            } else if (selectedItem.getStyle().equalsIgnoreCase("épée")) {
+                                equippedEpee = null;
+                            } else if (selectedItem.getStyle().equalsIgnoreCase("arc")) {
+                                equippedArc = null;
+                            } else if (selectedItem.getStyle().equalsIgnoreCase("bouclier")) {
+                                equippedBouclier = null;
+                            } else if (selectedItem.getStyle().equalsIgnoreCase("carquois")) {
+                                equippedCarquois = null;
+                            }
+                        }
+                    } else { // Si l'objet n'est pas équipé, on l'équipe
+                        if (selectedItem.getType().equalsIgnoreCase("Tenue")) {
+                            // Si une tenue est déjà équipée, la déséquiper
+                            if (equippedArmor != null) equippedArmor.setStates(false);
+                            equippedArmor = selectedItem;
+                            selectedItem.setStates(true);  // Marquer comme équipé
+                        }
+
+                        else if (selectedItem.getType().equalsIgnoreCase("Consommable")) {
+                            // Si un consommable est déjà équipé, la déséquiper
+                            if (equippedConsommable != null) equippedConsommable.setStates(false);
+                            equippedConsommable = selectedItem;
+                            selectedItem.setStates(true);  // Marquer comme équipé
+                        }
+
+                        else if (selectedItem.getType().equalsIgnoreCase("Armes")) {
+                            switch (selectedItem.getStyle().toLowerCase()) {
+                                case "lance":
+                                    if (equippedLance != null) equippedLance.setStates(false); // Déséquiper la lance précédente
+                                    equippedLance = selectedItem;
+                                    break;
+                                case "épée":
+                                    if (equippedEpee != null) equippedEpee.setStates(false); // Déséquiper l'épée précédente
+                                    equippedEpee = selectedItem;
+                                    break;
+                                case "arc":
+                                    if (equippedArc != null) equippedArc.setStates(false); // Déséquiper l'arc précédent
+                                    equippedArc = selectedItem;
+                                    break;
+                                case "bouclier":
+                                    if (equippedBouclier != null) equippedBouclier.setStates(false); // Déséquiper le bouclier précédent
+                                    equippedBouclier = selectedItem;
+                                    break;
+                                case "carquois":
+                                    if (equippedCarquois != null) equippedCarquois.setStates(false); // Déséquiper le carquois précédent
+                                    equippedCarquois = selectedItem;
+                                    break;
+                            }
+                            selectedItem.setStates(true);
+                        }
+
+                    }
+                    saveInventoryToJson(); // Sauvegarde après modification
+                }
             }
         }
 
+    }
+
+    public static int getPiece() {
+        String targetName = "Pièce Astrale"; // Nom de l'objet à rechercher
+        return items.stream()
+            .filter(item -> item.getName().equalsIgnoreCase(targetName)) // Trouver l'objet par son nom
+            .findFirst() // Récupérer le premier match
+            .map(Item::getQuantity) // Obtenir la quantité
+            .orElse(0); // Retourner 0 si l'objet n'est pas trouvé
+    }
+
+    public static void setArgent(int newQuantity) {
+        String targetName = "Pièce Astrale"; // Nom de l'objet à rechercher
+
+        // Vérifier si l'objet existe déjà dans l'inventaire
+        Item existingItem = items.stream()
+            .filter(item -> item.getName().equalsIgnoreCase(targetName))
+            .findFirst()
+            .orElse(null);
+
+        if (existingItem != null) {
+            // Si l'objet existe, mettre à jour sa quantité
+            existingItem.setQuantity(newQuantity);
+        } else {
+            // Si l'objet n'existe pas, le créer et l'ajouter à l'inventaire
+            Item astralPiece = new Item(
+                targetName, // Nom de l'objet
+                newQuantity, // Quantité
+                "Divers", // Type
+                "Blablabla", // Description
+                0, // Valeur
+                false, // States
+                "null" // Style
+            );
+            items.add(astralPiece); // Ajouter le nouvel objet à l'inventaire
+        }
+
+        // Sauvegarder les changements dans le fichier JSON
+        saveInventoryToJson();
     }
 
     public static boolean getShowInteractionFrame() {

@@ -2,7 +2,7 @@ package com.empire.rpg.component.pathfinding;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.empire.rpg.CollisionManager;
+import com.empire.rpg.map.CollisionManager;
 import com.empire.rpg.entity.mob.Mob;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
