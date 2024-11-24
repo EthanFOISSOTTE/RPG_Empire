@@ -5,6 +5,7 @@
     },
     "activeFile": "rpg-map.tmx",
     "expandedProjectPaths": [
+        "Spritesheets",
         "."
     ],
     "fileStates": {
@@ -59,7 +60,7 @@
             }
         },
         "Images/Epitech_Pixel.tsx": {
-            "scaleInDock": 1,
+            "scaleInDock": 0.75,
             "scaleInEditor": 1
         },
         "Images/labi_foret_temp.tsx": {
@@ -75,7 +76,7 @@
             "scaleInEditor": 1.5
         },
         "Spritesheets/A2_Terrain_And_Misc.tsx": {
-            "scaleInDock": 1,
+            "scaleInDock": 1.5,
             "scaleInEditor": 1.5
         },
         "Spritesheets/A2_Terrain_Red.tsx": {
@@ -103,6 +104,7 @@
             "scaleInEditor": 1
         },
         "Spritesheets/Big_Trees.tsx": {
+            "scaleInDock": 1,
             "scaleInEditor": 1
         },
         "Spritesheets/Big_Trees_Red.tsx": {
@@ -178,7 +180,7 @@
             "scaleInEditor": 1
         },
         "Spritesheets/Fantasy_Outside_B.tsx": {
-            "scaleInDock": 0.75,
+            "scaleInDock": 2,
             "scaleInEditor": 1
         },
         "Spritesheets/Fantasy_Outside_B_Red.tsx": {
@@ -190,7 +192,7 @@
             "scaleInEditor": 1.5
         },
         "Spritesheets/Fantasy_Outside_D.tsx": {
-            "scaleInDock": 1.5,
+            "scaleInDock": 0.75,
             "scaleInEditor": 1.5
         },
         "Spritesheets/Fantasy_Outside_D_Red.tsx": {
@@ -222,9 +224,11 @@
             "scaleInEditor": 1
         },
         "Spritesheets/Giant_Tree_No_Glowing.tsx": {
+            "scaleInDock": 1,
             "scaleInEditor": 1
         },
         "Spritesheets/Glowing_Tree.tsx": {
+            "scaleInDock": 0.75,
             "scaleInEditor": 1
         },
         "Spritesheets/Lamp.tsx": {
@@ -267,11 +271,11 @@
                 14,
                 13
             ],
-            "scale": 0.0625,
+            "scale": 0.12092708333333332,
             "selectedLayer": 14,
             "viewCenter": {
-                "x": 4688,
-                "y": 10856
+                "x": 4738.392626410543,
+                "y": 7926.264105435438
             }
         }
     },
@@ -289,6 +293,7 @@
     ],
     "project": "rpg-map.tiled-project",
     "recentFiles": [
+        "rpg-map.tmx",
         "Spritesheets/A2_Terrain_Red.tsx",
         "Spritesheets/A2_Terrain_And_Misc.tsx",
         "Spritesheets/Big_Misc.tsx",
@@ -299,8 +304,7 @@
         "Spritesheets/Gate_Stone1.tsx",
         "Spritesheets/Gate_Cathedral1.tsx",
         "Spritesheets/Flags_Banner.tsx",
-        "Spritesheets/Fantasy_Switches.tsx",
-        "Spritesheets/Fantasy_Roofs.tsx"
+        "Spritesheets/Fantasy_Switches.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
