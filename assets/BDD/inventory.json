@@ -34,7 +34,7 @@
         y: 0
       }
       com.empire.rpg.component.CollisionComponent: {
-        class: com.empire.rpg.component.CollisionComponent
+        class: com.empire.rpg.component.CollisionComponents
         isCollidable: true
       }
     }

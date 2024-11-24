@@ -335,6 +335,5 @@ public class Main extends ApplicationAdapter {
         quest.dispose();
         questBoardTexture.dispose();
         pathfinding.dispose();
-        debugRenderer.dispose();
     }
 }

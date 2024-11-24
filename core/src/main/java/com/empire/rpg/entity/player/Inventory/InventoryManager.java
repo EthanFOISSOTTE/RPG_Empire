@@ -27,7 +27,7 @@ public class InventoryManager {
      */
     public static void saveItemToInventory(Map<String, Object> itemInfo) {
         // Vérification des clés et des valeurs
-        if (itemInfo.get("Item-Name") == null || itemInfo.get("Item-Quantity") == null || itemInfo.get("Item-Val") == null) {
+        if (itemInfo.get("Item-Name") == null || itemInfo.get("Item-Quantity") == null) {
             System.out.println("Erreur : certaines informations d'item sont manquantes.");
             return; // Sortie de la méthode si des informations manquent
         }
@@ -41,28 +41,11 @@ public class InventoryManager {
         // Ajout des propriétés principales
         newItem.addProperty("class", "com.empire.rpg.entity.Item");
         newItem.addProperty("name", (String) itemInfo.get("Item-Name"));
-        newItem.add("id", new JsonObject());  // ID vide ou à remplir selon la logique
-        newItem.add("components", new JsonObject());
-
-        // Ajout des composants (PositionComponent et CollisionComponent)
-        JsonObject positionComponent = new JsonObject();
-        positionComponent.addProperty("class", "com.empire.rpg.component.PositionComponent");
-        positionComponent.addProperty("x", 0);  // Valeurs de position à ajuster
-        positionComponent.addProperty("y", 0);
-        newItem.getAsJsonObject("components").add("com.empire.rpg.component.PositionComponent", positionComponent);
-
-        JsonObject collisionComponent = new JsonObject();
-        collisionComponent.addProperty("class", "com.empire.rpg.component.CollisionComponent");
-        collisionComponent.addProperty("isCollidable", true);  // Valeur à ajuster si nécessaire
-        newItem.getAsJsonObject("components").add("com.empire.rpg.component.CollisionComponent", collisionComponent);
 
         // Ajout des autres propriétés
         newItem.addProperty("type", (String) itemInfo.get("Item-Type"));
         newItem.addProperty("quantity", ((Number) itemInfo.get("Item-Quantity")).intValue());
         newItem.addProperty("description", (String) itemInfo.get("Item-Description"));
-        newItem.addProperty("valeur", ((Number) itemInfo.get("Item-Val")).intValue());
-        newItem.addProperty("states", false);  // Exemple de valeur par défaut
-        newItem.addProperty("style", "null");
 
         // Vérifier si l'item existe déjà dans l'inventaire
         boolean itemExists = false;
