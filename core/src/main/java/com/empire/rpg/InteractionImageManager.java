@@ -57,9 +57,7 @@ public class InteractionImageManager {
     public void render(SpriteBatch batch) {
         if (isImageVisible) {
             // Dessine l'image actuellement visible sur toute la fenêtre
-            batch.begin();
-            batch.draw(images[currentImageIndex], 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()+20);
-            batch.end();
+            batch.draw(images[currentImageIndex], 0, 0, 1280, 720);
         }
     }
 

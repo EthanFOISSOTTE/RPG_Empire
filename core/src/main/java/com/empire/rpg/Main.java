@@ -223,10 +223,6 @@ public class Main extends ApplicationAdapter {
         } else {
             System.err.println("Erreur : 'player' n'a pas été initialisé correctement dans initializeGame().");
         }
-
-        // Mise à jour et rendu de l'interaction avec les images
-        interactionImageManager.update(new Vector2(player.getX(), player.getY()));
-        interactionImageManager.render(batch);
     }
 
     @Override
@@ -268,6 +264,7 @@ public class Main extends ApplicationAdapter {
         batch.setProjectionMatrix(camera.combined);
 
         batch.begin();
+
         for (Mob mob : Mob.allMobs) {
             // Appliquer le facteur de zoom lors du rendu
             batch.draw(
@@ -287,6 +284,7 @@ public class Main extends ApplicationAdapter {
             // Rendu de la barre de vie du mob
             mobUI.render(batch, mob);
         }
+
         batch.end();
 
 
@@ -301,6 +299,9 @@ public class Main extends ApplicationAdapter {
         batch2.begin();
         playerUI.render(batch2);
         zoneUI.render(batch2);
+        // Mise à jour et rendu de l'interaction avec les images
+        interactionImageManager.update(new Vector2(player.getX(), player.getY()));
+        interactionImageManager.render(batch2);
         batch2.end();
 
 
@@ -489,9 +490,6 @@ public class Main extends ApplicationAdapter {
         batch.dispose();
         mapManager.dispose();
         player.dispose();
-        if (soundManager != null) {
-            soundManager.dispose();
-        }
         if (player != null) {
             player.dispose();
         }
@@ -517,8 +515,6 @@ public class Main extends ApplicationAdapter {
             mob.dispose();
         }
         Mob.allMobs.clear();
-        debugRenderer.dispose();
-        playerUI.dispose();
         F_Key_Texture.dispose();
         shapeRenderer.dispose(); // Libère ShapeRenderer
         font.dispose();
