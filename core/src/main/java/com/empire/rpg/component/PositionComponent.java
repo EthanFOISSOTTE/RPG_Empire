@@ -1,5 +1,7 @@
 package com.empire.rpg.component;
 
+import com.badlogic.gdx.math.Vector2;
+
 /**
  * Représente un composant de position dans le jeu.
  */
@@ -52,6 +54,15 @@ public class PositionComponent implements Component {
      */
     public void getPosition() {
         System.out.println("X: " + x + " Y: " + y);
+    }
+
+    /**
+     * Retourne la position actuelle sous forme d'un Vector2.
+     *
+     * @return La position actuelle sous forme d'un Vector2.
+     */
+    public Vector2 getPlayerPosition() {
+        return new Vector2(x, y);  // Renvoie la position en tant que Vector2
     }
 
     /**

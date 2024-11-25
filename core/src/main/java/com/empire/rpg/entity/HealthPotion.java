@@ -1,5 +1,6 @@
 package com.empire.rpg.entity;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.empire.rpg.component.CollisionComponent;
 import com.empire.rpg.component.HealingComponent;
 import com.empire.rpg.component.PositionComponent;
@@ -25,7 +26,7 @@ public class HealthPotion extends Entity {
         super("HealthPotion",
             Map.of(
                 PositionComponent.class, new PositionComponent(x, y),
-                CollisionComponent.class, new CollisionComponent(true),
+                CollisionComponent.class, new CollisionComponent(true, new Rectangle(0, 0, 32, 32)),
                 HealingComponent.class, new HealingComponent(healingPoints)
             ),
             UUID.randomUUID());

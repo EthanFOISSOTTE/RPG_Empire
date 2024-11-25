@@ -60,7 +60,7 @@
             }
         },
         "Images/Epitech_Pixel.tsx": {
-            "scaleInDock": 1,
+            "scaleInDock": 0.75,
             "scaleInEditor": 1
         },
         "Images/labi_foret_temp.tsx": {
@@ -76,15 +76,16 @@
             "scaleInEditor": 1.5
         },
         "Spritesheets/A2_Terrain_And_Misc.tsx": {
-            "scaleInDock": 1,
+            "scaleInDock": 2,
             "scaleInEditor": 1.5
         },
         "Spritesheets/A2_Terrain_Red.tsx": {
-            "scaleInDock": 1,
+            "dynamicWrapping": false,
+            "scaleInDock": 0.5,
             "scaleInEditor": 2
         },
         "Spritesheets/A3_Walls_And_Floors.tsx": {
-            "scaleInDock": 1
+            "scaleInDock": 0.75
         },
         "Spritesheets/A4_Walls.tsx": {
             "scaleInDock": 1,
@@ -98,12 +99,24 @@
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
+        "Spritesheets/Big_Misc.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Spritesheets/Big_Trees.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
         "Spritesheets/Big_Trees_Red.tsx": {
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
         "Spritesheets/Big_drawbridge.tsx": {
             "scaleInDock": 0.75,
+            "scaleInEditor": 1
+        },
+        "Spritesheets/Decoration.tsx": {
+            "scaleInDock": 1,
             "scaleInEditor": 1
         },
         "Spritesheets/Decoration_Vegetation.tsx": {
@@ -114,13 +127,31 @@
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
+        "Spritesheets/Diagonal_Water.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Spritesheets/Door_Fence.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Spritesheets/Fantasy_Chest.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
         "Spritesheets/Fantasy_Chimney.tsx": {
-            "scaleInDock": 1
+            "scaleInDock": 1,
+            "scaleInEditor": 1
         },
         "Spritesheets/Fantasy_Door1.tsx": {
-            "scaleInDock": 1
+            "scaleInDock": 1,
+            "scaleInEditor": 1
         },
         "Spritesheets/Fantasy_Door2.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Spritesheets/Fantasy_Door_Fence.tsx": {
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
@@ -149,7 +180,8 @@
             "scaleInEditor": 1
         },
         "Spritesheets/Fantasy_Outside_B.tsx": {
-            "scaleInDock": 0.75
+            "scaleInDock": 1,
+            "scaleInEditor": 1
         },
         "Spritesheets/Fantasy_Outside_B_Red.tsx": {
             "scaleInDock": 1,
@@ -160,7 +192,7 @@
             "scaleInEditor": 1.5
         },
         "Spritesheets/Fantasy_Outside_D.tsx": {
-            "scaleInDock": 1.5,
+            "scaleInDock": 0.75,
             "scaleInEditor": 1.5
         },
         "Spritesheets/Fantasy_Outside_D_Red.tsx": {
@@ -171,12 +203,32 @@
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
+        "Spritesheets/Fantasy_Switches.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Spritesheets/Flags_Banner.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
         "Spritesheets/Gate_Cathedral1.tsx": {
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
         "Spritesheets/Gate_Stone1.tsx": {
             "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Spritesheets/Gate_Wood1.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Spritesheets/Giant_Tree_No_Glowing.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Spritesheets/Glowing_Tree.tsx": {
+            "scaleInDock": 0.75,
             "scaleInEditor": 1
         },
         "Spritesheets/Lamp.tsx": {
@@ -216,19 +268,19 @@
         },
         "rpg-map.tmx": {
             "expandedGroupLayers": [
-                14,
-                13
+                13,
+                14
             ],
-            "scale": 0.25,
+            "scale": 0.5,
             "selectedLayer": 12,
             "viewCenter": {
-                "x": 7940,
-                "y": 4922
+                "x": 1441,
+                "y": 7137
             }
         }
     },
     "frame.defaultDuration": 400,
-    "last.exportedFilePath": "C:/Users/banck/OneDrive/Bureau/EPITECH/PROJECT/T-JAV-501/T-JAV-501-NCY_1/assets",
+    "last.exportedFilePath": "C:/Users/user/Desktop/RPG_Empire/assets",
     "last.imagePath": "C:/Users/user/Desktop/CarteTiledJava/assets/Spritesheets",
     "map.height": 200,
     "map.lastUsedExportFilter": "Fichiers de carte JSON (*.tmj *.json)",
@@ -242,17 +294,17 @@
     "project": "rpg-map.tiled-project",
     "recentFiles": [
         "rpg-map.tmx",
-        "Spritesheets/A1_Liquids_And_Misc_Red.tsx",
-        "Spritesheets/A1_Liquids_And_Misc.tsx",
-        "Spritesheets/PM_Shadows.tsx",
-        "Spritesheets/Fantasy_Outside_D.tsx",
-        "Spritesheets/A2_Terrain_And_Misc.tsx",
-        "Spritesheets/Decoration_Vegetation.tsx",
-        "Spritesheets/Gate_Stone1.tsx",
-        "Spritesheets/Waterwheel.tsx",
         "Spritesheets/A2_Terrain_Red.tsx",
-        "Spritesheets/Fantasy_Outside_D_Red.tsx",
-        "Spritesheets/Big_Trees_Red.tsx"
+        "Spritesheets/A2_Terrain_And_Misc.tsx",
+        "Spritesheets/Big_Misc.tsx",
+        "Spritesheets/Glowing_Tree.tsx",
+        "Spritesheets/Decoration.tsx",
+        "Spritesheets/Giant_Tree_No_Glowing.tsx",
+        "Spritesheets/Gate_Wood1.tsx",
+        "Spritesheets/Gate_Stone1.tsx",
+        "Spritesheets/Gate_Cathedral1.tsx",
+        "Spritesheets/Flags_Banner.tsx",
+        "Spritesheets/Fantasy_Switches.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {

@@ -54,4 +54,3 @@ public class HealingComponent implements Component {
         return 0;
     }
 }
-

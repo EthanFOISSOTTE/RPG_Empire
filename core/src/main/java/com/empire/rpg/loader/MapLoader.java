@@ -7,10 +7,6 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 /**
  * Classe MapLoader pour charger et gérer les entités et objets d'une carte Tiled.
  */
-
-/**
- * Classe MapLoader pour charger et gérer les entités et objets d'une carte Tiled.
- */
 public class MapLoader {
 
     private final String mapPath;
