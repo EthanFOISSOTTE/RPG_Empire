@@ -25,6 +25,7 @@ import com.empire.rpg.ui.PlayerUI;
 
 import com.empire.rpg.entity.player.Inventory.Inventory;
 import com.empire.rpg.shop.Shop;
+import com.empire.rpg.shop.Vente;
 
 
 
@@ -59,6 +60,9 @@ public class Main extends ApplicationAdapter {
     private Shop shop; // Instance du shop
     private boolean showShopFrame = false;
 
+    //Shop
+    private Vente vente; // Instance du shop
+    private boolean showVenteFrame = false;
 
     @Override
     public void create() {
@@ -67,7 +71,6 @@ public class Main extends ApplicationAdapter {
         viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
         shapeRenderer = new ShapeRenderer(); // Initialisation de ShapeRenderer
         font = new BitmapFont();
-
 
 
         // Charger la carte et les collisions
@@ -96,6 +99,8 @@ public class Main extends ApplicationAdapter {
         inventaire = new Inventory(camera, batch);  // Initialisation de l'inventaire
 
         shop = new Shop(camera, batch);  // Initialisation du shop
+
+        vente = new Vente(camera, batch);  // Initialisation de vente
 
         // Initialiser l'InteractionImageManager
         interactionImageManager = new InteractionImageManager(
@@ -149,8 +154,14 @@ public class Main extends ApplicationAdapter {
                 shop.render(new Vector2(player.getX(),player.getY()));
             }
 
+            if (!showShopFrame){
+                vente.update();  // Appel de update() pour gérer la navigation dans le vente
+                vente.render(new Vector2(player.getX(),player.getY()));
+            }
+
+
             if (Inventory.getShowInteractionFrame()) {
-            inventaire.render(new Vector2(player.getX(), player.getY()));  // Rendu uniquement si l'inventaire est actif
+                inventaire.render(new Vector2(player.getX(), player.getY()));  // Rendu uniquement si l'inventaire est actif
             }
 
 
@@ -197,6 +208,7 @@ public class Main extends ApplicationAdapter {
 
 
         shop.dispose();  // Libère les ressources utilisées dans shop
+        vente.dispose();  // Libère les ressources utilisées dans vente
 
         // Autres libérations de ressources...
         interactionImageManager.dispose();

@@ -407,14 +407,31 @@ public class Inventory {
             .orElse(0); // Retourner 0 si l'objet n'est pas trouvé
     }
 
-    public static void setPiece(int newQuantity) {
+    public static void setArgent(int newQuantity) {
         String targetName = "Pièce Astrale"; // Nom de l'objet à rechercher
 
-        // Rechercher l'objet dans la liste
-        items.stream()
-            .filter(item -> item.getName().equalsIgnoreCase(targetName)) // Trouver l'objet par son nom
-            .findFirst() // Récupérer le premier match
-            .ifPresent(item -> item.setQuantity(newQuantity)); // Mettre à jour la quantité
+        // Vérifier si l'objet existe déjà dans l'inventaire
+        Item existingItem = items.stream()
+            .filter(item -> item.getName().equalsIgnoreCase(targetName))
+            .findFirst()
+            .orElse(null);
+
+        if (existingItem != null) {
+            // Si l'objet existe, mettre à jour sa quantité
+            existingItem.setQuantity(newQuantity);
+        } else {
+            // Si l'objet n'existe pas, le créer et l'ajouter à l'inventaire
+            Item astralPiece = new Item(
+                targetName, // Nom de l'objet
+                newQuantity, // Quantité
+                "Divers", // Type
+                "Blablabla", // Description
+                0, // Valeur
+                false, // States
+                "null" // Style
+            );
+            items.add(astralPiece); // Ajouter le nouvel objet à l'inventaire
+        }
 
         // Sauvegarder les changements dans le fichier JSON
         saveInventoryToJson();

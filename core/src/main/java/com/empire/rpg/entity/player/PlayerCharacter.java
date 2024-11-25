@@ -29,6 +29,7 @@ import java.util.*;
 import com.empire.rpg.entity.player.Inventory.Inventory;
 import com.empire.rpg.InteractionImageManager;
 import com.empire.rpg.shop.Shop;
+import com.empire.rpg.shop.Vente;
 
 
 /**
@@ -117,8 +118,9 @@ public class PlayerCharacter extends Player {
 
     private static boolean showInteractionFrame = false;
     private static boolean showShopFrame = false;
+    private static boolean showVenteFrame = false;
 
-    private Inventory inventaire;
+
 
     public PlayerCharacter(float scale, UUID id, String name, Map<Class<? extends Component>, Component> components) {
         super(name, components, id); // Appel au constructeur de la superclasse
@@ -173,9 +175,6 @@ public class PlayerCharacter extends Player {
 
         // Initialisation des ensembles d'outils
         initializeToolSets();
-
-        // Autres initialisations
-        inventaire = new Inventory(new OrthographicCamera(), new SpriteBatch());
 
     }
 
@@ -320,13 +319,17 @@ public class PlayerCharacter extends Player {
         if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
 
             if(!showShopFrame){
-                showInteractionFrame = !showInteractionFrame;   //inverse true en false et inversement
-                Inventory.setShowInteractionFrame(showInteractionFrame);  // Active le cadre d'inventaire
+                if (!showVenteFrame){
+                    showInteractionFrame = !showInteractionFrame;   //inverse true en false et inversement
+                    Inventory.setShowInteractionFrame(showInteractionFrame);  // Active le cadre d'inventaire
 
-                Inventory.loadInventoryFromJson();
+                    Inventory.loadInventoryFromJson();
+                }
+
             }
 
         }
+
         // Gérer l'affichage et la mise à jour de l'inventaire
         if(!showInteractionFrame) {
             if (isInShopArea(getX(), getY())) {
@@ -338,9 +341,6 @@ public class PlayerCharacter extends Player {
                 }
             }
         }
-
-
-
 
     }
 
@@ -499,6 +499,9 @@ public class PlayerCharacter extends Player {
             return;
         }
         if (Shop.getShowShopFrame()){
+            return;
+        }
+        if (Vente.getShowVenteFrame()){
             return;
         }
         if (InteractionImageManager.getIsImageVisible()){

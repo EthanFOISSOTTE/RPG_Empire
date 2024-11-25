@@ -16,46 +16,49 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.empire.rpg.entity.Item;
-import com.empire.rpg.entity.player.Inventory.Inventory;
 
 
-public class Shop {
 
-    //partie ouverture du shop
+public class Vente {
+
+    //partie ouverture de la partie vente
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private ShapeRenderer shapeRenderer;
     private BitmapFont font;
-    private static boolean showShopFrame = false;
+    private static boolean showVenteFrame = false;
 
-
-    //partie organisation du shop
+    //partie organisation de la partie vente
     private final String[] categories = {"Armes", "Tenue", "Consommable", "Outil",  "Objet de quête", "Divers"};
     private int selectedCategoryIndex = 0;
     private int selectedObjectIndex = 0;
     private boolean inCategorySelection = true;
-    private List<Item> items;  // Liste des objets chargés à partir du JSON
+    private static List<Item> items;  // Liste des objets chargés à partir du JSON
 
     //scroll des objet
     private static final int MAX_VISIBLE_ITEMS = 10; // Nombre maximum d'objets affichés en même temps
     private int scrollOffset = 0; // Décalage de défilement pour l'affichage des objets
 
 
-    public Shop(OrthographicCamera camera, SpriteBatch batch) {
+    public Vente(OrthographicCamera camera, SpriteBatch batch) {
         this.camera = camera;
         this.batch = batch;
         this.shapeRenderer = new ShapeRenderer();
         this.font = new BitmapFont();
         this.items = new ArrayList<>();
-        loadShopFromJson();  // Charger les données JSON à l'initialisation
+        loadVenteFromJson();  // Charger les données JSON à l'initialisation
     }
 
     //partie trie de la liste du fichier JSON
-    private void loadShopFromJson() {
-        Json json = new Json();
-        JsonValue base = new JsonReader().parse(Gdx.files.internal("BDD/shop.json"));
+    public static void loadVenteFromJson() {
 
-        for (JsonValue itemJson : base.get("shop")) {
+        // Vider la liste existante
+        items.clear();
+
+        Json json = new Json();
+        JsonValue base = new JsonReader().parse(Gdx.files.internal("BDD/inventory.json"));
+
+        for (JsonValue itemJson : base.get("inventory")) {
             String name = itemJson.getString("name");
             int quantity = itemJson.getInt("quantity");
             String type = itemJson.getString("type");
@@ -71,54 +74,23 @@ public class Shop {
         }
     }
 
-    private void addItemToInventory(Item selectedItem) {
-        // Charger l'inventaire existant depuis le fichier JSON
+    private void saveVenteToJson() {
         Json json = new Json();
-        JsonValue base = new JsonReader().parse(Gdx.files.local("BDD/inventory.json"));
-        List<Item> inventory = new ArrayList<>();
 
-        for (JsonValue itemJson : base.get("inventory")) {
-            String name = itemJson.getString("name");
-            int quantity = itemJson.getInt("quantity");
-            String type = itemJson.getString("type");
-            String description = itemJson.getString("description");
-            int valeur = itemJson.getInt("valeur", 0); // Valeur par défaut 0 si absent
-            boolean states = itemJson.getBoolean("states", false);
-            String style = itemJson.getString("style", "null");
-
-            inventory.add(new Item(name, quantity, type, description, valeur, states, style));
-        }
-
-        // Vérifier si l'item existe déjà dans l'inventaire
-        boolean itemExists = false;
-        for (Item item : inventory) {
-            if (item.getName().equals(selectedItem.getName())) {
-                // Augmenter la quantité
-                item.setQuantity(item.getQuantity() + selectedItem.getQuantity());
-                System.out.println(item.getQuantity());
-                itemExists = true;
-                break;
-            }
-        }
-
-        // Si l'item n'existe pas, l'ajouter
-        if (!itemExists) {
-            inventory.add(selectedItem);
-        }
-
-        // Sauvegarder les modifications dans le fichier JSON
-        String inventoryJson = json.prettyPrint(inventory);
+        // Convertit directement la liste des objets en JSON sans filtrage
+        String inventoryJson = json.prettyPrint(items);
         Gdx.files.local("BDD/inventory.json").writeString("{\"inventory\":" + inventoryJson + "}", false);
     }
 
+
     public void render(Vector2 playerPosition) {
-        if (showShopFrame) {
-            drawShopFrame(playerPosition);
+        if (showVenteFrame) {
+            drawVenteFrame(playerPosition);
         }
     }
 
-    // partie création de l'interface graphique du shop
-    private void drawShopFrame(Vector2 playerPosition) {
+    // partie création de l'interface graphique de la partie vente
+    private void drawVenteFrame(Vector2 playerPosition) {
         float frameWidth = 700;
         float frameHeight = 400;
         float frameX = playerPosition.x - frameWidth / 2;
@@ -167,14 +139,14 @@ public class Shop {
         float sectionY = textTopY - layout.height * 2f - 20; // Position de la section
 
         // Dessiner "Achat"
-        String achatText = "->Achat<-";
+        String achatText = "Achat";
         GlyphLayout achatLayout = new GlyphLayout(font, achatText);
         float achatX = frameX + (frameWidth / 4) - (achatLayout.width / 2);
         font.draw(batch, achatText, achatX, sectionY);
 
 
         // Dessiner "Vente"
-        String venteText = "Vente";
+        String venteText = "->Vente<-";
         GlyphLayout venteLayout = new GlyphLayout(font, venteText);
         float venteX = frameX + (3 * frameWidth / 4) - (venteLayout.width / 2);
         font.draw(batch, venteText, venteX, sectionY);
@@ -234,7 +206,6 @@ public class Shop {
             font.draw(batch, (i == selectedCategoryIndex ? "-> " : "") + category, frameX + 20, textY);
         }
     }
-
 
 
     // partie création de la partie objet
@@ -298,7 +269,7 @@ public class Shop {
     public void update() {
         List<Item> currentItems = getItemsByType(categories[selectedCategoryIndex]);
 
-        if(showShopFrame){
+        if(showVenteFrame){
             if (Gdx.input.isKeyJustPressed(Input.Keys.W)) {
                 if (inCategorySelection) {
                     selectedCategoryIndex = (selectedCategoryIndex - 1 + categories.length) % categories.length;
@@ -350,48 +321,105 @@ public class Shop {
                     if (!currentItems.isEmpty() && selectedObjectIndex < currentItems.size()) {
                         Item selectedItem = currentItems.get(selectedObjectIndex);
 
-                        if (selectedItem.getValeur() <= Inventory.getPiece()) {
+                        if (selectedItem.getValeur() > 0){
+                            setArgent(getPiece() + selectedItem.getValeur());
 
-                            Inventory.setArgent(Inventory.getPiece() - selectedItem.getValeur());
+                            if (selectedItem.getQuantity() > 1) {
+                                // Décrémenter la quantité
+                                selectedItem.setQuantity(selectedItem.getQuantity() - 1);
+                                System.out.println("Quantite de " + selectedItem.getName() + " diminuee à " + selectedItem.getQuantity());
+                            } else {
+                                // Supprimer l'objet de la liste
+                                currentItems.remove(selectedObjectIndex);
+                                items.remove(selectedItem); // Mise à jour globale
+                                System.out.println(selectedItem.getName() + " a été supprime de l'inventaire.");
 
-                            // Ajouter ou mettre à jour l'item dans l'inventaire
-                            addItemToInventory(selectedItem);
+                                // Ajuster l'index de sélection pour éviter un dépassement
+                                if (selectedObjectIndex >= currentItems.size()) {
+                                    selectedObjectIndex = Math.max(0, currentItems.size() - 1);
+                                }
+                            }
 
-                            Inventory.loadInventoryFromJson();
-
-                            // Optionnel : Message pour informer que l'item a été ajouté
-                            System.out.println(selectedItem.getName() + "l'objet a été acheté ");
+                            // Sauvegarder les modifications dans le fichier JSON
+                            saveVenteToJson();
                         }
 
                     }
                 }
             }
 
-            if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
 
-                Vente.setShowVenteFrame(true);// Active le cadre d'inventaire
-                showShopFrame = false;//inverse true en false et inversement
-                Shop.setShowShopFrame(false);
+                showVenteFrame = !showVenteFrame;   //inverse true en false et inversement
+                setShowVenteFrame(showVenteFrame);  // Active le cadre d'inventaire
 
+            }
+
+
+
+            if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
+
+
+                Shop.setShowShopFrame(true);
+                showVenteFrame = false; //inverse true en false et inversement
+                Vente.setShowVenteFrame(false);  // Active le cadre d'inventaire
 
                 Vente.loadVenteFromJson();
 
             }
 
+
+
         }
 
 
-
     }
 
-
-
-    public static boolean getShowShopFrame() {
-        return showShopFrame;
+    public int getPiece() {
+        String targetName = "Pièce Astrale"; // Nom de l'objet à rechercher
+        return items.stream()
+            .filter(item -> item.getName().equalsIgnoreCase(targetName)) // Trouver l'objet par son nom
+            .findFirst() // Récupérer le premier match
+            .map(Item::getQuantity) // Obtenir la quantité
+            .orElse(0); // Retourner 0 si l'objet n'est pas trouvé
     }
 
-    public static void setShowShopFrame(boolean show) {
-        showShopFrame = show;
+    public void setArgent(int newQuantity) {
+        String targetName = "Pièce Astrale"; // Nom de l'objet à rechercher
+
+        // Vérifier si l'objet existe déjà dans l'inventaire
+        Item existingItem = items.stream()
+            .filter(item -> item.getName().equalsIgnoreCase(targetName))
+            .findFirst()
+            .orElse(null);
+
+        if (existingItem != null) {
+            // Si l'objet existe, mettre à jour sa quantité
+            existingItem.setQuantity(newQuantity);
+        } else {
+            // Si l'objet n'existe pas, le créer et l'ajouter à l'inventaire
+            Item astralPiece = new Item(
+                targetName, // Nom de l'objet
+                newQuantity, // Quantité
+                "Divers", // Type
+                "Blablabla", // Description
+                0, // Valeur
+                false, // States
+                "null" // Style
+            );
+            items.add(astralPiece); // Ajouter le nouvel objet à l'inventaire
+        }
+
+        // Sauvegarder les changements dans le fichier JSON
+        saveVenteToJson();
+    }
+
+    public static boolean getShowVenteFrame() {
+        return showVenteFrame;
+    }
+
+    public static void setShowVenteFrame(boolean show) {
+        showVenteFrame = show;
     }
 
     public void dispose() {
