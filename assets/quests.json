@@ -28,6 +28,7 @@
 	title: Chasse aux lapins
 	description: Le boucher du village a besoin de viande fraîche pour ses clients. Il vous demande de chasser 5 lapins pour lui.
 	id: 3
+	status: 1
 	author: Boucher
 	reward: {
 		gold: 150
@@ -58,6 +59,7 @@
 	title: Une odeur d'orc
 	description: Le Capitaine de la milice a besoin de 5 peaux d'orc pour réparer les armures de ses hommes. Trouvez 5 peaux d'orc et rapportez-les lui.
 	id: 6
+	status: 1
 	author: Capitaine Jean-Claude
 	reward: {
 		gold: 850
