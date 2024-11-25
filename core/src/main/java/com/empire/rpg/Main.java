@@ -38,6 +38,7 @@ import com.empire.rpg.shop.Vente;
 
 public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
+    private SpriteBatch batch2;
     private OrthographicCamera camera;
     private FitViewport viewport;
     private MapManager mapManager;
@@ -80,6 +81,9 @@ public class Main extends ApplicationAdapter {
     private PauseScreen pauseScreen;
     private static Main instance;
 
+    // Nom du joueur
+    private String playerName;
+
     // Dimensions virtuelles de l'UI
     private static final float UI_WIDTH = 1280f;
     private static final float UI_HEIGHT = 720f;
@@ -116,9 +120,13 @@ public class Main extends ApplicationAdapter {
         IntroScreen introScreen = new IntroScreen(() -> setScreen(new MainMenuScreen()));
         setScreen(introScreen);
 
+        // Récupérer le nom du joueur depuis le menu principal
+        playerName = MainMenuScreen.getPlayerName();
+
         instance = this;
-//        Gdx.input.setCursorCatched(true);
+        // Gdx.input.setCursorCatched(true);
         batch = new SpriteBatch();
+        batch2 = new SpriteBatch();
         camera = new OrthographicCamera();
         pauseScreen = new PauseScreen();
         viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
@@ -133,9 +141,9 @@ public class Main extends ApplicationAdapter {
         collisionHandler = new CollisionHandler(collisionManager);
 
         Map<Class<? extends Component>, Component> Duc_Michel = Map.of(
-            PositionComponent.class, new PositionComponent(177* 48 + 24, 68 * 48 + 24),
+            PositionComponent.class, new PositionComponent(177* 48 + 24, 67 * 48 + 24),
             MovementComponent.class, new MovementComponent(1.5f, "north"),
-            TextureComponent.class, new TextureComponent(new Texture("PNJ/Duc_Michel.png"), 48, 48, 0, 0, 2.0f)
+            TextureComponent.class, new TextureComponent(new Texture("PNJ/michel.png"), 48, 48, 0, 0, 2.0f)
         );
         pnj_duc = new PNJ("Duc_Michel", Duc_Michel, UUID.randomUUID());
         pnj_duc.setName("Duc_Michel");
@@ -154,7 +162,7 @@ public class Main extends ApplicationAdapter {
         //components.put(PositionComponent.class, new PositionComponent(51 * 48 + 24, 42 * 48 + 24)); // Spawn au tableau des guêtes
         components.put(PositionComponent.class, new PositionComponent(8300, 2530));
 
-        this.player = new PlayerCharacter(2.0f, UUID.randomUUID(), "Hero", components);
+        this.player = new PlayerCharacter(2.0f, UUID.randomUUID(), playerName, components);
 
         inventaire = new Inventory(camera, batch);  // Initialisation de l'inventaire
 
@@ -282,21 +290,18 @@ public class Main extends ApplicationAdapter {
         batch.end();
 
 
-
         // Rendre les couches supérieures (au-dessus du joueur)
         mapManager.renderUpperLayers(camera);
 
+        // Mettre à jour la ZoneUI
+        zoneUI.update();
 
-//        // Mettre à jour la ZoneUI
-//        zoneUI.update();
-//
-//        // Rendre l'UI du joueur et de la zone
-//        uiViewport.apply();
-//        batch.setProjectionMatrix(uiCamera.combined);
-//        batch.begin();
-//        playerUI.render(batch);
-//        zoneUI.render(batch);
-//        batch.end();
+        // Rendre l'UI du joueur et de la zone
+        batch2.setProjectionMatrix(uiCamera.combined);
+        batch2.begin();
+        playerUI.render(batch2);
+        zoneUI.render(batch2);
+        batch2.end();
 
 
         dialogue.render(batch, player.getPlayerPosition());
@@ -397,14 +402,6 @@ public class Main extends ApplicationAdapter {
             quest.render(batch, player.getPlayerPosition());  // Affiche l'interaction avec le tableau de quête
         }
 
-        // Activer/Désactiver le mode de débogage
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F1)) {
-            debugMode = !debugMode;
-        }
-        if (debugMode) {
-            debugRenderer.renderDebugBounds(camera, player, collisionManager);
-        }
-
         // Mettre à jour la caméra pour suivre le joueur
         camera.position.set(player.getX(), player.getY(), 0);
         camera.update();
@@ -462,6 +459,9 @@ public class Main extends ApplicationAdapter {
     }
 
     private void initializeGame() {
+        // Récupérer le nom du joueur depuis le menu principal
+        playerName = MainMenuScreen.getPlayerName();
+
         // Création d'une map de composants avec PositionComponent et HealthComponent
         Map<Class<? extends Component>, Component> components = new HashMap<>();
         components.put(HealthComponent.class, new HealthComponent(100, 100));
@@ -471,7 +471,7 @@ public class Main extends ApplicationAdapter {
         mobManager.loadMobsFromMap(mapManager.getTiledMap());
 
         // Création et initialisation de l'instance de PlayerCharacter
-        player = new PlayerCharacter(2.0f, UUID.randomUUID(), "Hero", components);
+        player = new PlayerCharacter(2.0f, UUID.randomUUID(), playerName, components);
 
         // Initialiser l'UI du joueur
         playerUI = new PlayerUI(player, UI_WIDTH, UI_HEIGHT);

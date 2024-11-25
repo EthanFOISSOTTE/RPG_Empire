@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="200" height="200" tilewidth="48" tileheight="48" infinite="0" nextlayerid="26" nextobjectid="2955">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="200" height="200" tilewidth="48" tileheight="48" infinite="0" nextlayerid="26" nextobjectid="2956">
  <tileset firstgid="1" source="Spritesheets/A3_Walls_And_Floors.tsx"/>
  <tileset firstgid="513" source="Spritesheets/A2_Terrain_And_Misc.tsx"/>
  <tileset firstgid="2593" source="Spritesheets/Fantasy_Door1.tsx"/>
@@ -5892,6 +5892,7 @@
   <object id="2952" x="577" y="6792.55" width="47" height="49.0909"/>
   <object id="2953" x="528" y="6955.45" width="53.0909" height="52.5455"/>
   <object id="2954" x="1296" y="6768" width="144" height="48"/>
+  <object id="2955" x="8564.25" y="6288.25" width="43.75" height="66.25"/>
  </objectgroup>
  <objectgroup id="24" name="mob" visible="0">
   <object id="2220" name="goblin" x="6216.66" y="3680.67">

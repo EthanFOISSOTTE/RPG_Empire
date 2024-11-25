@@ -21,7 +21,7 @@ public class MainMenuScreen implements Screen {
     private int selectedOption = 0;
     private final String[] options = new String[]{"Nouvelle Partie", "Quitter le jeu"};
     private TextField playerNameField = null;
-    private String playerName = "";
+    private static String playerName = "";
     private Stage stage;
     private Skin skin;
     private BitmapFont customFont;
@@ -53,7 +53,6 @@ public class MainMenuScreen implements Screen {
 
         // Activer le clavier virtuel
         Gdx.input.setInputProcessor(stage);
-
     }
 
     @Override
@@ -79,6 +78,7 @@ public class MainMenuScreen implements Screen {
             customStyle.cursor = skin.getDrawable("cursor");
             customStyle.selection = skin.getDrawable("selection");
             customStyle.background = skin.getDrawable("textfield");
+
             // Création du champ de texte
             playerNameField = new TextField("", customStyle);
             playerNameField.setMessageText("Entrez votre nom...");
@@ -155,6 +155,7 @@ public class MainMenuScreen implements Screen {
                     playerNameField.setVisible(true);
                     Gdx.input.setInputProcessor(stage); // Activer le clavier virtuel
                     isEnteringName = true;
+
                     // Garder le nom du joueur dans une variable
                     playerName = playerNameField.getText();
                     // Démarre le jeu si le joueur appuie sur Enter & a entré un nom
@@ -170,5 +171,9 @@ public class MainMenuScreen implements Screen {
             }
         }
     }
-}
 
+    // get du nom du joueur static
+    public static String getPlayerName() {
+        return playerName;
+    }
+}
