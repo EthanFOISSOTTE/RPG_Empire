@@ -523,5 +523,7 @@ public class Main extends ApplicationAdapter {
         questBoardTexture.dispose();
         pathfinding.dispose();
         interactionImageManager.dispose();
+        shop.dispose();  // Libère les ressources utilisées dans shop
+        vente.dispose();  // Libère les ressources utilisées dans vente
     }
 }
