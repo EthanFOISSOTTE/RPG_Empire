@@ -357,6 +357,19 @@ public class Vente {
 
 
 
+            if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
+
+
+                Shop.setShowShopFrame(true);
+                showVenteFrame = false; //inverse true en false et inversement
+                Vente.setShowVenteFrame(false);  // Active le cadre d'inventaire
+
+                Vente.loadVenteFromJson();
+
+            }
+
+
+
         }
 
 
@@ -416,4 +429,3 @@ public class Vente {
 
 
 }
-

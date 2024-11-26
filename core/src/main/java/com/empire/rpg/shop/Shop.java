@@ -27,7 +27,7 @@ public class Shop {
     private ShapeRenderer shapeRenderer;
     private BitmapFont font;
     private static boolean showShopFrame = false;
-    private static boolean showVenteFrame = false;
+
 
     //partie organisation du shop
     private final String[] categories = {"Armes", "Tenue", "Consommable", "Outil",  "Objet de quête", "Divers"};
@@ -95,6 +95,7 @@ public class Shop {
             if (item.getName().equals(selectedItem.getName())) {
                 // Augmenter la quantité
                 item.setQuantity(item.getQuantity() + selectedItem.getQuantity());
+                System.out.println(item.getQuantity());
                 itemExists = true;
                 break;
             }
@@ -356,6 +357,8 @@ public class Shop {
                             // Ajouter ou mettre à jour l'item dans l'inventaire
                             addItemToInventory(selectedItem);
 
+                            Inventory.loadInventoryFromJson();
+
                             // Optionnel : Message pour informer que l'item a été ajouté
                             System.out.println(selectedItem.getName() + "l'objet a été acheté ");
                         }
@@ -366,10 +369,10 @@ public class Shop {
 
             if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
 
-                showShopFrame = false;
-                showVenteFrame = true;   //inverse true en false et inversement
-                Shop.setShowShopFrame(false);
                 Vente.setShowVenteFrame(true);// Active le cadre d'inventaire
+                showShopFrame = false;//inverse true en false et inversement
+                Shop.setShowShopFrame(false);
+
 
                 Vente.loadVenteFromJson();
 
@@ -377,21 +380,7 @@ public class Shop {
 
         }
 
-        if (showVenteFrame){
 
-            if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
-
-                showVenteFrame = false; //inverse true en false et inversement
-                showShopFrame = true;
-
-                Vente.setShowVenteFrame(false);  // Active le cadre d'inventaire
-                Shop.setShowShopFrame(true);
-
-                Vente.loadVenteFromJson();
-
-            }
-
-        }
 
     }
 
@@ -412,4 +401,3 @@ public class Shop {
 
 
 }
-

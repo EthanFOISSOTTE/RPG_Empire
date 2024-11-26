@@ -20,7 +20,7 @@
 		}
 	}
 	type: Consommable
-	quantity: 85
+	quantity: 86
 	description: Blablabla
 	valeur: 10
 	states: false
@@ -47,7 +47,7 @@
 		}
 	}
 	type: Divers
-	quantity: 2040
+	quantity: 1760
 	description: Blablablazf
 	valeur: 0
 	states: false
@@ -74,7 +74,34 @@
 		}
 	}
 	type: Armes
-	quantity: 4
+	quantity: 7
+	description: Blablabla
+	valeur: 30
+	states: false
+	style: lance
+}
+{
+	class: com.empire.rpg.entity.Item
+	name: Lance en acier
+	id: {}
+	components: {
+		class: java.util.ImmutableCollections$MapN
+		com.empire.rpg.component.CollisionComponent: {
+			class: com.empire.rpg.component.CollisionComponent
+			isCollidable: true
+			boundingBox: {
+				width: 32
+				height: 32
+			}
+		}
+		com.empire.rpg.component.PositionComponent: {
+			class: com.empire.rpg.component.PositionComponent
+			x: 0
+			y: 0
+		}
+	}
+	type: Armes
+	quantity: 5
 	description: Blablabla
 	valeur: 30
 	states: false
