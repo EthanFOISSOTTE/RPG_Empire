@@ -357,13 +357,13 @@ public class PlayerCharacter extends Player {
 
         }
 
-        // Gérer l'affichage et la mise à jour de l'inventaire
+        // Gérer l'affichage et la mise à jour du shop
         if(!showInteractionFrame) {
             if (isInShopArea(getX(), getY())) {
                 if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
 
                     showShopFrame = !showShopFrame;   //inverse true en false et inversement
-                    Shop.setShowShopFrame(showShopFrame);  // Active le cadre d'inventaire
+                    Shop.setShowShopFrame(showShopFrame);  // Active le cadre du shop
 
                 }
             }

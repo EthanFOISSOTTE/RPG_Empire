@@ -65,6 +65,7 @@ public class Main extends ApplicationAdapter {
     private QuestPlayer questPlayer;
     private DialogueManager dialogue; // Objet qui gère les dialogues avec les PNJ
     private PNJ pnj_duc;
+    private PNJ pnj_shop;
     private static final float INTERACTION_DISTANCE = 70;  // Distance d'interaction avec un objet
     private static final float DISPLAY_DISTANCE = 500;
     private static final float SQUARE_SIZE = 64;
@@ -147,6 +148,14 @@ public class Main extends ApplicationAdapter {
         );
         pnj_duc = new PNJ("Duc_Michel", Duc_Michel, UUID.randomUUID());
         pnj_duc.setName("Duc_Michel");
+
+        Map<Class<? extends Component>, Component> Jean_Benoit = Map.of(
+            PositionComponent.class, new PositionComponent(1265f, 1831f),
+            MovementComponent.class, new MovementComponent(1.5f, "north"),
+            TextureComponent.class, new TextureComponent(new Texture("PNJ/jean-benoit.png"), 48, 48, 0, 0, 2.0f)
+        );
+        pnj_shop = new PNJ("Jean-Benoit", Jean_Benoit, UUID.randomUUID());
+        pnj_shop.setName("Jean-Benoit");
 
         // Initialisation des objets liés aux quêtes
         quest = new Quest(camera, batch);  // Création de l'objet Quest pour gérer les quêtes
@@ -278,6 +287,7 @@ public class Main extends ApplicationAdapter {
 
 
         pnj_duc.render(batch);
+        pnj_shop.render(batch);
         player.render(batch);
 
         for (Mob mob : Mob.allMobs) {
