@@ -66,6 +66,8 @@ public class Main extends ApplicationAdapter {
     private DialogueManager dialogue; // Objet qui gère les dialogues avec les PNJ
     private PNJ pnj_duc;
     private PNJ pnj_shop;
+    private PNJ pnj_damien;
+    private PNJ pnj_morgane;
     private static final float INTERACTION_DISTANCE = 70;  // Distance d'interaction avec un objet
     private static final float DISPLAY_DISTANCE = 500;
     private static final float SQUARE_SIZE = 64;
@@ -156,6 +158,23 @@ public class Main extends ApplicationAdapter {
         );
         pnj_shop = new PNJ("Jean-Benoit", Jean_Benoit, UUID.randomUUID());
         pnj_shop.setName("Jean-Benoit");
+
+        Map<Class<? extends Component>, Component> Damien = Map.of(
+            PositionComponent.class, new PositionComponent(750f, 2550f),
+            MovementComponent.class, new MovementComponent(1.5f, "north"),
+            TextureComponent.class, new TextureComponent(new Texture("PNJ/damien.png"), 48, 48, 0, 0, 2.0f)
+        );
+        pnj_damien = new PNJ("Damien", Damien, UUID.randomUUID());
+        pnj_damien.setName("Damien");
+
+        Map<Class<? extends Component>, Component> Morgane = Map.of(
+            PositionComponent.class, new PositionComponent(1200f, 3145f),
+            MovementComponent.class, new MovementComponent(1.5f, "north"),
+            TextureComponent.class, new TextureComponent(new Texture("PNJ/morgane.png"), 48, 48, 0, 0, 2.0f)
+        );
+        pnj_morgane = new PNJ("Morgane", Morgane, UUID.randomUUID());
+        pnj_morgane.setName("Morgane");
+
 
         // Initialisation des objets liés aux quêtes
         quest = new Quest(camera, batch);  // Création de l'objet Quest pour gérer les quêtes
@@ -288,6 +307,8 @@ public class Main extends ApplicationAdapter {
 
         pnj_duc.render(batch);
         pnj_shop.render(batch);
+        pnj_damien.render(batch);
+        pnj_morgane.render(batch);
         player.render(batch);
 
         for (Mob mob : Mob.allMobs) {
@@ -303,6 +324,35 @@ public class Main extends ApplicationAdapter {
 
         // Mettre à jour la ZoneUI
         zoneUI.update();
+
+        if (isPlayerWithinInteractionDistance(player.getPlayerPosition(), pnj_shop.getPosition(), INTERACTION_DISTANCE)) {
+            batch.begin();
+            // Dessinez la texture de la touche "F"
+            batch.draw(F_Key_Texture, pnj_shop.getPosition().x + 52, pnj_shop.getPosition().y + 78, 24, 24);
+            batch.end();
+        }
+
+        if (isPlayerWithinInteractionDistance(player.getPlayerPosition(), pnj_damien.getPosition(), INTERACTION_DISTANCE)) {
+            batch.begin();
+            // Dessinez la texture de la touche "F"
+            batch.draw(F_Key_Texture, pnj_damien.getPosition().x + 52, pnj_damien.getPosition().y + 78, 24, 24);
+            batch.end();
+            // Détecter l'appui sur la touche "F"
+            if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+                dialogue.startDialogue("Damien");
+            }
+        }
+
+        if (isPlayerWithinInteractionDistance(player.getPlayerPosition(), pnj_morgane.getPosition(), INTERACTION_DISTANCE)) {
+            batch.begin();
+            // Dessinez la texture de la touche "F"
+            batch.draw(F_Key_Texture, pnj_morgane.getPosition().x + 52, pnj_morgane.getPosition().y + 78, 24, 24);
+            batch.end();
+            // Détecter l'appui sur la touche "F"
+            if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+                dialogue.startDialogue("Morgane");
+            }
+        }
 
         // Rendre l'UI du joueur et de la zone
         batch2.setProjectionMatrix(uiCamera.combined);
