@@ -175,13 +175,12 @@ public class Main extends ApplicationAdapter {
             8300, 2530, 48, 48, // Coordonnées et taille du carré
             // Chemins des images
             new String[]{
-                "PPT/image1.png",
-                "PPT/image2.png",
-                "PPT/image3.png",
-                "PPT/image4.png",
-                "PPT/image5.png",
-                "PPT/image6.png",
-                "PPT/image7.png"
+                "PPT/1.png",
+                "PPT/2.png",
+                "PPT/3.png",
+                "PPT/4.png",
+                "PPT/5.png",
+                "PPT/6.png"
             }
         );
 

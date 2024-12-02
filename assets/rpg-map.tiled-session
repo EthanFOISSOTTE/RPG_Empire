@@ -3,8 +3,9 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "",
+    "activeFile": "rpg-map.tmx",
     "expandedProjectPaths": [
+        "Images",
         "."
     ],
     "fileStates": {
@@ -270,11 +271,11 @@
                 13,
                 14
             ],
-            "scale": 4,
-            "selectedLayer": 12,
+            "scale": 1.5,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 8564.875,
-                "y": 6325.625
+                "x": 8281.666666666666,
+                "y": 6937
             }
         }
     },
@@ -288,10 +289,12 @@
     "map.tileWidth": 48,
     "map.width": 200,
     "openFiles": [
+        "rpg-map.tmx"
     ],
     "project": "rpg-map.tiled-project",
     "recentFiles": [
         "rpg-map.tmx",
+        "Images/Epitech_Pixel.tsx",
         "Spritesheets/A2_Terrain_Red.tsx",
         "Spritesheets/A2_Terrain_And_Misc.tsx",
         "Spritesheets/Big_Misc.tsx",
@@ -301,8 +304,7 @@
         "Spritesheets/Gate_Wood1.tsx",
         "Spritesheets/Gate_Stone1.tsx",
         "Spritesheets/Gate_Cathedral1.tsx",
-        "Spritesheets/Flags_Banner.tsx",
-        "Spritesheets/Fantasy_Switches.tsx"
+        "Spritesheets/Flags_Banner.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
