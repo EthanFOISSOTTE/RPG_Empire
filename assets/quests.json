@@ -5,7 +5,6 @@
 	description: "Dans la région proche de la capitale, se trouve des repaires de groupe de gobelins qui ont commencé à attaquer les convois commerciaux et les fermiers aux alentours. Le Duc Michel, a mis une récompense pour quiconque parviendrait à éliminer cette menace. Raportez lui 10 peau de gobelin."
 	id: 1
 	unique: true
-	status: 1
 	author: Duc Michel
 	reward: {
 		gold: 180
@@ -16,7 +15,6 @@
 	title: La Cueillette des Herbes de Soin
 	description: "Maître Théon, herboriste du village, cherche désespérément des herbes médicinales rares pour concocter un remède. Rapportez lui 5 herbes de soin."
 	id: 2
-	status: 1
 	author: Maître Théon
 	reward: {
 		gold: 100
@@ -28,7 +26,6 @@
 	title: Chasse aux lapins
 	description: Le boucher du village a besoin de viande fraîche pour ses clients. Il vous demande de chasser 5 lapins pour lui.
 	id: 3
-	status: 1
 	author: Boucher
 	reward: {
 		gold: 150
@@ -59,7 +56,6 @@
 	title: Une odeur d'orc
 	description: Le Capitaine de la milice a besoin de 5 peaux d'orc pour réparer les armures de ses hommes. Trouvez 5 peaux d'orc et rapportez-les lui.
 	id: 6
-	status: 1
 	author: Capitaine Jean-Claude
 	reward: {
 		gold: 850

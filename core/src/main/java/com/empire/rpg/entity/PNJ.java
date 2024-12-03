@@ -92,5 +92,15 @@ public class PNJ extends Entity {
         }
     }
 
-
+    /**
+     * Libère les ressources utilisées par le PNJ, notamment les textures.
+     */
+    public void dispose() {
+        TextureComponent textureComponent = (TextureComponent) components.get(TextureComponent.class);
+        if (textureComponent != null) {
+            if (textureComponent.getCurrentFrame() != null && textureComponent.getCurrentFrame().getTexture() != null) {
+                textureComponent.getCurrentFrame().getTexture().dispose();
+            }
+        }
+    }
 }

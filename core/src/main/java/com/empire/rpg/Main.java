@@ -553,6 +553,9 @@ public class Main extends ApplicationAdapter {
         interactionImageManager.dispose();
         shop.dispose();  // Libère les ressources utilisées dans shop
         vente.dispose();  // Libère les ressources utilisées dans vente
+        for (PNJ pnj : pnjList) {
+            pnj.dispose();
+        }
     }
 
     private void initializePNJ(String name, float x, float y, String texturePath) {
