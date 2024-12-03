@@ -5,8 +5,8 @@
     },
     "activeFile": "rpg-map.tmx",
     "expandedProjectPaths": [
-        "Images",
-        "."
+        ".",
+        "Images"
     ],
     "fileStates": {
         "C:/Users/88mat/Documents/four tout/map-tiled/Ow_Test2/Spritesheets/A1_Liquids_And_Misc.tsx": {
@@ -274,8 +274,8 @@
             "scale": 1.5,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 8281.666666666666,
-                "y": 6937
+                "x": 4795.333333333333,
+                "y": 5057.666666666666
             }
         }
     },

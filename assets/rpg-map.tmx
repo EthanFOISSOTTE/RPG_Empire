@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="200" height="200" tilewidth="48" tileheight="48" infinite="0" nextlayerid="26" nextobjectid="2956">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="200" height="200" tilewidth="48" tileheight="48" infinite="0" nextlayerid="26" nextobjectid="2971">
  <tileset firstgid="1" source="Spritesheets/A3_Walls_And_Floors.tsx"/>
  <tileset firstgid="513" source="Spritesheets/A2_Terrain_And_Misc.tsx"/>
  <tileset firstgid="2593" source="Spritesheets/Fantasy_Door1.tsx"/>
@@ -2485,7 +2485,7 @@
 0,0,0,0,0,0,0,0,0,8886,0,0,8683,0,0,0,0,0,0,0,0,0,0,0,8683,0,8699,0,0,0,0,8683,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="15" name="collision" visible="0">
+ <objectgroup id="15" name="collision">
   <object id="4" x="1152" y="7920" width="288" height="288"/>
   <object id="5" x="1152" y="8208" width="192" height="42.5"/>
   <object id="7" x="1440" y="8064" width="68.4242" height="97.75"/>
@@ -5893,6 +5893,19 @@
   <object id="2953" x="528" y="6955.45" width="53.0909" height="52.5455"/>
   <object id="2954" x="1296" y="6768" width="144" height="48"/>
   <object id="2955" x="8564.25" y="6288.25" width="43.75" height="66.25"/>
+  <object id="2956" x="8447.75" y="7192" width="48.25" height="50.5"/>
+  <object id="2958" x="8294.55" y="6732" width="32.3636" height="59.8182"/>
+  <object id="2960" x="7999" y="6926.75" width="36.25" height="65.75"/>
+  <object id="2961" x="6384" y="6524.67" width="39.3333" height="79.3333"/>
+  <object id="2962" x="5730" y="5259.33" width="49.3333" height="83.3333"/>
+  <object id="2963" x="5348.67" y="4938" width="32.6667" height="57.3333"/>
+  <object id="2964" x="5388" y="7117.5" width="38.5" height="68.5"/>
+  <object id="2965" x="4560" y="7824" width="48" height="48">
+   <ellipse/>
+  </object>
+  <object id="2968" x="940" y="8948.5" width="37" height="63"/>
+  <object id="2969" x="765.5" y="7004.5" width="101.5" height="37"/>
+  <object id="2970" x="1252.5" y="6388" width="36" height="70"/>
  </objectgroup>
  <objectgroup id="24" name="mob" visible="0">
   <object id="2220" name="goblin" x="6216.66" y="3680.67">
