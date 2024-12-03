@@ -12,9 +12,13 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.empire.rpg.component.*;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+
 import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
+
 import com.empire.rpg.map.*;
 import com.empire.rpg.entity.PNJ;
 import com.empire.rpg.quest.Quest;
@@ -31,7 +35,6 @@ import com.empire.rpg.ui.MobUI;
 import com.empire.rpg.ui.ZoneUI;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.empire.rpg.screen.*;
-
 import com.empire.rpg.entity.player.Inventory.Inventory;
 import com.empire.rpg.shop.Shop;
 import com.empire.rpg.shop.Vente;
@@ -64,7 +67,7 @@ public class Main extends ApplicationAdapter {
     private Quest quest;  // Objet Quest qui gère les quêtes dans le jeu
     private QuestPlayer questPlayer;
     private DialogueManager dialogue; // Objet qui gère les dialogues avec les PNJ
-    private PNJ pnj_duc;
+    private PNJ pnj_duc, pnj_shop, pnj_damien, pnj_morgane, pnj_fostine, pnj_pierre, pnj_marie, pnj_jean, pnj_luc, pnj_paul, pnj_claude, pnj_gaspard, pnj_grog, pnj_ethan, pnj_gork;
     private static final float INTERACTION_DISTANCE = 70;  // Distance d'interaction avec un objet
     private static final float DISPLAY_DISTANCE = 500;
     private static final float SQUARE_SIZE = 64;
@@ -80,6 +83,9 @@ public class Main extends ApplicationAdapter {
     private boolean animationFinished = false;
     private PauseScreen pauseScreen;
     private static Main instance;
+
+    // Ajoutez cette liste à votre classe Main
+    private List<PNJ> pnjList = new ArrayList<>();
 
     // Nom du joueur
     private String playerName;
@@ -140,13 +146,19 @@ public class Main extends ApplicationAdapter {
         // Initialiser collisionHandler
         collisionHandler = new CollisionHandler(collisionManager);
 
-        Map<Class<? extends Component>, Component> Duc_Michel = Map.of(
-            PositionComponent.class, new PositionComponent(177* 48 + 24, 67 * 48 + 24),
-            MovementComponent.class, new MovementComponent(1.5f, "north"),
-            TextureComponent.class, new TextureComponent(new Texture("PNJ/michel.png"), 48, 48, 0, 0, 2.0f)
-        );
-        pnj_duc = new PNJ("Duc_Michel", Duc_Michel, UUID.randomUUID());
-        pnj_duc.setName("Duc_Michel");
+        // Initialisation des PNJ
+        initializePNJ("Duc_Michel", 177 * 48 + 24, 67 * 48 + 24, "PNJ/michel.png");
+        initializePNJ("Jean-Benoit", 1265f, 1831f, "PNJ/jean-benoit.png");
+        initializePNJ("Damien", 750f, 2550f, "PNJ/damien.png");
+        initializePNJ("Morgane", 1200f, 3145f, "PNJ/morgane.png");
+        initializePNJ("Fostine", 900f, 580f, "PNJ/fostine.png");
+        initializePNJ("Pierre", 5300f, 4600f, "PNJ/PNJ01.png");
+        initializePNJ("Marie", 5700f, 4250f, "PNJ/PNJ06.png");
+        initializePNJ("Jean", 8250f, 2800f, "PNJ/PNJ15.png");
+        initializePNJ("Luc", 8400f, 2350f, "PNJ/PNJ10.png");
+        initializePNJ("Paul", 7950f, 2600f, "PNJ/PNJ04.png");
+        initializePNJ("Claude", 5350f, 2400f, "PNJ/PNJ02.png");
+        initializePNJ("Gaspard", 6350f, 3000f, "PNJ/PNJ13.png");
 
         // Initialisation des objets liés aux quêtes
         quest = new Quest(camera, batch);  // Création de l'objet Quest pour gérer les quêtes
@@ -175,12 +187,7 @@ public class Main extends ApplicationAdapter {
             8300, 2530, 48, 48, // Coordonnées et taille du carré
             // Chemins des images
             new String[]{
-                "PPT/1.png",
-                "PPT/2.png",
-                "PPT/3.png",
-                "PPT/4.png",
-                "PPT/5.png",
-                "PPT/6.png"
+                "PPT/1.png", "PPT/2.png", "PPT/3.png", "PPT/4.png", "PPT/5.png", "PPT/6.png"
             }
         );
 
@@ -275,8 +282,18 @@ public class Main extends ApplicationAdapter {
             );
         }
 
-
         pnj_duc.render(batch);
+        pnj_shop.render(batch);
+        pnj_damien.render(batch);
+        pnj_morgane.render(batch);
+        pnj_fostine.render(batch);
+        pnj_pierre.render(batch);
+        pnj_marie.render(batch);
+        pnj_jean.render(batch);
+        pnj_luc.render(batch);
+        pnj_paul.render(batch);
+        pnj_claude.render(batch);
+        pnj_gaspard.render(batch);
         player.render(batch);
 
         for (Mob mob : Mob.allMobs) {
@@ -286,12 +303,45 @@ public class Main extends ApplicationAdapter {
 
         batch.end();
 
-
         // Rendre les couches supérieures (au-dessus du joueur)
         mapManager.renderUpperLayers(camera);
 
         // Mettre à jour la ZoneUI
         zoneUI.update();
+
+        if (isPlayerWithinInteractionDistance(player.getPlayerPosition(), pnj_shop.getPosition(), INTERACTION_DISTANCE)) {
+            batch.begin();
+            // Dessinez la texture de la touche "F"
+            batch.draw(F_Key_Texture, pnj_shop.getPosition().x + 52, pnj_shop.getPosition().y + 78, 24, 24);
+            batch.end();
+        }
+
+        // Dans la méthode create(), après avoir initialisé tous les PNJ, ajoutez-les à la liste
+        pnjList.add(pnj_duc);
+        pnjList.add(pnj_damien);
+        pnjList.add(pnj_morgane);
+        pnjList.add(pnj_fostine);
+        pnjList.add(pnj_pierre);
+        pnjList.add(pnj_marie);
+        pnjList.add(pnj_jean);
+        pnjList.add(pnj_luc);
+        pnjList.add(pnj_paul);
+        pnjList.add(pnj_claude);
+        pnjList.add(pnj_gaspard);
+
+        // Dans la méthode render(), remplacez le code spécifique par une boucle for
+        for (PNJ pnj : pnjList) {
+            if (isPlayerWithinInteractionDistance(player.getPlayerPosition(), pnj.getPosition(), INTERACTION_DISTANCE)) {
+                batch.begin();
+                // Dessinez la texture de la touche "F"
+                batch.draw(F_Key_Texture, pnj.getPosition().x + 52, pnj.getPosition().y + 78, 24, 24);
+                batch.end();
+                // Détecter l'appui sur la touche "F"
+                if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+                    dialogue.startDialogue(pnj.getName());
+                }
+            }
+        }
 
         // Rendre l'UI du joueur et de la zone
         batch2.setProjectionMatrix(uiCamera.combined);
@@ -303,7 +353,6 @@ public class Main extends ApplicationAdapter {
         interactionImageManager.render(batch2);
         batch2.end();
 
-
         dialogue.render(batch, player.getPlayerPosition());
 
         // Activer/Désactiver le mode de débogage
@@ -313,7 +362,6 @@ public class Main extends ApplicationAdapter {
         if (debugMode) {
             debugRenderer.renderDebugBounds(camera, player, collisionManager);
         }
-
 
         // Mettre à jour l'inventaire pour gérer les entrées
         if (!showInteractionFrame) {
@@ -338,25 +386,7 @@ public class Main extends ApplicationAdapter {
             batch.end();
         }
 
-
-        if (isPlayerWithinInteractionDistance(player.getPlayerPosition(), pnj_duc.getPosition(), INTERACTION_DISTANCE)) {
-            batch.begin();
-
-            // Dessinez la texture de la touche "F"
-            batch.draw(F_Key_Texture, pnj_duc.getPosition().x + 52, pnj_duc.getPosition().y + 78, 24, 24);
-
-            // Dessinez le texte "interagir" à côté de l'image
-//            font.draw(batch, " INTERAGIR", pnj_duc.getPosition().x + 50, pnj_duc.getPosition().y + 90);
-
-            batch.end();
-
-            // Détecter l'appui sur la touche "F"
-            if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
-                dialogue.startDialogue("Duc Michel");
-            }
-        }
-
-// Afficher le cadre de dialogue si activé
+        // Afficher le cadre de dialogue si activé
         if (dialogue.isShowDialogueFrame()) {
             if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
                 dialogue.nextDialogue(); // Avance au dialogue suivant
@@ -378,7 +408,6 @@ public class Main extends ApplicationAdapter {
             showInteractionFrame = !showInteractionFrame;  // Inverse l'état d'affichage du cadre d'interaction
             quest.setShowInteractionFrame(showInteractionFrame);  // Applique l'état à l'objet Quest
         }
-
 
         // Afficher/masquer le cadre de quête avec la touche G
         if (Gdx.input.isKeyJustPressed(Input.Keys.G)) {
@@ -524,5 +553,53 @@ public class Main extends ApplicationAdapter {
         interactionImageManager.dispose();
         shop.dispose();  // Libère les ressources utilisées dans shop
         vente.dispose();  // Libère les ressources utilisées dans vente
+    }
+
+    private void initializePNJ(String name, float x, float y, String texturePath) {
+        Map<Class<? extends Component>, Component> components = Map.of(
+            PositionComponent.class, new PositionComponent(x, y),
+            MovementComponent.class, new MovementComponent(1.5f, "north"),
+            TextureComponent.class, new TextureComponent(new Texture(texturePath), 48, 48, 0, 0, 2.0f)
+        );
+        PNJ pnj = new PNJ(name, components, UUID.randomUUID());
+        pnj.setName(name);
+        switch (name) {
+            case "Duc_Michel":
+                pnj_duc = pnj;
+                break;
+            case "Jean-Benoit":
+                pnj_shop = pnj;
+                break;
+            case "Damien":
+                pnj_damien = pnj;
+                break;
+            case "Morgane":
+                pnj_morgane = pnj;
+                break;
+            case "Fostine":
+                pnj_fostine = pnj;
+                break;
+            case "Pierre":
+                pnj_pierre = pnj;
+                break;
+            case "Marie":
+                pnj_marie = pnj;
+                break;
+            case "Jean":
+                pnj_jean = pnj;
+                break;
+            case "Luc":
+                pnj_luc = pnj;
+                break;
+            case "Paul":
+                pnj_paul = pnj;
+                break;
+            case "Claude":
+                pnj_claude = pnj;
+                break;
+            case "Gaspard":
+                pnj_gaspard = pnj;
+                break;
+        }
     }
 }
