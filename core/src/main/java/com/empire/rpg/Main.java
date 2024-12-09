@@ -2,32 +2,255 @@ package com.empire.rpg;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
+import com.empire.rpg.component.*;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.empire.rpg.player.Player;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import com.empire.rpg.map.*;
+import com.empire.rpg.entity.PNJ;
+import com.empire.rpg.quest.Quest;
+import com.empire.rpg.quest.QuestPlayer;
+import com.empire.rpg.entity.player.PlayerCharacter;
+import com.empire.rpg.entity.player.audio.SoundManager;
+import com.empire.rpg.debug.DebugRenderer;
+import com.empire.rpg.entity.mob.MobFactory;
+import com.empire.rpg.component.pathfinding.Pathfinding;
+import com.empire.rpg.CollisionHandler;
+import com.empire.rpg.entity.mob.Mob;
+import com.empire.rpg.ui.PlayerUI;
+import com.empire.rpg.ui.MobUI;
+import com.empire.rpg.ui.ZoneUI;
+import com.badlogic.gdx.utils.viewport.Viewport;
+import com.empire.rpg.screen.*;
+
+import com.empire.rpg.entity.player.Inventory.Inventory;
+import com.empire.rpg.shop.Shop;
+import com.empire.rpg.shop.Vente;
 
 public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
+    private SpriteBatch batch2;
     private OrthographicCamera camera;
     private FitViewport viewport;
-    private Player player;
     private MapManager mapManager;
     private CollisionManager collisionManager;
-
+    private CollisionHandler collisionHandler;
+    private PlayerCharacter player;
+    private PositionComponent positionComponent;
+    private SoundManager soundManager;
+    private DebugRenderer debugRenderer;
+    private PlayerUI playerUI;
+    private Texture F_Key_Texture;
+    private Texture questBoardTexture;
+    private boolean debugMode = false;
     private static final float WORLD_WIDTH = 854f;
     private static final float WORLD_HEIGHT = 480f;
+    private static final Vector2 squarePosition = new Vector2(52 * 48, 45 * 49);  // Position du tableau de quête dans le monde
+    private boolean showInteractionFrame = false;  // Booléen pour savoir si le cadre d'interaction est affiché
+    private boolean showQuestPlayer = false;
+    private boolean showDialogueFrame = false;
+    private Inventory inventaire; // Instance de l'inventaire
+    private ShapeRenderer shapeRenderer; // Déclaration de ShapeRenderer
+    private BitmapFont font;
+    private Quest quest;  // Objet Quest qui gère les quêtes dans le jeu
+    private QuestPlayer questPlayer;
+    private DialogueManager dialogue; // Objet qui gère les dialogues avec les PNJ
+    private PNJ pnj_duc;
+    private PNJ pnj_shop;
+    private PNJ pnj_damien;
+    private PNJ pnj_morgane;
+    private static final float INTERACTION_DISTANCE = 70;  // Distance d'interaction avec un objet
+    private static final float DISPLAY_DISTANCE = 500;
+    private static final float SQUARE_SIZE = 64;
+    private static final float INTERACTION_DISTANCE_PNJ = 70;
+    private Pathfinding pathfinding;
+    private MobUI mobUI;
+    private ZoneUI zoneUI;
+    private OrthographicCamera uiCamera;
+    private Viewport uiViewport;
+    private ZoneManager zoneManager;
+    private MobManager mobManager;
+    private Screen currentScreen;
+    private boolean animationFinished = false;
+    private PauseScreen pauseScreen;
+    private static Main instance;
+
+    // Nom du joueur
+    private String playerName;
+
+    // Dimensions virtuelles de l'UI
+    private static final float UI_WIDTH = 1280f;
+    private static final float UI_HEIGHT = 720f;
+
+    //PPT
+    private InteractionImageManager interactionImageManager;
+
+    //Shop
+    private Shop shop; // Instance du shop
+    private boolean showShopFrame = false;
+
+    //Shop
+    private Vente vente; // Instance du shop
+    private boolean showVenteFrame = false;
+
+    public static Main getInstance() {
+        return instance;
+    }
+
+    public static void setInstance(Main instance) {
+        Main.instance = instance;
+    }
+
+    public void setScreen(Screen screen) {
+        currentScreen = screen;
+        if (!(currentScreen instanceof IntroScreen)) {
+            return;
+        }
+    }
 
     @Override
     public void create() {
-        batch = new SpriteBatch();
-        camera = new OrthographicCamera();
-        viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
+        // Charger l'écran d'introduction avec un Runnable pour afficher le menu principal
+        IntroScreen introScreen = new IntroScreen(() -> setScreen(new MainMenuScreen()));
+        setScreen(introScreen);
 
+        // Récupérer le nom du joueur depuis le menu principal
+        playerName = MainMenuScreen.getPlayerName();
+
+        instance = this;
+        // Gdx.input.setCursorCatched(true);
+        batch = new SpriteBatch();
+        batch2 = new SpriteBatch();
+        camera = new OrthographicCamera();
+        pauseScreen = new PauseScreen();
+        viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
+        shapeRenderer = new ShapeRenderer(); // Initialisation de ShapeRenderer
+        font = new BitmapFont();
+
+        // Charger la carte et les collisions
         mapManager = new MapManager("rpg-map.tmx", camera);
         collisionManager = new CollisionManager(mapManager.getTiledMap());
-        player = new Player(collisionManager);
+
+        // Initialiser collisionHandler
+        collisionHandler = new CollisionHandler(collisionManager);
+
+        Map<Class<? extends Component>, Component> Duc_Michel = Map.of(
+            PositionComponent.class, new PositionComponent(177* 48 + 24, 67 * 48 + 24),
+            MovementComponent.class, new MovementComponent(1.5f, "north"),
+            TextureComponent.class, new TextureComponent(new Texture("PNJ/michel.png"), 48, 48, 0, 0, 2.0f)
+        );
+        pnj_duc = new PNJ("Duc_Michel", Duc_Michel, UUID.randomUUID());
+        pnj_duc.setName("Duc_Michel");
+
+        Map<Class<? extends Component>, Component> Jean_Benoit = Map.of(
+            PositionComponent.class, new PositionComponent(1265f, 1831f),
+            MovementComponent.class, new MovementComponent(1.5f, "north"),
+            TextureComponent.class, new TextureComponent(new Texture("PNJ/jean-benoit.png"), 48, 48, 0, 0, 2.0f)
+        );
+        pnj_shop = new PNJ("Jean-Benoit", Jean_Benoit, UUID.randomUUID());
+        pnj_shop.setName("Jean-Benoit");
+
+        Map<Class<? extends Component>, Component> Damien = Map.of(
+            PositionComponent.class, new PositionComponent(750f, 2550f),
+            MovementComponent.class, new MovementComponent(1.5f, "north"),
+            TextureComponent.class, new TextureComponent(new Texture("PNJ/damien.png"), 48, 48, 0, 0, 2.0f)
+        );
+        pnj_damien = new PNJ("Damien", Damien, UUID.randomUUID());
+        pnj_damien.setName("Damien");
+
+        Map<Class<? extends Component>, Component> Morgane = Map.of(
+            PositionComponent.class, new PositionComponent(1200f, 3145f),
+            MovementComponent.class, new MovementComponent(1.5f, "north"),
+            TextureComponent.class, new TextureComponent(new Texture("PNJ/morgane.png"), 48, 48, 0, 0, 2.0f)
+        );
+        pnj_morgane = new PNJ("Morgane", Morgane, UUID.randomUUID());
+        pnj_morgane.setName("Morgane");
+
+
+        // Initialisation des objets liés aux quêtes
+        quest = new Quest(camera, batch);  // Création de l'objet Quest pour gérer les quêtes
+        questPlayer = new QuestPlayer(camera, batch, quest.getQuestList());  // Création de l'objet QuestPlayer pour gérer l'affichage des quêtes
+        dialogue = new DialogueManager(camera, batch, questPlayer); // Initialisation du gestionnaire de dialogues
+        // Chargement de la texture de l'icône du tableau de quête
+        questBoardTexture = new Texture(Gdx.files.internal("exclamation.png"));  // Chemin vers l'image du tableau de quêtes
+        F_Key_Texture = new Texture(Gdx.files.internal("Images/F_Key.png"));  // Chemin vers l'image de la touche F
+
+        Map<Class<? extends Component>, Component> components = new HashMap<>();
+        components.put(HealthComponent.class, new HealthComponent(90, 100));
+        //components.put(PositionComponent.class, new PositionComponent(180 * 48 + 24, 55 * 48 + 24)); // Spawn au port de la ville
+        //components.put(PositionComponent.class, new PositionComponent(51 * 48 + 24, 42 * 48 + 24)); // Spawn au tableau des guêtes
+        components.put(PositionComponent.class, new PositionComponent(8300, 2530));
+
+        this.player = new PlayerCharacter(2.0f, UUID.randomUUID(), playerName, components);
+
+        inventaire = new Inventory(camera, batch);  // Initialisation de l'inventaire
+
+        shop = new Shop(camera, batch);  // Initialisation du shop
+
+        vente = new Vente(camera, batch);  // Initialisation de vente
+
+        // Initialiser l'InteractionImageManager
+        interactionImageManager = new InteractionImageManager(
+            8300, 2530, 48, 48, // Coordonnées et taille du carré
+            // Chemins des images
+            new String[]{
+                "PPT/image1.png",
+                "PPT/image2.png",
+                "PPT/image3.png",
+                "PPT/image4.png",
+                "PPT/image5.png",
+                "PPT/image6.png",
+                "PPT/image7.png"
+            }
+        );
+
+        // Initialiser la caméra et le Viewport de l'UI
+        uiCamera = new OrthographicCamera();
+        uiViewport = new FitViewport(UI_WIDTH, UI_HEIGHT, uiCamera);
+
+        // Initialiser le débogueur
+        debugRenderer = new DebugRenderer();
+
+        // Initialiser le pathfinding
+        pathfinding = new Pathfinding(collisionManager);
+        // Définit le pathfinding global pour tous les mobs
+        MobFactory.setPathfinding(pathfinding);
+
+        // Initialiser le MobManager
+        mobManager = new MobManager(collisionManager);
+        // Initialiser le MobUI
+        mobUI = new MobUI();
+
+        // Initialiser le ZoneManager et charger les zones
+        zoneManager = new ZoneManager();
+        zoneManager.loadZonesFromMap(mapManager.getTiledMap());
+
+        // Initialiser le débogueur
+        debugRenderer = new DebugRenderer();
+
+        // Mettre à jour la caméra sur le joueur
+        camera.position.set(player.getX(), player.getY(), 0);
+        camera.update();
+
+        // Appeler initializeGame() pour initialiser le joueur et l'UI
+        initializeGame();
+
+        // Mettre à jour la caméra sur le joueur
+        if (player != null) {
+            camera.position.set(player.getX(), player.getY(), 0);
+            camera.update();
+        } else {
+            System.err.println("Erreur : 'player' n'a pas été initialisé correctement dans initializeGame().");
+        }
     }
 
     @Override
@@ -35,29 +258,291 @@ public class Main extends ApplicationAdapter {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // Mise à jour du joueur
-        player.update(Gdx.graphics.getDeltaTime());
+        // Gestion de la touche Echap
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            pauseScreen.toggleVisibility(); // Basculer la visibilité du menu Pause
+        }
 
-        // La caméra suit la position du joueur
-        camera.position.set(player.getPosition().x, player.getPosition().y, 0);
-        camera.update();
+        // Si le menu Pause est visible, ne pas rendre le reste du jeu
+        if (pauseScreen.isVisible()) {
+            pauseScreen.render(null); // Passer `null` ou une instance de `Graphics` si nécessaire
+            return;
+        }
 
-        // Rendre les couches inférieures (sous le joueur)
+        // Rendre les couches inférieures (en-dessous du joueur)
         mapManager.renderLowerLayers(camera);
 
+        if (canMove()) {
+            float deltaTime = Gdx.graphics.getDeltaTime();
+            player.update(deltaTime, collisionManager);
+        }
+
+        // Vérifier si le joueur est mort
+        if (player.isDead()) {
+            resetGame();
+            return; // Arrêter le rendu pour cette frame
+        }
+
+        // Mettre à jour les mobs
+        for (Mob mob : Mob.allMobs) {
+            mob.update(Gdx.graphics.getDeltaTime(), player, camera);
+        }
+        collisionHandler.handleCollisions(player, Mob.allMobs);
         // Démarrer le batch pour dessiner le joueur
         batch.setProjectionMatrix(camera.combined);
+
         batch.begin();
-        player.render(batch); // Rendre le joueur sans vérification de collision
+
+        for (Mob mob : Mob.allMobs) {
+            // Appliquer le facteur de zoom lors du rendu
+            batch.draw(
+                mob.getCurrentTexture(),
+                mob.getPosition().x + mob.getOffsetX(),
+                mob.getPosition().y + mob.getOffsetY(),
+                mob.getCurrentTexture().getRegionWidth() * mob.getScale(),
+                mob.getCurrentTexture().getRegionHeight() * mob.getScale()
+            );
+        }
+
+
+        pnj_duc.render(batch);
+        pnj_shop.render(batch);
+        pnj_damien.render(batch);
+        pnj_morgane.render(batch);
+        player.render(batch);
+
+        for (Mob mob : Mob.allMobs) {
+            // Rendu de la barre de vie du mob
+            mobUI.render(batch, mob);
+        }
+
         batch.end();
+
 
         // Rendre les couches supérieures (au-dessus du joueur)
         mapManager.renderUpperLayers(camera);
+
+        // Mettre à jour la ZoneUI
+        zoneUI.update();
+
+        if (isPlayerWithinInteractionDistance(player.getPlayerPosition(), pnj_shop.getPosition(), INTERACTION_DISTANCE)) {
+            batch.begin();
+            // Dessinez la texture de la touche "F"
+            batch.draw(F_Key_Texture, pnj_shop.getPosition().x + 52, pnj_shop.getPosition().y + 78, 24, 24);
+            batch.end();
+        }
+
+        if (isPlayerWithinInteractionDistance(player.getPlayerPosition(), pnj_damien.getPosition(), INTERACTION_DISTANCE)) {
+            batch.begin();
+            // Dessinez la texture de la touche "F"
+            batch.draw(F_Key_Texture, pnj_damien.getPosition().x + 52, pnj_damien.getPosition().y + 78, 24, 24);
+            batch.end();
+            // Détecter l'appui sur la touche "F"
+            if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+                dialogue.startDialogue("Damien");
+            }
+        }
+
+        if (isPlayerWithinInteractionDistance(player.getPlayerPosition(), pnj_morgane.getPosition(), INTERACTION_DISTANCE)) {
+            batch.begin();
+            // Dessinez la texture de la touche "F"
+            batch.draw(F_Key_Texture, pnj_morgane.getPosition().x + 52, pnj_morgane.getPosition().y + 78, 24, 24);
+            batch.end();
+            // Détecter l'appui sur la touche "F"
+            if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+                dialogue.startDialogue("Morgane");
+            }
+        }
+
+        // Rendre l'UI du joueur et de la zone
+        batch2.setProjectionMatrix(uiCamera.combined);
+        batch2.begin();
+        playerUI.render(batch2);
+        zoneUI.render(batch2);
+        // Mise à jour et rendu de l'interaction avec les images
+        interactionImageManager.update(new Vector2(player.getX(), player.getY()));
+        interactionImageManager.render(batch2);
+        batch2.end();
+
+
+        dialogue.render(batch, player.getPlayerPosition());
+
+        // Activer/Désactiver le mode de débogage
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F1)) {
+            debugMode = !debugMode;
+        }
+        if (debugMode) {
+            debugRenderer.renderDebugBounds(camera, player, collisionManager);
+        }
+
+
+        // Mettre à jour l'inventaire pour gérer les entrées
+        if (!showInteractionFrame) {
+            inventaire.update();  // Appel de update() pour gérer la navigation dans l'inventaire
+            inventaire.render(new Vector2(player.getX(),player.getY()));
+        }
+
+        if (!showShopFrame) {
+            shop.update();  // Appel de update() pour gérer la navigation dans le shop
+            shop.render(new Vector2(player.getX(), player.getY()));
+        }
+
+        if (!showShopFrame) {
+            vente.update();  // Appel de update() pour gérer la navigation dans le vente
+            vente.render(new Vector2(player.getX(), player.getY()));
+        }
+
+        // Affichage de l'icône de quête si le joueur est proche du tableau
+        if (isPlayerNearSquare(player.getPlayerPosition(), squarePosition, DISPLAY_DISTANCE)) {
+            batch.begin();
+            batch.draw(questBoardTexture, squarePosition.x + 19, squarePosition.y + SQUARE_SIZE);  // Affiche l'icône du tableau de quête
+            batch.end();
+        }
+
+
+        if (isPlayerWithinInteractionDistance(player.getPlayerPosition(), pnj_duc.getPosition(), INTERACTION_DISTANCE)) {
+            batch.begin();
+
+            // Dessinez la texture de la touche "F"
+            batch.draw(F_Key_Texture, pnj_duc.getPosition().x + 52, pnj_duc.getPosition().y + 78, 24, 24);
+
+            // Dessinez le texte "interagir" à côté de l'image
+//            font.draw(batch, " INTERAGIR", pnj_duc.getPosition().x + 50, pnj_duc.getPosition().y + 90);
+
+            batch.end();
+
+            // Détecter l'appui sur la touche "F"
+            if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+                dialogue.startDialogue("Duc Michel");
+            }
+        }
+
+// Afficher le cadre de dialogue si activé
+        if (dialogue.isShowDialogueFrame()) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+                dialogue.nextDialogue(); // Avance au dialogue suivant
+            }
+            if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+                dialogue.closeDialogue(); // Ferme le cadre
+            }
+            dialogue.render(batch, player.getPlayerPosition());
+        }
+
+        // Cacher le cadre d'interaction avec la touche ESCAPE
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            showDialogueFrame = false;  // Désactive le cadre d'interaction
+            dialogue.setShowDialogueFrame(false);  // Désactive le cadre d'interaction dans Quest
+        }
+
+        // Bascule d'affichage du cadre d'interaction avec la touche F
+        if (isPlayerWithinInteractionDistance(player.getPlayerPosition(), squarePosition, INTERACTION_DISTANCE) && Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+            showInteractionFrame = !showInteractionFrame;  // Inverse l'état d'affichage du cadre d'interaction
+            quest.setShowInteractionFrame(showInteractionFrame);  // Applique l'état à l'objet Quest
+        }
+
+
+        // Afficher/masquer le cadre de quête avec la touche G
+        if (Gdx.input.isKeyJustPressed(Input.Keys.G)) {
+            showQuestPlayer = !showQuestPlayer;  // Inverse l'état d'affichage du cadre de quête
+            questPlayer.setShowQuestPlayerFrame(showQuestPlayer);  // Applique l'état à l'objet QuestPlayer
+        }
+
+        // Cacher le cadre d'interaction avec la touche ESCAPE
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            showInteractionFrame = false;  // Désactive le cadre d'interaction
+            quest.setShowInteractionFrame(false);  // Désactive le cadre d'interaction dans Quest
+        }
+
+        // Si le cadre de quête doit être affiché, appelle le rendu de QuestPlayer
+        if (showQuestPlayer) {
+            questPlayer.render();  // Affiche le cadre de quête
+        }
+
+        // Si le cadre d'interaction doit être affiché, appelle le rendu de Quest
+        if (showInteractionFrame) {
+            quest.render(batch, player.getPlayerPosition());  // Affiche l'interaction avec le tableau de quête
+        }
+
+        // Mettre à jour la caméra pour suivre le joueur
+        camera.position.set(player.getX(), player.getY(), 0);
+        camera.update();
+
+        if (currentScreen != null) {
+            currentScreen.render(Gdx.graphics.getDeltaTime());
+        }
+    }
+
+    // Méthode pour déterminer si le joueur peut se déplacer
+    private boolean canMove() {
+        return !showQuestPlayer && !showInteractionFrame && !showDialogueFrame;  // Le joueur ne peut se déplacer que si les cadres de quête et d'interaction sont fermés
+    }
+
+    // Méthode pour vérifier si le joueur est proche du tableau d'interaction (50 unités)
+    private boolean isPlayerWithinInteractionDistance(Vector2 playerPosition, Vector2 squarePosition, float distanceThreshold) {
+        return playerPosition.dst(squarePosition) < distanceThreshold;  // Vérifie si le joueur est à une distance inférieure au seuil
+    }
+
+    // Méthode pour vérifier si le joueur est proche du tableau de quête (500 unités)
+    private boolean isPlayerNearSquare(Vector2 playerPosition, Vector2 squarePosition, float distanceThreshold) {
+        return playerPosition.dst(squarePosition) < distanceThreshold;  // Vérifie si le joueur est à une distance inférieure au seuil
     }
 
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
+        uiViewport.update(width, height, true);
+    }
+
+    private void resetGame() {
+        System.out.println("Redémarrage du jeu...");
+
+        // Dispose des ressources existantes
+        if (player != null) {
+            player.dispose();
+            player = null;
+        }
+        if (playerUI != null) {
+            playerUI.dispose();
+            playerUI = null;
+        }
+        if (zoneUI != null) {
+            zoneUI.dispose();
+            zoneUI = null;
+        }
+        // Disposer les mobs
+        for (Mob mob : Mob.allMobs) {
+            mob.dispose();
+        }
+        Mob.allMobs.clear();
+
+        // Appeler initializeGame() pour recréer le joueur et l'UI
+        initializeGame();
+    }
+
+    private void initializeGame() {
+        // Récupérer le nom du joueur depuis le menu principal
+        playerName = MainMenuScreen.getPlayerName();
+
+        // Création d'une map de composants avec PositionComponent et HealthComponent
+        Map<Class<? extends Component>, Component> components = new HashMap<>();
+        components.put(HealthComponent.class, new HealthComponent(100, 100));
+        components.put(PositionComponent.class, new PositionComponent(8300f, 2530f));
+
+        // Recharger les mobs depuis la carte
+        mobManager.loadMobsFromMap(mapManager.getTiledMap());
+
+        // Création et initialisation de l'instance de PlayerCharacter
+        player = new PlayerCharacter(2.0f, UUID.randomUUID(), playerName, components);
+
+        // Initialiser l'UI du joueur
+        playerUI = new PlayerUI(player, UI_WIDTH, UI_HEIGHT);
+
+        // Initialiser le ZoneUI
+        zoneUI = new ZoneUI(player, zoneManager, UI_WIDTH, UI_HEIGHT);
+
+        // Mettre à jour la caméra sur le joueur
+        camera.position.set(player.getX(), player.getY(), 0);
+        camera.update();
     }
 
     @Override
@@ -65,5 +550,40 @@ public class Main extends ApplicationAdapter {
         batch.dispose();
         mapManager.dispose();
         player.dispose();
+        if (player != null) {
+            player.dispose();
+        }
+        if (playerUI != null) {
+            playerUI.dispose();
+        }
+        if (zoneUI != null) {
+            zoneUI.dispose();
+        }
+        if (pathfinding != null) {
+            pathfinding.dispose();
+        }
+        if (debugRenderer != null) {
+            debugRenderer.dispose();
+        }
+        if (mobUI != null) {
+            mobUI.dispose();
+        }
+        if (soundManager != null) {
+            soundManager.dispose();
+        }
+        for (Mob mob : Mob.allMobs) {
+            mob.dispose();
+        }
+        Mob.allMobs.clear();
+        F_Key_Texture.dispose();
+        shapeRenderer.dispose(); // Libère ShapeRenderer
+        font.dispose();
+        inventaire.dispose();  // Libère les ressources utilisées dans inventaire
+        quest.dispose();
+        questBoardTexture.dispose();
+        pathfinding.dispose();
+        interactionImageManager.dispose();
+        shop.dispose();  // Libère les ressources utilisées dans shop
+        vente.dispose();  // Libère les ressources utilisées dans vente
     }
 }

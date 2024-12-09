@@ -1,33 +1,61 @@
-# RPG_Empire
 
-A [libGDX](https://libgdx.com/) project generated with [gdx-liftoff](https://github.com/libgdx/gdx-liftoff).
+### README pour RPG Empire
 
-This project was generated with a template including simple application launchers and an `ApplicationAdapter` extension that draws libGDX logo.
+----------
 
-## Platforms
+# RPG Empire
 
-- `core`: Main module with the application logic shared by all platforms.
-- `lwjgl3`: Primary desktop platform using LWJGL3; was called 'desktop' in older docs.
+**RPG Empire** est un RPG en 2D avec une vue du dessus et un style pixel art, se déroulant dans un monde ouvert. Les joueurs explorent un vaste territoire rempli de mystères, de quêtes et de personnages uniques.
 
-## Gradle
+----------
 
-This project uses [Gradle](https://gradle.org/) to manage dependencies.
-The Gradle wrapper was included, so you can run Gradle tasks using `gradlew.bat` or `./gradlew` commands.
-Useful Gradle tasks and flags:
+## 📋 Présentation du projet
 
-- `--continue`: when using this flag, errors will not stop the tasks from running.
-- `--daemon`: thanks to this flag, Gradle daemon will be used to run chosen tasks.
-- `--offline`: when using this flag, cached dependency archives will be used.
-- `--refresh-dependencies`: this flag forces validation of all dependencies. Useful for snapshot versions.
-- `build`: builds sources and archives of every project.
-- `cleanEclipse`: removes Eclipse project data.
-- `cleanIdea`: removes IntelliJ project data.
-- `clean`: removes `build` folders, which store compiled classes and built archives.
-- `eclipse`: generates Eclipse project data.
-- `idea`: generates IntelliJ project data.
-- `lwjgl3:jar`: builds application's runnable jar, which can be found at `lwjgl3/build/libs`.
-- `lwjgl3:run`: starts the application.
-- `test`: runs unit tests (if any).
+-   **Genre** : RPG 2D, Pixel Art, Monde Ouvert
+-   **Style Visuel** : Fantaisie médiévale en pixel art
+-   **Public Cible** : Fans de RPG 2D, exploration en monde ouvert et récits immersifs
+-   **Fonctionnalités principales** :
+    -   Exploration non linéaire de divers biomes
+    -   Combats en temps réel avec des armes variées
+    -   Quêtes principales et secondaires avec récompenses
+    -   Personnalisation du personnage
+    -   Interactions avec des PNJ via des dialogues
 
-Note that most tasks that are not specific to a single project can be run with `name:` prefix, where the `name` should be replaced with the ID of a specific project.
-For example, `core:clean` removes `build` folder only from the `core` project.
+----------
+
+## 🛠 Technologies utilisées
+
+-   **Moteur de jeu** : LibGDX
+-   **Bibliothèque graphique** : Tiled
+-   **Plateformes supportées** : PC (Windows, Mac, Linux)
+
+----------
+
+## 🎨 Ressources et Assets
+
+-   **Tilesets** : [Winlu Fantasy Tileset](https://winlu.itch.io/winlu-fantasy-tileset-exterior)
+-   **Bases de personnages** : [Seliel Character Base](https://seliel-the-shaper.itch.io/character-base)
+-   **Effets sonores** : [Sound-Fishing Combat Sounds](https://www.sound-fishing.net/bruitages/combat)
+
+----------
+
+## 🎮 Contrôles
+
+-   Clavier & Souris (support AZERTY/QWERTY) :
+    -   **Déplacement** : Z/Q/S/D (AZERTY) ou W/A/S/D (QWERTY)
+    -   **Interaction** : F
+    -   **Inventaire** : E
+    -   **Attaque** : Clic gauche
+    -   **Défense** : Clic droit
+
+----------
+
+## 👥 Contributeurs
+
+-   **Game Designers** : Ethan Foissotte, Pol-Mattis Harquet
+-   **Artistes Pixel** : Pol-Mattis Harquet, Anna-Rose Harquet
+-   **Développeurs** : Michel Banckaert, Jean-Claude Jin, Ethan Foissotte
+
+----------
+
+Bonne aventure dans **RPG Empire** ! 🐉

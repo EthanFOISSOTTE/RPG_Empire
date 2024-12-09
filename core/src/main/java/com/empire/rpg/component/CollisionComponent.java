@@ -1,5 +1,7 @@
 package com.empire.rpg.component;
 
+import com.badlogic.gdx.math.Rectangle;
+
 /**
  * La classe CollisionComponent représente un composant qui gère la détection de collision
  * et l'état de collision pour une entité dans le jeu.
@@ -7,15 +9,18 @@ package com.empire.rpg.component;
 
 public class CollisionComponent implements Component {
     private boolean isCollidable;
+    private Rectangle boundingBox;
 
     /**
      * Constructeur d'un CollisionComponent avec un état de collision spécifié.
      *
      * @param isCollidable l'état de collision initial
+     * @param boundingBox la boîte de collision de l'entité
      */
 
-    public CollisionComponent(boolean isCollidable) {
+    public CollisionComponent(boolean isCollidable, Rectangle boundingBox) {
         this.isCollidable = isCollidable;
+        this.boundingBox = boundingBox;
     }
 
     /**
@@ -35,6 +40,24 @@ public class CollisionComponent implements Component {
 
     public void setCollidable(boolean collidable) {
         isCollidable = collidable;
+    }
+
+    /**
+     * Retourne la bounding box de l'entité.
+     *
+     * @return la bounding box
+     */
+    public Rectangle getBoundingBox() {
+        return boundingBox;
+    }
+
+    /**
+     * Définit une nouvelle bounding box.
+     *
+     * @param boundingBox la nouvelle bounding box
+     */
+    public void setBoundingBox(Rectangle boundingBox) {
+        this.boundingBox = boundingBox;
     }
 
     /**

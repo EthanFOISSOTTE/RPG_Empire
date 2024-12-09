@@ -1,0 +1,25 @@
+{
+  "Radagast": [
+    "Bonjour, aventurier. Puis-je t'aider ?",
+    "Le chemin vers la forêt est dangereux, fais attention."
+  ],
+  "Duc Michel": [
+    "Ah, un aventurier ! Vous tombez à pic. La région subit une véritable calamité... Ces derniers mois, des groupes de gobelins se sont installés dans des repaires tout proches de la capitale.",
+    "Ils sont devenus si audacieux qu'ils attaquent nos convois de marchandises et agressent nos pauvres fermiers. Nos ressources s'amenuisent, et nos gens vivent dans la peur.",
+    "J'ai besoin d'une personne qui sache manier l'épée et qui ait du courage pour s'attaquer à cette vermine. Ces gobelins ne sont peut-être pas les plus puissants, mais ils savent se cacher et attaquer en meute.",
+    "Je ne vous demande pas de les anéantir tous, bien sûr, mais d'en éliminer suffisamment pour faire passer le message. Rapportez-moi dix de leurs peaux... Oui, leurs peaux ! Cela suffira à prouver que vous avez fait le nécessaire.",
+    "...[Il marque une pause, le regard grave]",
+    "Accomplissez cette tâche, et vous serez récompensé comme il se doit. Vous aurez non seulement l'or promis, mais également ma gratitude, et celle de tout le peuple. Faites vite, et que les dieux vous gardent.",
+    "Acceptez-vous cette mission ? [O = Oui / N = Non]"
+  ],
+  "Damien": [
+    "Le Duché de Michel, situé à la frontière maritime orientale de l'Empire, est une région riche en diversité géographique et culturelle.",
+    "Gouverné par le duc Michel, un homme respecté mais constamment pris entre les pressions de l'Empire et les menaces locales, le duché est un microcosme de défis et de mystères.",
+    "Cette terre, bien que stratégiquement importante, est marquée par des inégalités flagrantes et une coexistence précaire avec des forces qui échappent au contrôle humain."
+  ],
+    "Morgane": [
+        "Le duché est à la fois une région fertile et une terre de conflits constants. Le duc Michel, bien qu'intelligent et bienveillant envers ses sujets, se retrouve pris entre plusieurs fronts",
+        "Malgré ces défis, le duché reste une terre vivante, où les habitants, qu'ils soient nobles, marchands, paysans ou aventuriers, continuent de lutter pour leur survie et leur avenir.",
+        "C'est une région au bord de l'équilibre, où chaque action, qu'elle soit politique, militaire ou magique, pourrait faire basculer son destin."
+    ]
+}
